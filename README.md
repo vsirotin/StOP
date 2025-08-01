@@ -1,5 +1,7 @@
 # StOP - State Oriented Programming
 
+[![CI](https://github.com/vsirotin/StOP/actions/workflows/ci.yml/badge.svg)](https://github.com/vsirotin/StOP/actions/workflows/ci.yml)
+
 Explanation, basic implementation with some programming languages and examples of the concept of State Oriented Programming (StOP).
 
 🚧 **Under Construction** 🚧
@@ -9,6 +11,11 @@ Explanation, basic implementation with some programming languages and examples o
 ### Build All Projects
 ```bash
 ./build-all.sh
+```
+
+### Test All Projects
+```bash
+./test-all.sh
 ```
 
 ### Run Examples
@@ -26,6 +33,7 @@ cd kotlin && ./gradlew runExamples
 - **`ts/`** - TypeScript workspace with library and examples
 - **`kotlin/`** - Kotlin workspace with library and examples  
 - **`docs/`** - Documentation and architecture guides
+- **`.github/`** - GitHub Actions CI/CD workflows
 
 ## Libraries
 

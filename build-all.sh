@@ -3,6 +3,8 @@
 # StOP - State Oriented Programming
 # Common build script for all projects
 
+set -e  # Exit on any error
+
 echo "=== Building StOP Projects ==="
 echo "Current directory: $(pwd)"
 
