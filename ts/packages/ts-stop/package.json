@@ -1,0 +1,32 @@
+{
+  "name": "@vsirotin/ts-stop",
+  "version": "1.0.0",
+  "description": "TypeScript State Oriented Programming library",
+  "main": "dist/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build": "npm run clean && npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc",
+    "build:esm": "tsc --project tsconfig.esm.json",
+    "clean": "rm -rf dist",
+    "test": "echo \"Tests not implemented yet\"",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "typescript",
+    "state-oriented-programming",
+    "stop"
+  ],
+  "author": "Viktor Sirotin",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
