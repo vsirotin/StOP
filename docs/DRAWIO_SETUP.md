@@ -1,5 +1,20 @@
 # Draw.io Setup Instructions
 
+## Common Issues and Solutions
+
+### Blue Popup "Keep Undo History" When Opening .drawio Files
+
+**Issue**: When opening `.drawio` files, VS Code shows a blue popup asking about undo history.
+
+**Cause**: The draw.io extension modifies the file when opening, triggering VS Code's external change detection.
+
+**Solutions**:
+1. **Quick Fix**: Click "Reload from Disk" in the popup
+2. **Automatic**: VS Code workspace settings are configured to handle this
+3. **Manual**: You can always choose "Keep Undo History" if you've made recent changes
+
+This is normal behavior and doesn't affect the functionality of your diagrams.
+
 ## How to Export Diagrams to Images
 
 Since VS Code's draw.io extension requires manual export, here are the steps:
