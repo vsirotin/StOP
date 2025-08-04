@@ -1,5 +1,42 @@
 # Draw.io Setup Instructions
 
+## Creating New Draw.io Files - IMPORTANT!
+
+### ⚠️ Don't Create Empty .drawio Files!
+
+**Problem**: Creating empty `.drawio` files or files with incorrect structure causes:
+- Blue popups about file conflicts
+- "Not a diagram file" errors
+- Disabled toolbar icons
+- Extension not working properly
+
+### ✅ Correct Way to Create New Draw.io Files:
+
+**Method 1: Use VS Code Command Palette (RECOMMENDED)**
+1. Press `Cmd+Shift+P` (macOS) or `Ctrl+Shift+P` (Windows/Linux)
+2. Type "Draw.io: Create New Diagram"
+3. Choose location: `docs/diagrams/`
+4. Name your file: `stop-concept.drawio`
+5. The extension will create a properly formatted file
+
+**Method 2: Copy from Working Example**
+1. Copy an existing working `.drawio` file
+2. Rename it to your desired name
+3. Open and modify the content
+
+**Method 3: Create Online First**
+1. Go to https://app.diagrams.net/
+2. Create your diagram
+3. File > Download > Device (.drawio)
+4. Save to `docs/diagrams/`
+
+### 🔧 If You're Already Having Issues:
+
+1. **Close VS Code completely**
+2. **Delete the problematic file**: `rm docs/diagrams/problem-file.drawio`
+3. **Restart VS Code**
+4. **Use Method 1 above to create a new file**
+
 ## Common Issues and Solutions
 
 ### Blue Popup "Keep Undo History" When Opening .drawio Files
