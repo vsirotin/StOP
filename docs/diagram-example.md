@@ -8,7 +8,7 @@ State Oriented Programming (StOP) is a paradigm that focuses on explicit state m
 
 ## Architecture Diagram
 
-![StOP Architecture](./images/stop-architecture.png)
+![StOP Architecture](./images/test.png)
 
 *Figure 1: StOP Architecture Overview showing the flow from State Container through State Processor to State Transformer, with implementations in TypeScript and Kotlin*
 
@@ -67,9 +67,9 @@ Use standard markdown image syntax with the correct relative path:
 - **Documentation**: `docs/*.md`
 
 **Current Status:**
-- ✅ Source diagram: `docs/diagrams/stop-architecture.drawio` 
-- ✅ Exported image: `docs/images/stop-architecture.png` (601x421 PNG)
+- ✅ Exported image: `docs/images/test.png` 
 - ✅ Documentation: `docs/diagram-example.md`
+- 🔄 Draw.io plugin: Reinstalled correctly
 
 ## Best Practices
 
