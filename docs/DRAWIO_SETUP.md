@@ -1,6 +1,53 @@
 # Draw.io Setup Instructions
 
-## Creating New Draw.io Files - IMPORTANT!
+## 🔄 Plugin Acting Up? - Clean Reset Required!
+
+### ⚠️ If Draw.io Plugin is "Doing Its Own Thing":
+
+**Symptoms:**
+- Files appearing/disappearing automatically
+- Blue popups about file conflicts
+- "Not a diagram file" errors
+- Plugin creating files you didn't ask for
+
+**Solution: Clean Plugin Reset**
+
+### **Step 1: Uninstall the Extension**
+1. In VS Code, go to Extensions (Cmd+Shift+X)
+2. Search for "Draw.io Integration"
+3. Click the gear icon → "Uninstall"
+4. **Restart VS Code completely**
+
+### **Step 2: Clean Up**
+1. Check `docs/diagrams/` folder
+2. Delete any problematic `.drawio` files
+3. Start fresh
+
+### **Step 3: Reinstall**
+1. Go to Extensions again
+2. Search for "Draw.io Integration" by hediet
+3. Click "Install"
+4. **Restart VS Code again**
+
+### **Step 4: Test with Simple File**
+1. Right-click in `docs/diagrams/` folder
+2. New File → `test.drawio`
+3. VS Code should automatically open the draw.io editor
+4. If it works, you're good to go!
+
+## Alternative: Use Online Draw.io
+
+If the plugin keeps causing issues:
+
+1. **Create diagrams online**: https://app.diagrams.net/
+2. **Save as .drawio**: File → Download → Device (.drawio format)
+3. **Save to**: `docs/diagrams/` folder
+4. **Export images**: File → Export as → PNG → save to `docs/images/`
+5. **Reference in markdown**: `![Diagram](./images/filename.png)`
+
+This way you avoid plugin issues entirely!
+
+## Creating New Draw.io Files
 
 ### ⚠️ Don't Create Empty .drawio Files!
 
