@@ -6,14 +6,35 @@
 
 **Issue**: When opening `.drawio` files, VS Code shows a blue popup asking about undo history.
 
+**What the popup looks like**:
+- Blue notification bar at the top of the editor
+- Text: "The file has been changed outside of the editor..."
+- Buttons: Usually "Reload from Disk" and "Keep Undo History"
+
+**If you don't see "Reload from Disk" button**:
+1. **Look for these alternatives**:
+   - "Reload" button
+   - "Discard Changes" button
+   - "Revert File" option
+   
+2. **Alternative solutions**:
+   ```bash
+   # Close VS Code completely
+   # Restart VS Code
+   # Or use Command Palette:
+   ```
+   - Press `Cmd+Shift+P` (macOS) or `Ctrl+Shift+P` (Windows/Linux)
+   - Type "File: Revert File" and press Enter
+   - Or type "Developer: Reload Window" and press Enter
+
+3. **Manual file refresh**:
+   - Close the `.drawio` file tab
+   - Reopen the file from the file explorer
+   - This should refresh the file content
+
 **Cause**: The draw.io extension modifies the file when opening, triggering VS Code's external change detection.
 
-**Solutions**:
-1. **Quick Fix**: Click "Reload from Disk" in the popup
-2. **Automatic**: VS Code workspace settings are configured to handle this
-3. **Manual**: You can always choose "Keep Undo History" if you've made recent changes
-
-This is normal behavior and doesn't affect the functionality of your diagrams.
+**Prevention**: The workspace settings are now configured to automatically reload draw.io files.
 
 ## How to Export Diagrams to Images
 
