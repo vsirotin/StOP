@@ -6,6 +6,15 @@ Welcome to the State Oriented Programming (StOP) documentation.
 
 State Oriented Programming (StOP) is a programming paradigm that focuses on explicit state management and transformation. This repository provides implementations and examples in multiple programming languages.
 
+## Documentation Structure
+
+- **`README.md`** - This overview document
+- **`architecture.md`** - Detailed architecture documentation
+- **`diagram-example.md`** - Example of using diagrams in documentation
+- **`DRAWIO_SETUP.md`** - Instructions for setting up and using draw.io
+- **`diagrams/`** - Draw.io source files (*.drawio)
+- **`images/`** - Exported diagram images (*.png)
+
 ## Current Status
 
 🚧 **Under Construction** 🚧

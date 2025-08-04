@@ -144,3 +144,8 @@ jobs:
         ls -la kotlin/kotlin-stop/build/libs/
         ls -la kotlin/kotlin-example/build/libs/
         ls -la kotlin/java-example/build/libs/
+        
+        # Check documentation structure
+        ls -la docs/
+        ls -la docs/diagrams/ || echo "No diagrams directory"
+        ls -la docs/images/ || echo "No images directory"
