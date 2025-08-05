@@ -1,4 +1,4 @@
-import { StopLibrary, createStopInstance, transformState } from '@vsirotin/ts-stop';
+import { StopLibrary, createStopInstance, transformState } from '../../ts-stop/src';
 
 /**
  * TypeScript Example demonstrating usage of @vsirotin/ts-stop library
@@ -38,10 +38,4 @@ const transformedState = transformState(initialState, (state: any) => ({
 
 console.log('Transformed state:', transformedState);
 
-// Update message and process again
-stopInstance2.setMessage("Updated message from TypeScript!");
-const finalState = stopInstance2.processState(transformedState);
-console.log('\n=== Final State ===');
-console.log('Final processed state:', finalState);
-
-console.log('\nTypeScript example completed successfully!');
+console.log('\n=== TypeScript Example Completed ===');

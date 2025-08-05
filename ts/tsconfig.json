@@ -14,10 +14,13 @@
   },
   "references": [
     {
-      "path": "./packages/ts-stop"
+      "path": "./ts-stop"
     },
     {
-      "path": "./packages/ts-example"
+      "path": "./ts-example"
+    },
+    {
+      "path": "./js-example"
     }
   ]
 }

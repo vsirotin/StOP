@@ -1,28 +1,17 @@
 {
-  "name": "@vsirotin/ts-stop-workspace",
+  "name": "stop-typescript-workspace",
   "version": "1.0.0",
-  "description": "TypeScript State Oriented Programming workspace",
+  "description": "TypeScript workspace for StOP (State Oriented Programming)",
   "private": true,
-  "workspaces": [
-    "packages/ts-stop",
-    "packages/ts-example",
-    "packages/js-example"
-  ],
   "scripts": {
-    "build": "npm run build --workspaces",
-    "build:lib": "npm run build --workspace=@vsirotin/ts-stop",
-    "build:ts-example": "npm run build --workspace=@vsirotin/ts-example",
-    "build:js-example": "npm run build --workspace=@vsirotin/js-example",
-    "clean": "npm run clean --workspaces",
-    "test": "npm run test --workspaces",
-    "install:all": "npm install"
+    "build": "npm run build:lib && npm run build:examples",
+    "build:lib": "cd ts-stop && npm run build",
+    "build:examples": "cd ts-example && npm run build",
+    "test": "cd ts-stop && npm test",
+    "clean": "cd ts-stop && npm run clean && cd ../ts-example && npm run clean",
+    "install-all": "cd ts-stop && npm install && cd ../ts-example && npm install && cd ../js-example && npm install"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
-    "@types/node": "^20.0.0"
-  },
-  "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
+    "typescript": "^5.0.0"
   }
 }

@@ -1,14 +1,13 @@
 /**
- * @vsirotin/ts-stop - TypeScript State Oriented Programming Library
+ * @vsirotin/ts-stop - State Oriented Programming Library
  * 
- * This is a basic "Hello World" implementation that will be expanded
- * to include the full State Oriented Programming functionality.
+ * A TypeScript library for implementing State Oriented Programming patterns.
  */
 
 export class StopLibrary {
     private message: string;
 
-    constructor(message: string = "Hello World from TypeScript StOP Library!") {
+    constructor(message: string = "Hello from StOP TypeScript Library!") {
         this.message = message;
     }
 
@@ -30,12 +29,10 @@ export class StopLibrary {
      * Basic state operation (placeholder for future StOP functionality)
      */
     public processState(state: any): any {
-        console.log("Processing state:", state);
         return {
             ...state,
             processed: true,
-            timestamp: new Date().toISOString(),
-            message: this.message
+            timestamp: new Date().toISOString()
         };
     }
 }
@@ -50,9 +47,12 @@ export function createStopInstance(message?: string): StopLibrary {
 /**
  * Utility function for state transformation
  */
-export function transformState(state: any, transformer: (state: any) => any): any {
+export function transformState<T>(state: T, transformer: (state: T) => T): T {
     return transformer(state);
 }
+
+// Export the new StateMachine class
+export { StateMachine } from './StateMachine';
 
 // Default export
 export default StopLibrary;

@@ -5,47 +5,87 @@ node_modules/
 .pnpm-debug.log*
 
 # Build outputs
-ts/packages/*/dist/
+ts/*/dist/
 ts/node_modules/
 kotlin/.gradle/
 kotlin/build/
 kotlin/*/build/
 **/gradle-app.setting
 
+# TypeScript compilation artifacts
+*.tsbuildinfo
+**/*.d.ts.map
+**/*.js.map
+# But keep essential declaration files for distribution
+!ts/*/dist/**/*.d.ts
+!ts/*/dist/**/*.js
+!ts/*/dist/**/*.js.map
+
+# Test-related files (auto-generated)
+test/**/*.d.ts
+test/**/*.js
+test/**/*.js.map
+src/**/*.d.ts
+src/**/*.js
+src/**/*.js.map
+# But keep source JS files that are intentionally written
+!**/src/index.js
+!**/js-example/src/**/*.js
+
+# Test coverage (auto-generated)
+coverage/
+**/coverage/
+*.lcov
+.nyc_output/
+
 # IDE files
 .vscode/
 .idea/
 *.iml
 *.iws
+*.swp
+*.swo
 
 # OS files
 .DS_Store
 Thumbs.db
+.AppleDouble
+.LSOverride
 
 # Logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-kotlin/.gradle/file-system.probe
-kotlin/.gradle/8.8/gc.properties
-kotlin/.gradle/8.8/checksums/checksums.lock
-kotlin/.gradle/8.8/checksums/md5-checksums.bin
-kotlin/.gradle/8.8/checksums/sha1-checksums.bin
-kotlin/.gradle/8.8/dependencies-accessors/gc.properties
-kotlin/.gradle/8.8/fileChanges/last-build.bin
-kotlin/.gradle/8.8/fileHashes/fileHashes.bin
-kotlin/.gradle/8.8/fileHashes/fileHashes.lock
-kotlin/.gradle/9.0.0/gc.properties
-kotlin/.gradle/9.0.0/checksums/checksums.lock
-kotlin/.gradle/9.0.0/checksums/md5-checksums.bin
-kotlin/.gradle/9.0.0/checksums/sha1-checksums.bin
-kotlin/.gradle/9.0.0/executionHistory/executionHistory.bin
-kotlin/.gradle/9.0.0/executionHistory/executionHistory.lock
-kotlin/.gradle/9.0.0/fileChanges/last-build.bin
-kotlin/.gradle/9.0.0/fileHashes/fileHashes.bin
-kotlin/.gradle/9.0.0/fileHashes/fileHashes.lock
-kotlin/.gradle/buildOutputCleanup/buildOutputCleanup.lock
-kotlin/.gradle/buildOutputCleanup/cache.properties
-kotlin/.gradle/buildOutputCleanup/outputFiles.bin
-kotlin/.gradle/vcs-1/gc.properties
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Gradle cache and wrapper (simplified)
+.gradle/
+gradle-app.setting
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
