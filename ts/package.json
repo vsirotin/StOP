@@ -4,9 +4,10 @@
   "description": "TypeScript workspace for StOP (State Oriented Programming)",
   "private": true,
   "scripts": {
-    "build": "npm run build:lib && npm run build:examples",
+    "build": "npm run build:lib && npm run build:ts-example && npm run build:js-example",
     "build:lib": "cd ts-stop && npm run build",
-    "build:examples": "cd ts-example && npm run build",
+    "build:ts-example": "cd ts-example && npm run build",
+    "build:js-example": "echo '✓ JavaScript example needs no build (pure JS)'",
     "test": "cd ts-stop && npm test",
     "clean": "cd ts-stop && npm run clean && cd ../ts-example && npm run clean",
     "install-all": "cd ts-stop && npm install && cd ../ts-example && npm install && cd ../js-example && npm install"

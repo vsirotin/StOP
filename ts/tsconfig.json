@@ -6,21 +6,11 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "composite": true
+    "forceConsistentCasingInFileNames": true
   },
-  "references": [
-    {
-      "path": "./ts-stop"
-    },
-    {
-      "path": "./ts-example"
-    },
-    {
-      "path": "./js-example"
-    }
+  "exclude": [
+    "node_modules",
+    "dist",
+    "coverage"
   ]
 }

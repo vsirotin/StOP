@@ -1,78 +1,35 @@
 #!/bin/bash
+set -e
 
-# Test script for StOP project
-# This script runs all examples and verifies they complete successfully
+echo "🧪 Testing all StOP projects..."
 
-set -e  # Exit on any error
+# TypeScript Library Unit Tests
+echo "🧪 Running TypeScript library tests..."
+cd ts/ts-stop && npm test
+cd ../..
 
-echo "=== Running StOP Project Tests ==="
-echo "Current directory: $(pwd)"
+# TypeScript Example
+echo "🧪 Running TypeScript example..."
+cd ts/ts-example && npm run start
+cd ../..
 
-# Function to check if command succeeded
-check_success() {
-    if [ $? -eq 0 ]; then
-        echo "✓ $1 completed successfully"
-    else
-        echo "✗ $1 failed"
-        exit 1
-    fi
-}
+# JavaScript Example  
+echo "🧪 Running JavaScript example..."
+cd ts/js-example && npm run start
+cd ../..
 
-# Function to run with timeout (works on both macOS and Linux)
-run_with_timeout() {
-    if command -v timeout > /dev/null 2>&1; then
-        # Linux - use timeout command
-        timeout 30s "$@" || true
-    elif command -v gtimeout > /dev/null 2>&1; then
-        # macOS with coreutils installed
-        gtimeout 30s "$@" || true
-    else
-        # macOS default - just run the command
-        "$@" || true
-    fi
-}
-
-echo ""
-echo "======================================"
-echo "Testing TypeScript Projects"
-echo "======================================"
-
-cd ts
-
-echo "Running TypeScript example..."
-cd packages/ts-example
-run_with_timeout npm run dev
-check_success "TypeScript example"
-
-echo "Running JavaScript example..."
-cd ../js-example
-run_with_timeout npm start
-check_success "JavaScript example"
-
-cd ../../..
-
-echo ""
-echo "======================================"
-echo "Testing Kotlin Projects"
-echo "======================================"
-
-cd kotlin
-
-echo "Running Kotlin example..."
-run_with_timeout ./gradlew :kotlin-example:run --quiet
-check_success "Kotlin example"
-
-echo "Running Java example..."
-run_with_timeout ./gradlew :java-example:run --quiet
-check_success "Java example"
-
+# Kotlin/Java Tests
+echo "🧪 Running Kotlin tests..."
+cd kotlin && ./gradlew test
 cd ..
 
-echo ""
-echo "======================================"
-echo "Test Summary"
-echo "======================================"
-echo "✓ All TypeScript examples tested successfully"
-echo "✓ All Kotlin/Java examples tested successfully"
-echo ""
-echo "All tests completed successfully! 🎉"
+# Kotlin/Java Examples
+echo "🧪 Running Kotlin example..."  
+cd kotlin && ./gradlew :kotlin-example:run
+cd ..
+
+echo "🧪 Running Java example..."
+cd kotlin && ./gradlew :java-example:run  
+cd ..
+
+echo "✅ All tests and examples completed successfully!"

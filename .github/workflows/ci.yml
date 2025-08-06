@@ -1,4 +1,4 @@
-name: CI - Build and Test
+name: CI
 
 on:
   push:
@@ -7,145 +7,33 @@ on:
     branches: [ main ]
 
 jobs:
-  typescript-build:
-    name: TypeScript Build & Test
+  build-and-test:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
+    - uses: actions/checkout@v4
+    
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: ts/package.json
-        
-    - name: Install TypeScript dependencies
-      working-directory: ts
-      run: npm ci
-      
-    - name: Build TypeScript library
-      working-directory: ts
-      run: npm run build:lib
-      
-    - name: Build TypeScript example
-      working-directory: ts
-      run: npm run build:ts-example
-      
-    - name: Build JavaScript example
-      working-directory: ts
-      run: npm run build:js-example
-      
-    - name: Run TypeScript example
-      working-directory: ts/packages/ts-example
-      run: npm run dev
-      
-    - name: Run JavaScript example
-      working-directory: ts/packages/js-example
-      run: npm start
-
-  kotlin-build:
-    name: Kotlin/Java Build & Test
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Java
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '22'
-        
-    - name: Cache Gradle packages
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-          
-    - name: Make gradlew executable
-      working-directory: kotlin
-      run: chmod +x gradlew
-      
-    - name: Build Kotlin library
-      working-directory: kotlin
-      run: ./gradlew :kotlin-stop:build
-      
-    - name: Build Kotlin example
-      working-directory: kotlin
-      run: ./gradlew :kotlin-example:build
-      
-    - name: Build Java example
-      working-directory: kotlin
-      run: ./gradlew :java-example:build
-      
-    - name: Run Kotlin example
-      working-directory: kotlin
-      run: ./gradlew :kotlin-example:run
-      
-    - name: Run Java example
-      working-directory: kotlin
-      run: ./gradlew :java-example:run
-
-  integration-test:
-    name: Integration Test
-    runs-on: ubuntu-latest
-    needs: [typescript-build, kotlin-build]
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: ts/package.json
         
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
+        java-version: '21'
         distribution: 'temurin'
-        java-version: '22'
         
-    - name: Cache Gradle packages
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-          
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v2
+      
     - name: Make scripts executable
       run: |
         chmod +x build-all.sh
+        chmod +x test-all.sh
         chmod +x kotlin/gradlew
         
-    - name: Run full build script
+    - name: Build all projects
       run: ./build-all.sh
       
-    - name: Verify build artifacts
-      run: |
-        # Check TypeScript build artifacts
-        ls -la ts/packages/ts-stop/dist/
-        ls -la ts/packages/ts-example/dist/
-        
-        # Check Kotlin build artifacts
-        ls -la kotlin/kotlin-stop/build/libs/
-        ls -la kotlin/kotlin-example/build/libs/
-        ls -la kotlin/java-example/build/libs/
-        
-        # Check documentation structure
-        ls -la docs/
-        ls -la docs/diagrams/ || echo "No diagrams directory"
-        ls -la docs/images/ || echo "No images directory"
+    - name: Test all projects
+      run: ./test-all.sh

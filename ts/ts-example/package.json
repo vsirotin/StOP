@@ -1,18 +1,14 @@
 {
   "name": "@vsirotin/ts-example",
   "version": "1.0.0",
-  "description": "TypeScript example for @vsirotin/ts-stop",
-  "private": true,
-  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "npm run build && node dist/index.js",
-    "clean": "rm -rf dist"
+    "start": "node dist/index.js",
+    "dev": "npm run build && npm run start",
+    "clean": "rm -rf dist",
+    "update:local": "cd ../ts-stop && npm run publish:local"
   },
   "dependencies": {
-    "@vsirotin/ts-stop": "workspace:*"
-  },
-  "devDependencies": {
-    "typescript": "^5.0.0"
+    "@vsirotin/ts-stop": "0.0.1"
   }
 }

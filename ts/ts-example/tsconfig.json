@@ -4,14 +4,12 @@
     "lib": ["es2017", "dom"],
     "module": "commonjs",
     "outDir": "./dist",
-    "rootDir": "./src",
     "strict": true,
     "moduleResolution": "node",
     "baseUrl": "./",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "composite": true,
     "sourceMap": true
   },
   "include": [
@@ -20,10 +18,5 @@
   "exclude": [
     "dist",
     "node_modules"
-  ],
-  "references": [
-    {
-      "path": "../ts-stop"
-    }
   ]
 }

@@ -1,4 +1,4 @@
-import { StopLibrary, createStopInstance, transformState } from '../../ts-stop/src';
+import { StopLibrary, createStopInstance, transformState } from '@vsirotin/ts-stop';
 
 /**
  * TypeScript Example demonstrating usage of @vsirotin/ts-stop library
