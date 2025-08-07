@@ -10,7 +10,7 @@ cd ../..
 
 # TypeScript Example
 echo "🧪 Running TypeScript example..."
-cd ts/ts-example && npm run start
+cd ts/ts-example && npm run dev  # This builds first, then runs
 cd ../..
 
 # JavaScript Example  
