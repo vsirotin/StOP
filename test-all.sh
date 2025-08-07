@@ -8,9 +8,14 @@ echo "🧪 Running TypeScript library tests..."
 cd ts/ts-stop && npm test
 cd ../..
 
+# Publish TypeScript library locally for examples
+echo "📦 Publishing TypeScript library locally..."
+cd ts/ts-stop && npm run publish:local
+cd ../..
+
 # TypeScript Example
 echo "🧪 Running TypeScript example..."
-cd ts/ts-example && npm run dev  # This builds first, then runs
+cd ts/ts-example && npm run dev
 cd ../..
 
 # JavaScript Example  
