@@ -1,4 +1,4 @@
-const { StopLibrary, createStopInstance, transformState } = require('../../ts-stop/dist');
+const { StopLibrary, createStopInstance, transformState } = require('@vsirotin/ts-stop');
 
 /**
  * JavaScript Example demonstrating usage of @vsirotin/ts-stop library

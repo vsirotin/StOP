@@ -6,6 +6,11 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "node src/index.js"
+    "dev": "npm run start",
+    "update:local": "cd ../ts-stop && npm run publish:local",
+    "clean": "echo 'Nothing to clean (pure JavaScript)'"
+  },
+  "dependencies": {
+    "@vsirotin/ts-stop": "0.0.1"
   }
 }
