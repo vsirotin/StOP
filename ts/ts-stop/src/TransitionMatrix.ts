@@ -14,7 +14,7 @@ type NonEmpty<T> = T extends "" | undefined | null ? never : T;
  * @template STATE - Type for states
  * @template SIGNAL - Type for signals
  */
-class TransitionMatrix<STATE, SIGNAL> {
+export class TransitionMatrix<STATE, SIGNAL> {
     private states: STATE[] = [];
     private signals: SIGNAL[] = [];
     private transitions: { from: STATE; to: STATE; signal: SIGNAL }[] = [];
@@ -140,11 +140,8 @@ class TransitionMatrix<STATE, SIGNAL> {
  * @template S - State type
  * @template G - Signal type  
  */
-function transitionMatrix<S, G>(
+export function transitionMatrix<S, G>(
     matrix: Array<Array<S | G | undefined | null | "">>
 ): TransitionMatrix<NonEmpty<S>, NonEmpty<G>> {
     return TransitionMatrix.fromArray<S, G>(matrix);
 }
-
-// Export the class and helper function
-export { TransitionMatrix, transitionMatrix };

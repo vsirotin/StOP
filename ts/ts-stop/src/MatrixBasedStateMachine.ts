@@ -18,14 +18,27 @@ import { TransitionMatrix } from './TransitionMatrix';
  * 
  * @example
  * ```typescript
- * class MyStateMachine extends MatrixBasedStateMachine<string, string> {
+ * // Example 1: Using explicit start state
+ * class TurnstileMatrix extends MatrixBasedStateMachine<string, string> {
  *     constructor() {
  *         const matrix = transitionMatrix([
  *             [           , "locked"    , "unlocked" ],
  *             [ "coin"    , "unlocked" ,             ],
  *             [ "push"    ,            , "locked"   ]
  *         ]);
- *         super(matrix, "locked");
+ *         super(matrix, "locked"); // Explicit start state
+ *     }
+ * }
+ * 
+ * // Example 2: Using first state as start state (auto)
+ * class TurnstileMatrixAuto extends MatrixBasedStateMachine<string, string> {
+ *     constructor() {
+ *         const matrix = transitionMatrix([
+ *             [           , "locked"    , "unlocked" ],  // "locked" becomes start state
+ *             [ "coin"    , "unlocked" ,             ],
+ *             [ "push"    ,            , "locked"   ]
+ *         ]);
+ *         super(matrix); // Uses first state ("locked") as start state
  *     }
  * }
  * ```
@@ -41,34 +54,74 @@ abstract class MatrixBasedStateMachine<STATE, SIGNAL> extends FiniteStateMachine
      * Creates a new matrix-based finite state machine.
      * 
      * @param matrix - The transition matrix defining all states, signals, and transitions
-     * @param startState - The initial state of the machine (must be one of the states in the matrix)
+     * @param startState - Optional. The initial state of the machine. If not provided, 
+     *                     the first state from the matrix (first column in header row) will be used.
+     *                     If provided, must be one of the states in the matrix.
      * 
-     * @throws {Error} If startState is not found in the matrix states
+     * @throws {Error} If matrix has no states
+     * @throws {Error} If startState is provided but not found in the matrix states
      * 
      * @example
      * ```typescript
+     * // Constructor with explicit start state
      * const matrix = transitionMatrix([
-     *     [           , "idle"     , "running"  , "error"   ],
-     *     [ "start"   , "running" ,            ,           ],
-     *     [ "stop"    ,           , "idle"     ,           ],
-     *     [ "error"   , "error"   , "error"    , "error"   ],
-     *     [ "reset"   , "idle"    , "idle"     , "idle"    ]
+     *     [           , "locked"    , "unlocked" ],
+     *     [ "coin"    , "unlocked" ,             ],
+     *     [ "push"    ,            , "locked"   ]
      * ]);
+     * super(matrix, "unlocked"); // Start in unlocked state
      * 
-     * class ProcessStateMachine extends MatrixBasedStateMachine<string, string> {
+     * // Constructor with auto start state (uses first state)
+     * super(matrix); // Automatically starts in "locked" state
+     * ```
+     * 
+     * @example
+     * ```typescript
+     * // TurnstileMatrix implementation from test/Turnstile/TurnstileMatrix.ts
+     * class TurnstileMatrix extends MatrixBasedStateMachine<string, string> {
      *     constructor() {
-     *         super(matrix, "idle");
+     *         const matrix = transitionMatrix([
+     *             [           , "locked"    , "unlocked" ],
+     *             [ "coin"    , "unlocked" ,             ],
+     *             [ "push"    ,            , "locked"   ]
+     *         ]);
+     *         
+     *         // Two ways to call the constructor:
+     *         super(matrix, "locked");  // Option 1: Explicit start state
+     *         // OR
+     *         super(matrix);            // Option 2: Auto start state (uses "locked")
      *     }
+     *     
+     *     insertCoin(): string { return this.sendSignal('coin'); }
+     *     pushThrough(): string { return this.sendSignal('push'); }
+     *     isLocked(): boolean { return this.getCurrentState() === 'locked'; }
+     *     isUnlocked(): boolean { return this.getCurrentState() === 'unlocked'; }
      * }
      * ```
      */
-    constructor(matrix: TransitionMatrix<STATE, SIGNAL>, startState: STATE) {
-        // Validate that startState exists in the matrix
+    constructor(matrix: TransitionMatrix<STATE, SIGNAL>, startState?: STATE) {
+        // Get states from matrix
         const states = matrix.getStates();
-        if (!states.includes(startState)) {
-            throw new Error(
-                `Start state '${String(startState)}' not found in matrix states: [${states.map(s => String(s)).join(', ')}]`
-            );
+        
+        // Validate matrix has states
+        if (states.length === 0) {
+            throw new Error('Matrix must contain at least one state');
+        }
+        
+        // Determine the actual start state
+        let actualStartState: STATE;
+        
+        if (startState !== undefined) {
+            // Explicit start state provided - validate it exists
+            if (!states.includes(startState)) {
+                throw new Error(
+                    `Start state '${String(startState)}' not found in matrix states: [${states.map(s => String(s)).join(', ')}]`
+                );
+            }
+            actualStartState = startState;
+        } else {
+            // No start state provided - use first state from matrix
+            actualStartState = states[0];
         }
 
         // Call parent constructor with matrix-derived data
@@ -76,7 +129,7 @@ abstract class MatrixBasedStateMachine<STATE, SIGNAL> extends FiniteStateMachine
             matrix.getStates(),
             matrix.getSignals(),
             matrix.getTransitions(),
-            startState
+            actualStartState
         );
 
         // Store the matrix for potential future use
