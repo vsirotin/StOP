@@ -203,7 +203,6 @@ This is **pure JavaScript** - no compilation, transpilation, or build steps need
 
 ## Related Projects
 - **Library**: [`../ts-stop/`](../ts-stop) - The TypeScript StOP library
-- **TypeScript Example**: [`../ts-example/`](../ts-example) - Shows TypeScript usage
 - **Kotlin Examples**: [`../../kotlin/`](../../kotlin) - JVM implementations
 
 ## Advantages of JavaScript Example

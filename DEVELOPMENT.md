@@ -20,12 +20,11 @@ This guide covers global development setup and cross-project concerns.
 
 ### `./build-all.sh`
 Builds all libraries and examples in dependency order:
-1. TypeScript library (`ts/ts-stop`)
-2. TypeScript example (`ts/ts-example`) 
-3. JavaScript example (no build needed)
-4. Kotlin library (`kotlin/kotlin-stop`)
-5. Kotlin example (`kotlin/kotlin-example`)
-6. Java example (`kotlin/java-example`)
+1. TypeScript library with examples(`ts/ts-stop`)
+2. JavaScript example (no build needed)
+3. Kotlin library (`kotlin/kotlin-stop`)
+4. Kotlin example (`kotlin/kotlin-example`)
+5. Java example (`kotlin/java-example`)
 
 ### `./test-all.sh`  
 Runs all unit tests and example verification:
@@ -61,7 +60,6 @@ See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) for details.
 
 ```
 ts-stop (TypeScript library)
-├── ts-example (depends on ts-stop source)
 └── js-example (depends on ts-stop build)
 
 kotlin-stop (Kotlin library)  

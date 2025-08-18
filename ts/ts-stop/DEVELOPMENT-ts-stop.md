@@ -51,7 +51,6 @@ npm run publish:local
 
 This script:
 - Builds the library if needed
-- Copies the package to `../ts-example/node_modules/@vsirotin/ts-stop/`
 - Copies the package to `../js-example/node_modules/@vsirotin/ts-stop/`
 - Updates version to `0.0.1` in target locations
 
@@ -98,7 +97,6 @@ npm run publish:local
 
 ### 4. Test Examples
 ```bash
-cd ../ts-example && npm run dev
 cd ../js-example && npm start
 ```
 
@@ -122,6 +120,5 @@ Repeat steps 1-4 until satisfied
 - **Type Definitions**: `dist/index.d.ts`
 
 ## Used By Examples
-- **ts-example**: Imports from `node_modules/@vsirotin/ts-stop`
 - **js-example**: Imports from `node_modules/@vsirotin/ts-stop`
 - **Published via**: `npm run publish:local` script

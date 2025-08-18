@@ -1,4 +1,4 @@
-import { FiniteStateMachine } from '../src/FiniteStateMachine';
+import { FiniteStateMachine } from '../../src/FiniteStateMachine';
 
 /**
  * Turnstile finite state machine implementation.

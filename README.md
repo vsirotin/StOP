@@ -15,7 +15,6 @@ This repository contains StOP implementations in multiple languages with working
 - **Kotlin**: [`com.vsirotin.kotlin-stop`](kotlin/kotlin-stop) - JVM implementation with Java interop
 
 ### Examples  
-- **TypeScript Example**: [`ts/ts-example`](ts/ts-example) - Shows TypeScript library usage
 - **JavaScript Example**: [`ts/js-example`](ts/js-example) - Shows JavaScript interop  
 - **Kotlin Example**: [`kotlin/kotlin-example`](kotlin/kotlin-example) - Kotlin native usage
 - **Java Example**: [`kotlin/java-example`](kotlin/java-example) - Java interop from Kotlin library
@@ -43,7 +42,6 @@ This repository contains StOP implementations in multiple languages with working
 StOP/
 ├── ts/                    # TypeScript workspace
 │   ├── ts-stop/          # TypeScript library
-│   ├── ts-example/       # TypeScript example  
 │   └── js-example/       # JavaScript example
 ├── kotlin/               # Kotlin workspace
 │   ├── kotlin-stop/      # Kotlin library

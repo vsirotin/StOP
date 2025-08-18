@@ -8,11 +8,6 @@ echo "📦 Building TypeScript library..."
 cd ts/ts-stop && npm install && npm run build
 cd ../..
 
-# TypeScript Example  
-echo "📦 Building TypeScript example..."
-cd ts/ts-example && npm install && npm run build
-cd ../..
-
 # JavaScript example needs no build
 echo "✅ JavaScript example needs no build (pure JS)"
 

@@ -13,10 +13,6 @@ echo "📦 Publishing TypeScript library locally..."
 cd ts/ts-stop && npm run publish:local
 cd ../..
 
-# TypeScript Example
-echo "🧪 Running TypeScript example..."
-cd ts/ts-example && npm run dev
-cd ../..
 
 # JavaScript Example  
 echo "🧪 Running JavaScript example..."

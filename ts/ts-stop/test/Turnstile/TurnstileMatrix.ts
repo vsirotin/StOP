@@ -1,5 +1,5 @@
-import { MatrixBasedStateMachine } from '../src/MatrixBasedStateMachine';
-import { transitionMatrix } from '../src/TransitionMatrix';
+import { MatrixBasedStateMachine } from '../../src/MatrixBasedStateMachine';
+import { transitionMatrix } from '../../src/TransitionMatrix';
 
 /**
  * Turnstile implementation using matrix-based state machine.
@@ -22,8 +22,9 @@ export class TurnstileMatrix extends MatrixBasedStateMachine<string, string> {
     isUnlocked(): boolean { return this.getCurrentState() === 'unlocked'; }
 }
 
-// Usage
+/**  -----------------Usage
 const turnstile = new TurnstileMatrix();
 turnstile.printTransitionMatrix(); // Debug output
 console.log(turnstile.getCurrentState()); // "locked"
 console.log(turnstile.getValidSignalsFromCurrentState()); // ["coin"]
+*/

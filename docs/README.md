@@ -59,8 +59,6 @@ cd kotlin && ./gradlew buildAll
 
 #### TypeScript Examples
 ```bash
-cd ts/packages/ts-example
-npm run dev
 
 cd ts/packages/js-example  
 npm start
@@ -87,7 +85,6 @@ StOP/
 ├── ts/                    # TypeScript workspace
 │   ├── packages/
 │   │   ├── ts-stop/      # TypeScript library
-│   │   ├── ts-example/   # TypeScript example
 │   │   └── js-example/   # JavaScript example
 │   └── package.json      # Workspace configuration
 ├── kotlin/               # Kotlin workspace  
