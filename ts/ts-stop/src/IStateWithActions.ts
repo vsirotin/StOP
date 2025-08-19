@@ -1,13 +1,13 @@
 /**
  * Interface for states that have an action after entry.
  */
-interface IStateWithAfterEntryAction {
+export interface IStateWithAfterEntryAction {
     afterEntryAction: () => void;
 }
 /**
  * Interface for states that have an action before exit.
  */
-interface IStateWithBeforeExitAction {
+export interface IStateWithBeforeExitAction {
     beforeExitAction: () => void;
 }
 /**

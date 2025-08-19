@@ -16,6 +16,7 @@ describe('TurnstileObjects', () => {
     });
 
     afterEach(() => {
+        consoleSpy.mockClear();
         // Restore console.log
         jest.restoreAllMocks();
     });

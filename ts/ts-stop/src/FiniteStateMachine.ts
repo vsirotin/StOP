@@ -1,10 +1,24 @@
+import { IStateWithAfterEntryAction, IStateWithBeforeExitAction } from './IStateWithActions';
+
+/**
+ * Represents a transition in a finite state machine.
+ * 
+ * @template STATE - The type representing possible states
+ * @template SIGNAL - The type representing signals/events
+ */
+export interface ITransition<STATE, SIGNAL> {
+    from: STATE;
+    signal: SIGNAL;
+    to: STATE;
+}
+
 /**
  * Interface defining the contract for a finite state machine.
  * 
  * @template STATE - The type representing possible states in the state machine
  * @template SIGNAL - The type representing signals/events that trigger state transitions
  */
-interface IFiniteStateMachine<STATE, SIGNAL> {
+export interface IFiniteStateMachine<STATE, SIGNAL> {
     /**
      * Gets the current state of the state machine.
      * 
@@ -16,29 +30,112 @@ interface IFiniteStateMachine<STATE, SIGNAL> {
      * Sends a signal to the state machine to potentially trigger a state transition.
      * 
      * @param signal - The signal/event to process
+     * @returns The resulting state after processing the signal
      */
-    sendSignal(signal: SIGNAL): void;
+    sendSignal(signal: SIGNAL): STATE;
 }
 
 /**
- * Abstract base class implementing a finite state machine.
+ * Concrete implementation of a finite state machine with optional state actions.
  * 
- * A finite state machine consists of:
- * - A finite set of states
- * - A finite set of signals (events/inputs)
- * - A set of transitions that define how signals move the machine between states
- * - A start state (initial state)
- * - A current state (tracks where the machine is now)
+ * This class supports states that can optionally implement action interfaces:
+ * - IStateWithAfterEntryAction: Execute action when entering the state
+ * - IStateWithBeforeExitAction: Execute action when exiting the state
+ * - Both interfaces: Execute both entry and exit actions
+ * - Neither interface: Traditional state machine behavior (no actions)
  * 
  * @template STATE - The type representing possible states
  * @template SIGNAL - The type representing signals/events
+ * 
+ * @example
+ * ```typescript
+ * // Basic string-based turnstile (traditional approach)
+ * class Turnstile extends FiniteStateMachine<string, string> {
+ *     constructor() {
+ *         super(
+ *             ['locked', 'unlocked'],
+ *             ['coin', 'push'],
+ *             [
+ *                 { from: 'locked', signal: 'coin', to: 'unlocked' },
+ *                 { from: 'unlocked', signal: 'push', to: 'locked' }
+ *             ],
+ *             'locked'
+ *         );
+ *     }
+ * 
+ *     insertCoin(): string {
+ *         return this.sendSignal('coin');
+ *     }
+ * 
+ *     pushThrough(): string {
+ *         return this.sendSignal('push');
+ *     }
+ * 
+ *     isLocked(): boolean {
+ *         return this.getCurrentState() === 'locked';
+ *     }
+ * 
+ *     isUnlocked(): boolean {
+ *         return this.getCurrentState() === 'unlocked';
+ *     }
+ * }
+ * 
+ * // Enhanced turnstile with state actions
+ * class ActionState implements IStateWithActions {
+ *     constructor(private name: string, private message: string) {}
+ * 
+ *     afterEntryAction(): void {
+ *         console.log(`🎯 Entered ${this.name}: ${this.message}`);
+ *     }
+ * 
+ *     beforeExitAction(): void {
+ *         console.log(`🚀 Leaving ${this.name}`);
+ *     }
+ * 
+ *     toString(): string {
+ *         return this.name;
+ *     }
+ * }
+ * 
+ * class TurnstileWithActions extends FiniteStateMachine<ActionState, string> {
+ *     private locked = new ActionState('locked', 'Payment required');
+ *     private unlocked = new ActionState('unlocked', 'Please proceed');
+ * 
+ *     constructor() {
+ *         super(
+ *             [this.locked, this.unlocked],
+ *             ['coin', 'push'],
+ *             [
+ *                 { from: this.locked, signal: 'coin', to: this.unlocked },
+ *                 { from: this.unlocked, signal: 'push', to: this.locked }
+ *             ],
+ *             this.locked
+ *         );
+ *     }
+ * 
+ *     insertCoin(): ActionState { return this.sendSignal('coin'); }
+ *     pushThrough(): ActionState { return this.sendSignal('push'); }
+ * }
+ * 
+ * // Usage example:
+ * const turnstile = new TurnstileWithActions();
+ * // Output: 🎯 Entered locked: Payment required
+ * 
+ * turnstile.insertCoin();
+ * // Output: 🚀 Leaving locked
+ * // Output: 🎯 Entered unlocked: Please proceed
+ * 
+ * turnstile.pushThrough();
+ * // Output: 🚀 Leaving unlocked  
+ * // Output: 🎯 Entered locked: Payment required
+ * ```
  */
-abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateMachine<STATE, SIGNAL> {
+export class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateMachine<STATE, SIGNAL> {
     /**
      * The current state of the state machine.
-     * Private to ensure state changes only happen through sendSignal().
+     * Protected to allow subclass access while maintaining encapsulation.
      */
-    private currentState: STATE;
+    protected currentState: STATE;
 
     /**
      * Creates a new finite state machine.
@@ -49,13 +146,16 @@ abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateMachine<
      * @param startState - The initial state of the machine
      */
     constructor(
-        private states: STATE[], 
-        private signals: SIGNAL[], 
-        private transitions: { from: STATE; signal: SIGNAL; to: STATE }[], 
-        private startState: STATE
+        protected states: STATE[], 
+        protected signals: SIGNAL[], 
+        protected transitions: ITransition<STATE, SIGNAL>[], 
+        protected startState: STATE
     ) {
         // Initialize the machine to its starting state
         this.currentState = startState;
+        
+        // Execute initial state entry action if supported
+        this.executeEntryAction(startState);
     }
 
     /**
@@ -68,33 +168,142 @@ abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateMachine<
     }
 
     /**
-     * Processes a signal and potentially transitions to a new state.
+     * Processes a signal and potentially transitions to a new state with action execution.
      * 
-     * Searches for a transition rule that matches:
-     * - Current state (from)
-     * - The provided signal
-     * 
-     * If a matching transition is found, the machine moves to the target state.
-     * If no matching transition exists, the machine remains in its current state.
+     * This method:
+     * 1. Finds a matching transition for the current state and signal
+     * 2. If found and the target state is different:
+     *    a. Executes beforeExitAction on current state (if implemented)
+     *    b. Changes to the new state
+     *    c. Executes afterEntryAction on new state (if implemented)
+     * 3. Returns the resulting state
      * 
      * @param signal - The signal/event to process
-     * @returns The resulting state after processing the signal (may be unchanged)
+     * @returns The resulting state after processing the signal
      */
-sendSignal(signal: SIGNAL): STATE {
+    sendSignal(signal: SIGNAL): STATE {
         // Find a transition that matches current state and signal
         const transition = this.transitions.find(t => 
             t.from === this.currentState && t.signal === signal
         );
         
-        // If valid transition found, move to the target state
+        // If valid transition found, handle state change with actions
         if (transition) {
-            this.currentState = transition.to;
+            const oldState = this.currentState;
+            const newState = transition.to;
+
+            // Only execute actions if there's an actual state change
+            if (oldState !== newState) {
+                // Execute before exit action on current state
+                this.executeExitAction(oldState);
+
+                // Change state
+                this.currentState = newState;
+
+                // Execute after entry action on new state
+                this.executeEntryAction(newState);
+            }
         }
         
         // Return the current state (whether changed or not)
         return this.currentState;
     }
-}
 
-// Export both interface and class for external use
-export { IFiniteStateMachine, FiniteStateMachine };
+    /**
+     * Type guard to check if a state implements IStateWithAfterEntryAction.
+     * 
+     * @param state - The state to check
+     * @returns true if the state implements afterEntryAction method
+     */
+    protected hasAfterEntryAction(state: STATE): state is STATE & IStateWithAfterEntryAction {
+        return typeof state === 'object' && 
+               state !== null && 
+               'afterEntryAction' in state && 
+               typeof (state as any).afterEntryAction === 'function';
+    }
+
+    /**
+     * Type guard to check if a state implements IStateWithBeforeExitAction.
+     * 
+     * @param state - The state to check
+     * @returns true if the state implements beforeExitAction method
+     */
+    protected hasBeforeExitAction(state: STATE): state is STATE & IStateWithBeforeExitAction {
+        return typeof state === 'object' && 
+               state !== null && 
+               'beforeExitAction' in state && 
+               typeof (state as any).beforeExitAction === 'function';
+    }
+
+    /**
+     * Executes the afterEntryAction on a state if it implements IStateWithAfterEntryAction.
+     * 
+     * @param state - The state to execute the entry action on
+     */
+    private executeEntryAction(state: STATE): void {
+        if (this.hasAfterEntryAction(state)) {
+            state.afterEntryAction();
+        }
+    }
+
+    /**
+     * Executes the beforeExitAction on a state if it implements IStateWithBeforeExitAction.
+     * 
+     * @param state - The state to execute the exit action on
+     */
+    private executeExitAction(state: STATE): void {
+        if (this.hasBeforeExitAction(state)) {
+            state.beforeExitAction();
+        }
+    }
+
+    /**
+     * Gets all possible states.
+     * 
+     * @returns Array of all states
+     */
+    getAllStates(): STATE[] {
+        return [...this.states];
+    }
+
+    /**
+     * Gets all possible signals.
+     * 
+     * @returns Array of all signals
+     */
+    getAllSignals(): SIGNAL[] {
+        return [...this.signals];
+    }
+
+    /**
+     * Checks if a given signal is valid from the current state.
+     * 
+     * @param signal - The signal to check
+     * @returns true if the signal can trigger a transition from the current state
+     */
+    isValidSignalFromCurrentState(signal: SIGNAL): boolean {
+        return this.transitions.some(
+            t => t.from === this.currentState && t.signal === signal
+        );
+    }
+
+    /**
+     * Gets all valid signals from the current state.
+     * 
+     * @returns Array of signals that can trigger transitions from the current state
+     */
+    getValidSignalsFromCurrentState(): SIGNAL[] {
+        return this.transitions
+            .filter(t => t.from === this.currentState)
+            .map(t => t.signal);
+    }
+
+    /**
+     * Gets all transitions.
+     * 
+     * @returns Array of all transitions
+     */
+    getTransitions(): ITransition<STATE, SIGNAL>[] {
+        return [...this.transitions];
+    }
+}

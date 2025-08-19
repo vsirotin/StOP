@@ -111,33 +111,6 @@ export class TurnstileObject extends MatrixBasedStateMachine<IStateWithActions, 
         this.getCurrentState().afterEntryAction();
     }
 
-    /**
-     * Enhanced sendSignal that executes state actions.
-     * 
-     * @param signal - The signal to process
-     * @returns The new state after transition
-     */
-    sendSignal(signal: TurnstileSignal): IStateWithActions {
-        const currentState = this.getCurrentState();
-        
-        // Check if transition will occur
-        const willTransition = this.isValidSignalFromCurrentState(signal);
-        
-        if (willTransition) {
-            // Execute before exit action
-            currentState.beforeExitAction();
-        }
-        
-        // Perform the transition
-        const newState = super.sendSignal(signal);
-        
-        if (willTransition && newState !== currentState) {
-            // Execute after entry action for new state
-            newState.afterEntryAction();
-        }
-        
-        return newState;
-    }
 
     /**
      * Convenience method to insert a coin.
