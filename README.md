@@ -1,10 +1,16 @@
 # StOP - State Oriented Programming
 
-[![CI](https://github.com/vsirotin/StOP/actions/workflows/ci.yml/badge.svg)](https://github.com/vsirotin/StOP/actions/workflows/ci.yml)
 
-State Oriented Programming (StOP) is a [programming paradigm description - to be added by you].
+State Oriented Programming (StOP) is a programming paradigm that focuses on explicit state management and transformation. This repository provides implementations and examples in multiple programming languages.
 
-🚧 **Under Construction** 🚧
+<div align="center">
+  <img src="docs/images/StateRole.png" alt="StOP" width="30%"/>
+</div>
+
+
+<div align="center">
+  <span style="color: red; font-weight: bold; font-size: 18px;">⚠️ Attention! The project is currently under construction in an intensive development phase! ⚠️</span>
+</div>
 
 ## Project Overview
 
