@@ -1,4 +1,4 @@
-# StOP State-oriented Programming
+# StOP State-Oriented Programming
 
 This document explains shortly main ideas an examples of practical of StOP.
 
