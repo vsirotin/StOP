@@ -12,6 +12,21 @@ State Oriented Programming (StOP) is a programming paradigm that focuses on expl
   <span style="color: red; font-weight: bold; font-size: 18px;">⚠️ Attention! The project is currently under construction in an intensive development phase! ⚠️</span>
 </div>
 
+## Table of Contents
+- [Tutorial](#tutorial)
+- [Project Overview](#project-overview)
+- [Quick Start](#quick-start)
+- [Project Structure](#project-structure)
+- [Development](#development)
+- [Documentation](#documentation)
+
+
+## Tutorial
+
+You can find a tutorial for using StOP here:
+- **Getting Started**: [StOP Tutorial](./docs/Tutorial/01-StOP-Tutorial.md)
+- **Background**: [StOP Motivation](./docs/Tutorial/02-StOP-Motivation.md)
+
 ## Project Overview
 
 This repository contains StOP implementations in multiple languages with working examples:
