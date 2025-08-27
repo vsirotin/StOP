@@ -19,10 +19,6 @@ export class LockedState implements IStateWithActions {
      */
     afterEntryAction(): void {
         console.log("Turnstile is now LOCKED - passage blocked");
-        // Additional locked state behavior could be added here:
-        // - Turn on red light
-        // - Disable gate motor
-        // - Log security event
     }
 
     /**
@@ -30,10 +26,6 @@ export class LockedState implements IStateWithActions {
      */
     beforeExitAction(): void {
         console.log("Processing payment - preparing to unlock...");
-        // Additional pre-unlock behavior could be added here:
-        // - Validate payment
-        // - Check for maintenance mode
-        // - Log transaction
     }
 
     /**
@@ -53,10 +45,6 @@ export class UnlockedState implements IStateWithActions {
      */
     afterEntryAction(): void {
         console.log("Turnstile is now UNLOCKED - passage allowed");
-        // Additional unlocked state behavior could be added here:
-        // - Turn on green light
-        // - Enable gate motor
-        // - Start timer for auto-lock
     }
 
     /**
@@ -64,10 +52,6 @@ export class UnlockedState implements IStateWithActions {
      */
     beforeExitAction(): void {
         console.log("Person passing through - preparing to lock...");
-        // Additional pre-lock behavior could be added here:
-        // - Detect person passage
-        // - Count passage
-        // - Reset timer
     }
 
     /**

@@ -1,4 +1,4 @@
-## The Simplest Finite Automaton
+## Example 1. The Simplest Finite Automaton
 
 Mountains of scientific and educational books and articles have been written about finite automata, which manage in an amazing way to not only confuse the reader, but also to frighten practitioners away from using them.
 
