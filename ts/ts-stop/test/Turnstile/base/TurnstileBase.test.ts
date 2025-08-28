@@ -1,10 +1,10 @@
-import { Turnstile } from './Turnstile';
+import { TurnstileBase } from './TurnstileBase';
 
 describe('Turnstile', () => {
-    let turnstile: Turnstile;
+    let turnstile: TurnstileBase;
 
     beforeEach(() => {
-        turnstile = new Turnstile();
+        turnstile = new TurnstileBase();
     });
 
     describe('constructor', () => {
@@ -187,7 +187,7 @@ describe('Turnstile', () => {
 
     describe('inheritance from FiniteStateMachine', () => {
         it('should properly extend FiniteStateMachine', () => {
-            expect(turnstile).toBeInstanceOf(Turnstile);
+            expect(turnstile).toBeInstanceOf(TurnstileBase);
             expect(turnstile.getCurrentState).toBeDefined();
             expect(turnstile.sendSignal).toBeDefined();
         });

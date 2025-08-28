@@ -1,11 +1,11 @@
-import { TurnstileMatrix } from './TurnstileMatrix';
 import { Turnstile } from './Turnstile';
+import { TurnstileBase } from './TurnstileBase';
 
 describe('TurnstileMatrix', () => {
-    let turnstileMatrix: TurnstileMatrix;
+    let turnstileMatrix: Turnstile;
 
     beforeEach(() => {
-        turnstileMatrix = new TurnstileMatrix();
+        turnstileMatrix = new Turnstile();
     });
 
     describe('constructor', () => {
@@ -256,7 +256,7 @@ describe('TurnstileMatrix', () => {
 
     describe('inheritance from MatrixBasedStateMachine', () => {
         it('should properly extend MatrixBasedStateMachine', () => {
-            expect(turnstileMatrix).toBeInstanceOf(TurnstileMatrix);
+            expect(turnstileMatrix).toBeInstanceOf(Turnstile);
             expect(turnstileMatrix.getCurrentState).toBeDefined();
             expect(turnstileMatrix.sendSignal).toBeDefined();
             expect(turnstileMatrix.getMatrix).toBeDefined();
@@ -298,10 +298,10 @@ describe('TurnstileMatrix', () => {
 
     // 🎯 COMPARISON TESTS WITH ORIGINAL TURNSTILE
     describe('comparison with original Turnstile implementation', () => {
-        let originalTurnstile: Turnstile;
+        let originalTurnstile: TurnstileBase;
 
         beforeEach(() => {
-            originalTurnstile = new Turnstile();
+            originalTurnstile = new TurnstileBase();
         });
 
         describe('structural equivalence', () => {
@@ -335,8 +335,8 @@ describe('TurnstileMatrix', () => {
 
                 for (const testCase of testCases) {
                     // Reset both turnstiles to the test starting state
-                    const matrixTurnstile = new TurnstileMatrix();
-                    const originalTurnstile = new Turnstile();
+                    const matrixTurnstile = new Turnstile();
+                    const originalTurnstile = new TurnstileBase();
 
                     // Move to the desired starting state if needed
                     if (testCase.fromState === 'unlocked') {
@@ -419,8 +419,8 @@ describe('TurnstileMatrix', () => {
 
                 for (const signal of invalidSignals) {
                     // Reset to known state
-                    const matrixTurnstile = new TurnstileMatrix();
-                    const originalTurnstile = new Turnstile();
+                    const matrixTurnstile = new Turnstile();
+                    const originalTurnstile = new TurnstileBase();
 
                     const matrixResult = matrixTurnstile.sendSignal(signal);
                     const originalResult = originalTurnstile.sendSignal(signal);

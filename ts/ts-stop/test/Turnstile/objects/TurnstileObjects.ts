@@ -1,6 +1,6 @@
-import { MatrixBasedStateMachine } from '../../src/MatrixBasedStateMachine';
-import { transitionMatrix } from '../../src/TransitionMatrix';
-import { IStateWithActions } from '../../src/IStateWithActions';
+import { MatrixBasedStateMachine } from '../../../src/MatrixBasedStateMachine';
+import { transitionMatrix } from '../../../src/TransitionMatrix';
+import { IStateWithActions } from '../../../src/IStateWithActions';
 
 /**
  * Enum representing signals for turnstile operations.

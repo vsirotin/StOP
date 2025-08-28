@@ -1,4 +1,4 @@
-import { FiniteStateMachine } from '../../src/FiniteStateMachine';
+import { FiniteStateMachine } from '../../../src/FiniteStateMachine';
 
 /**
  * Turnstile finite state machine implementation.
@@ -30,7 +30,7 @@ import { FiniteStateMachine } from '../../src/FiniteStateMachine';
  * console.log(turnstile.getCurrentState()); // "locked"
  * ```
  */
-export class Turnstile extends FiniteStateMachine<string, string> {
+export class TurnstileBase extends FiniteStateMachine<string, string> {
     /**
      * Creates a new turnstile in the locked state.
      * 
