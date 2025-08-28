@@ -1,7 +1,7 @@
 /**
  * Utility type to extract non-empty values from transition matrix
  */
-type NonEmpty<T> = T extends "" | undefined | null ? never : T;
+export type NonEmpty<T> = T extends "" | undefined | null ? never : T;
 
 /**
  * Creates transitions from a 2D matrix representation.

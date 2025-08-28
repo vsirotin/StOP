@@ -1,6 +1,7 @@
 import { MatrixBasedStateMachine } from '../../../src/MatrixBasedStateMachine';
-import { transitionMatrix } from '../../../src/TransitionMatrix';
+import { NonEmpty, TransitionMatrix, transitionMatrix } from '../../../src/TransitionMatrix';
 import { IStateWithActions } from '../../../src/IStateWithActions';
+import { TurnstileAbstract } from './TurnstileAbstract';
 
 /**
  * Enum representing signals for turnstile operations.
@@ -70,116 +71,69 @@ const coin = TurnstileSignal.COIN;
 const push = TurnstileSignal.PUSH;
 
 // Define the transition matrix using the state objects
-const turnstileMatrix = transitionMatrix<IStateWithActions, TurnstileSignal>([
+const turnstileMatrix : TransitionMatrix<NonEmpty<IStateWithActions>, NonEmpty<TurnstileSignal>>  
+        = transitionMatrix<IStateWithActions, TurnstileSignal>([
     [      , l , u ],
     [ coin , u ,   ],
     [ push ,   , l ]
 ]);
 
 /**
- * Turnstile implementation using state objects with actions.
+ * TurnstileObject - State-oriented implementation of a subway/metro turnstile
  * 
- * This class extends the matrix-based state machine to use actual state objects
- * that can perform actions when entering or exiting states, providing a more
- * object-oriented approach to state management.
+ * This class demonstrates the StOP (State-oriented Programming) paradigm by implementing
+ * a turnstile as a finite state machine with action-enabled states. The turnstile operates
+ * with two primary states (locked/unlocked) and responds to two signals (coin/push).
+ * 
+ * ## Key Features:
+ * - **Matrix-based state machine**: Uses a transition matrix for clear state definition
+ * - **Action-enabled states**: Each state executes specific actions on entry/exit
+ * - **Type-safe signals**: Uses enum for signal definitions
+ * - **Inheritance-based**: Extends TurnstileAbstract for shared functionality
+ * 
+ * ## State Machine Behavior:
+ * ```
+ * [LOCKED] --coin--> [UNLOCKED] --push--> [LOCKED]
+ * ```
+ * 
+ * ## States:
+ * - **LockedState**: Blocks passage, awaits payment
+ *   - Entry: Logs "Turnstile is now LOCKED - passage blocked"
+ *   - Exit: Logs "Processing payment - preparing to unlock..."
+ * 
+ * - **UnlockedState**: Allows passage after payment
+ *   - Entry: Logs "Turnstile is now UNLOCKED - passage allowed"
+ *   - Exit: Logs "Person passing through - preparing to lock..."
+ * 
+ * ## Signals:
+ * - **COIN**: Payment received, triggers unlock (if locked)
+ * - **PUSH**: Person attempts passage, triggers lock (if unlocked)
+ * 
+ * ## Usage Pattern:
+ * 1. Initialize turnstile (starts in LOCKED state)
+ * 2. Insert coin → transitions to UNLOCKED
+ * 3. Push through → transitions back to LOCKED
+ * 4. Repeat cycle
+ * 
+ * @extends TurnstileAbstract
+ * @implements Matrix-based state machine pattern
+ * @example
+ * ```typescript
+ * const turnstile = new TurnstileObject();
+ * console.log(turnstile.isLocked()); // true
+ * 
+ * turnstile.insertCoin();
+ * console.log(turnstile.isUnlocked()); // true
+ * 
+ * turnstile.pushThrough();
+ * console.log(turnstile.isLocked()); // true
+ * ```
  */
-export class TurnstileObject extends MatrixBasedStateMachine<IStateWithActions, TurnstileSignal> {
-    // Reference to the state objects
-    private readonly lockedState = l;
-    private readonly unlockedState = u;
 
+export class TurnstileObject extends TurnstileAbstract {
     constructor() {
         super(turnstileMatrix);
-        
-        // Execute initial state entry action
-        this.getCurrentState().afterEntryAction();
-    }
-
-
-    /**
-     * Convenience method to insert a coin.
-     * 
-     * @returns The resulting state after inserting coin
-     */
-    insertCoin(): IStateWithActions {
-        return this.sendSignal(TurnstileSignal.COIN);
-    }
-
-    /**
-     * Convenience method to push through the turnstile.
-     * 
-     * @returns The resulting state after pushing through
-     */
-    pushThrough(): IStateWithActions {
-        return this.sendSignal(TurnstileSignal.PUSH);
-    }
-
-    /**
-     * Check if the turnstile is currently locked.
-     * 
-     * @returns true if in locked state, false otherwise
-     */
-    isLocked(): boolean {
-        return this.getCurrentState() === this.lockedState;
-    }
-
-    /**
-     * Check if the turnstile is currently unlocked.
-     * 
-     * @returns true if in unlocked state, false otherwise
-     */
-    isUnlocked(): boolean {
-        return this.getCurrentState() === this.unlockedState;
-    }
-
-    /**
-     * Get the string representation of the current state.
-     * 
-     * @returns String representation of current state
-     */
-    getCurrentStateString(): string {
-        return this.getCurrentState().toString();
-    }
-
-    /**
-     * Get the locked state object.
-     * 
-     * @returns The locked state object
-     */
-    getLockedState(): IStateWithActions {
-        return this.lockedState;
-    }
-
-    /**
-     * Get the unlocked state object.
-     * 
-     * @returns The unlocked state object
-     */
-    getUnlockedState(): IStateWithActions {
-        return this.unlockedState;
     }
 }
 
 
-/**
- * Usage example:
- * 
- * ```typescript
- * const turnstile = new TurnstileObject();
- * // Output: 🔒 Turnstile is now LOCKED - passage blocked
- * 
- * console.log(turnstile.getCurrentStateString()); // "locked"
- * 
- * turnstile.insertCoin();
- * // Output: 🪙 Processing payment - preparing to unlock...
- * // Output: 🔓 Turnstile is now UNLOCKED - passage allowed
- * 
- * console.log(turnstile.getCurrentStateString()); // "unlocked"
- * 
- * turnstile.pushThrough();
- * // Output: 🚶 Person passing through - preparing to lock...
- * // Output: 🔒 Turnstile is now LOCKED - passage blocked
- * 
- * console.log(turnstile.getCurrentStateString()); // "locked"
- * ```
- */

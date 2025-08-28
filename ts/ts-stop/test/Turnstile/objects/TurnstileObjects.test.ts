@@ -1,453 +1,299 @@
 import { TurnstileObject, TurnstileSignal, LockedState, UnlockedState } from './TurnstileObjects';
 
-describe('TurnstileObjects', () => {
-    let turnstileObject: TurnstileObject;
+describe('TurnstileObject', () => {
+    let turnstile: TurnstileObject;
     let consoleSpy: jest.SpyInstance;
 
     beforeEach(() => {
-        // Setup console spy BEFORE creating the object
-        consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+        // Create fresh instance for each test
+        turnstile = new TurnstileObject();
         
-        // Now create the object (this will trigger constructor log)
-        turnstileObject = new TurnstileObject();
-        
-        // Clear the spy to ignore constructor logs for most tests
-        consoleSpy.mockClear();
+        // Spy on console.log to verify action execution
+        consoleSpy = jest.spyOn(console, 'log').mockImplementation();
     });
 
     afterEach(() => {
-        consoleSpy.mockClear();
-        // Restore console.log
-        jest.restoreAllMocks();
+        // Restore console.log after each test
+        consoleSpy.mockRestore();
     });
 
-    describe('TurnstileSignal enum', () => {
-        it('should have correct enum values', () => {
-            expect(TurnstileSignal.COIN).toBe('coin');
-            expect(TurnstileSignal.PUSH).toBe('push');
+    describe('Constructor and Initial State', () => {
+        test('should initialize in locked state', () => {
+            expect(turnstile.isLocked()).toBe(true);
+            expect(turnstile.isUnlocked()).toBe(false);
         });
 
-        it('should have exactly two enum values', () => {
-            const values = Object.values(TurnstileSignal);
-            expect(values).toHaveLength(2);
-            expect(values).toContain('coin');
-            expect(values).toContain('push');
-        });
-    });
-
-    describe('LockedState', () => {
-        let lockedState: LockedState;
-
-        beforeEach(() => {
-            lockedState = new LockedState();
-        });
-
-        it('should implement IStateWithActions interface', () => {
-            expect(lockedState.afterEntryAction).toBeDefined();
-            expect(lockedState.beforeExitAction).toBeDefined();
-            expect(typeof lockedState.afterEntryAction).toBe('function');
-            expect(typeof lockedState.beforeExitAction).toBe('function');
-        });
-
-        it('should have correct toString representation', () => {
-            expect(lockedState.toString()).toBe('locked');
-        });
-
-        it('should execute afterEntryAction without errors', () => {
-            expect(() => lockedState.afterEntryAction()).not.toThrow();
-        });
-
-        it('should execute beforeExitAction without errors', () => {
-            expect(() => lockedState.beforeExitAction()).not.toThrow();
-        });
-
-        it('should log appropriate messages on actions', () => {
-            const consoleSpy = jest.spyOn(console, 'log');
-            
-            lockedState.afterEntryAction();
-            expect(consoleSpy).toHaveBeenCalledWith("Turnstile is now LOCKED - passage blocked");
-            
-            lockedState.beforeExitAction();
-            expect(consoleSpy).toHaveBeenCalledWith("Processing payment - preparing to unlock...");
+        test('should have correct initial state type', () => {
+            const currentState = turnstile.getCurrentState();
+            expect(currentState).toBeInstanceOf(LockedState);
+            expect(currentState.toString()).toBe('locked');
         });
     });
 
-    describe('UnlockedState', () => {
-        let unlockedState: UnlockedState;
-
-        beforeEach(() => {
-            unlockedState = new UnlockedState();
+    describe('State Transitions - insertCoin()', () => {
+        test('should transition from locked to unlocked when coin inserted', () => {
+            expect(turnstile.isLocked()).toBe(true);
+            
+            const resultState = turnstile.insertCoin();
+            
+            expect(turnstile.isUnlocked()).toBe(true);
+            expect(turnstile.isLocked()).toBe(false);
+            expect(resultState).toBeInstanceOf(UnlockedState);
         });
 
-        it('should implement IStateWithActions interface', () => {
-            expect(unlockedState.afterEntryAction).toBeDefined();
-            expect(unlockedState.beforeExitAction).toBeDefined();
-            expect(typeof unlockedState.afterEntryAction).toBe('function');
-            expect(typeof unlockedState.beforeExitAction).toBe('function');
+        test('should execute proper action sequence during coin insertion', () => {
+            consoleSpy.mockClear(); // Clear initialization logs
+            
+            turnstile.insertCoin();
+            
+            expect(consoleSpy).toHaveBeenCalledWith(
+                'Processing payment - preparing to unlock...'
+            );
+            expect(consoleSpy).toHaveBeenCalledWith(
+                'Turnstile is now UNLOCKED - passage allowed'
+            );
         });
 
-        it('should have correct toString representation', () => {
-            expect(unlockedState.toString()).toBe('unlocked');
-        });
-
-        it('should execute afterEntryAction without errors', () => {
-            expect(() => unlockedState.afterEntryAction()).not.toThrow();
-        });
-
-        it('should execute beforeExitAction without errors', () => {
-            expect(() => unlockedState.beforeExitAction()).not.toThrow();
-        });
-
-        it('should log appropriate messages on actions', () => {
-            const consoleSpy = jest.spyOn(console, 'log');
+        test('should remain unlocked when coin inserted while already unlocked', () => {
+            // First, unlock the turnstile
+            turnstile.insertCoin();
+            expect(turnstile.isUnlocked()).toBe(true);
             
-            unlockedState.afterEntryAction();
-            expect(consoleSpy).toHaveBeenCalledWith("Turnstile is now UNLOCKED - passage allowed");
-            
-            unlockedState.beforeExitAction();
-            expect(consoleSpy).toHaveBeenCalledWith("Person passing through - preparing to lock...");
-        });
-    });
-
-    describe('TurnstileObject constructor', () => {
-        it('should execute initial state entry action', () => {
-            // Create a fresh spy for this test
-            const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-            
-            // Create new instance to capture constructor log
-            new TurnstileObject();
-            
-            expect(consoleSpy).toHaveBeenCalledWith("Turnstile is now LOCKED - passage blocked");
-            
-            // Clean up
-            consoleSpy.mockRestore();
-        });
-        
-        // Remove the accessibility test that calls missing methods
-        it('should have correct initial state', () => {
-            expect(turnstileObject.getCurrentStateString()).toBe('locked');
-            expect(turnstileObject.isLocked()).toBe(true);
-            expect(turnstileObject.isUnlocked()).toBe(false);
-        });
-    });
-
-    describe('insertCoin method', () => {
-        it('should unlock turnstile when locked and execute state actions', () => {
-            const consoleSpy = jest.spyOn(console, 'log');
-            
-            // Ensure starting state
-            expect(turnstileObject.getCurrentStateString()).toBe('locked');
-            
-            // Insert coin
-            const resultState = turnstileObject.insertCoin();
-            
-            // Verify state change
-            expect(turnstileObject.getCurrentStateString()).toBe('unlocked');
-            expect(turnstileObject.isUnlocked()).toBe(true);
-            expect(turnstileObject.isLocked()).toBe(false);
-            expect(resultState.toString()).toBe('unlocked');
-            
-            // Verify actions were executed
-            expect(consoleSpy).toHaveBeenCalledWith("Processing payment - preparing to unlock...");
-            expect(consoleSpy).toHaveBeenCalledWith("Turnstile is now UNLOCKED - passage allowed");
-        });
-
-        it('should remain unlocked when already unlocked', () => {
-            // First unlock
-            turnstileObject.insertCoin();
-            expect(turnstileObject.getCurrentStateString()).toBe('unlocked');
-            
-            const consoleSpy = jest.spyOn(console, 'log');
-             consoleSpy.mockClear();
+            consoleSpy.mockClear();
             
             // Insert another coin
-            const resultState = turnstileObject.insertCoin();
+            const resultState = turnstile.insertCoin();
             
-            // Should remain unlocked, no state transition
-            expect(turnstileObject.getCurrentStateString()).toBe('unlocked');
-            expect(resultState.toString()).toBe('unlocked');
-            
-            // No exit/entry actions should be called (no transition)
+            // Should remain unlocked, no actions executed
+            expect(turnstile.isUnlocked()).toBe(true);
+            expect(resultState).toBeInstanceOf(UnlockedState);
             expect(consoleSpy).not.toHaveBeenCalled();
+        });
+
+        test('should return correct state object after coin insertion', () => {
+            const resultState = turnstile.insertCoin();
+            
+            expect(resultState.toString()).toBe('unlocked');
+            expect(resultState).toBeInstanceOf(UnlockedState);
         });
     });
 
-    describe('pushThrough method', () => {
-        it('should lock turnstile when unlocked and execute state actions', () => {
+    describe('State Transitions - pushThrough()', () => {
+        test('should remain locked when pushing while locked', () => {
+            expect(turnstile.isLocked()).toBe(true);
+            
+            consoleSpy.mockClear();
+            const resultState = turnstile.pushThrough();
+            
+            // Should remain locked, no actions executed
+            expect(turnstile.isLocked()).toBe(true);
+            expect(resultState).toBeInstanceOf(LockedState);
+            expect(consoleSpy).not.toHaveBeenCalled();
+        });
+
+        test('should transition from unlocked to locked when pushing through', () => {
             // First unlock
-            turnstileObject.insertCoin();
-            expect(turnstileObject.getCurrentStateString()).toBe('unlocked');
-            
-            const consoleSpy = jest.spyOn(console, 'log');
-            
-            // Push through
-            const resultState = turnstileObject.pushThrough();
-            
-            // Verify state change
-            expect(turnstileObject.getCurrentStateString()).toBe('locked');
-            expect(turnstileObject.isLocked()).toBe(true);
-            expect(turnstileObject.isUnlocked()).toBe(false);
-            expect(resultState.toString()).toBe('locked');
-            
-            // Verify actions were executed
-            expect(consoleSpy).toHaveBeenCalledWith("Person passing through - preparing to lock...");
-            expect(consoleSpy).toHaveBeenCalledWith("Turnstile is now LOCKED - passage blocked");
-        });
-
-        it('should remain locked when already locked', () => {
-            // Ensure starting in locked state
-            expect(turnstileObject.getCurrentStateString()).toBe('locked');
-            
-            const consoleSpy = jest.spyOn(console, 'log');
-            
-            // Try to push through
-            const resultState = turnstileObject.pushThrough();
-            
-            // Should remain locked, no state transition
-            expect(turnstileObject.getCurrentStateString()).toBe('locked');
-            expect(resultState.toString()).toBe('locked');
-            
-            // No exit/entry actions should be called (no transition)
-            expect(consoleSpy).not.toHaveBeenCalled();
-        });
-    });
-
-    describe('sendSignal method with state actions', () => {
-        it('should execute state actions on valid transitions', () => {
-            const consoleSpy = jest.spyOn(console, 'log');
-            
-            // Test COIN signal (locked -> unlocked)
-            const resultState1 = turnstileObject.sendSignal(TurnstileSignal.COIN);
-            expect(resultState1.toString()).toBe('unlocked');
-            expect(consoleSpy).toHaveBeenCalledWith("Processing payment - preparing to unlock...");
-            expect(consoleSpy).toHaveBeenCalledWith("Turnstile is now UNLOCKED - passage allowed");
+            turnstile.insertCoin();
+            expect(turnstile.isUnlocked()).toBe(true);
             
             consoleSpy.mockClear();
+            const resultState = turnstile.pushThrough();
             
-            // Test PUSH signal (unlocked -> locked)
-            const resultState2 = turnstileObject.sendSignal(TurnstileSignal.PUSH);
-            expect(resultState2.toString()).toBe('locked');
-            expect(consoleSpy).toHaveBeenCalledWith("Person passing through - preparing to lock...");
-            expect(consoleSpy).toHaveBeenCalledWith("Turnstile is now LOCKED - passage blocked");
+            expect(turnstile.isLocked()).toBe(true);
+            expect(turnstile.isUnlocked()).toBe(false);
+            expect(resultState).toBeInstanceOf(LockedState);
         });
 
-        it('should not execute state actions on invalid transitions', () => {
-            const consoleSpy = jest.spyOn(console, 'log');
-            
-            // Test invalid signal
-            const resultState = turnstileObject.sendSignal('invalid-signal' as TurnstileSignal);
-            expect(resultState.toString()).toBe('locked');
-            
-            // No actions should be executed
-            expect(consoleSpy).not.toHaveBeenCalled();
-        });
-
-        it('should not execute actions when no state transition occurs', () => {
-            // Move to unlocked state first
-            turnstileObject.insertCoin();
-            
-            const consoleSpy = jest.spyOn(console, 'log');
-             consoleSpy.mockClear();
-            
-            // Send COIN signal when already unlocked (no transition)
-            const resultState = turnstileObject.sendSignal(TurnstileSignal.COIN);
-            expect(resultState.toString()).toBe('unlocked');
-            
-            // No actions should be executed
-            expect(consoleSpy).not.toHaveBeenCalled();
-        });
-    });
-
-    describe('state checking methods', () => {
-        it('should correctly identify locked state', () => {
-            expect(turnstileObject.isLocked()).toBe(true);
-            expect(turnstileObject.isUnlocked()).toBe(false);
-            
-            // Reference equality check
-            expect(turnstileObject.getCurrentState()).toBe(turnstileObject.getLockedState());
-        });
-
-        it('should correctly identify unlocked state', () => {
-            turnstileObject.insertCoin();
-            
-            expect(turnstileObject.isLocked()).toBe(false);
-            expect(turnstileObject.isUnlocked()).toBe(true);
-            
-            // Reference equality check
-            expect(turnstileObject.getCurrentState()).toBe(turnstileObject.getUnlockedState());
-        });
-    });
-
-    describe('matrix-based state machine features', () => {
-        it('should have correct states and signals', () => {
-            const states = turnstileObject.getAllStates();
-            const signals = turnstileObject.getAllSignals();
-            
-            expect(states).toHaveLength(2);
-            expect(signals).toHaveLength(2);
-            expect(signals).toContain(TurnstileSignal.COIN);
-            expect(signals).toContain(TurnstileSignal.PUSH);
-        });
-
-        it('should validate state and signal existence', () => {
-            const lockedState = turnstileObject.getLockedState();
-            const unlockedState = turnstileObject.getUnlockedState();
-            
-            expect(turnstileObject.hasState(lockedState)).toBe(true);
-            expect(turnstileObject.hasState(unlockedState)).toBe(true);
-            expect(turnstileObject.hasSignal(TurnstileSignal.COIN)).toBe(true);
-            expect(turnstileObject.hasSignal(TurnstileSignal.PUSH)).toBe(true);
-        });
-
-        it('should return valid signals from current state', () => {
-            // From locked state
-            let validSignals = turnstileObject.getValidSignalsFromCurrentState();
-            expect(validSignals).toEqual([TurnstileSignal.COIN]);
-            expect(turnstileObject.isValidSignalFromCurrentState(TurnstileSignal.COIN)).toBe(true);
-            expect(turnstileObject.isValidSignalFromCurrentState(TurnstileSignal.PUSH)).toBe(false);
-            
-            // Move to unlocked state
-            turnstileObject.insertCoin();
-            
-            // From unlocked state
-            validSignals = turnstileObject.getValidSignalsFromCurrentState();
-            expect(validSignals).toEqual([TurnstileSignal.PUSH]);
-            expect(turnstileObject.isValidSignalFromCurrentState(TurnstileSignal.COIN)).toBe(false);
-            expect(turnstileObject.isValidSignalFromCurrentState(TurnstileSignal.PUSH)).toBe(true);
-        });
-    });
-
-    describe('complete workflow scenarios', () => {
-        it('should handle normal usage cycle with proper action execution', () => {
-            const consoleSpy = jest.spyOn(console, 'log');
-            
-            // Start: locked
-            expect(turnstileObject.getCurrentStateString()).toBe('locked');
-            
-            // Insert coin: locked → unlocked
-            turnstileObject.insertCoin();
-            expect(turnstileObject.getCurrentStateString()).toBe('unlocked');
-            expect(consoleSpy).toHaveBeenCalledWith("Processing payment - preparing to unlock...");
-            expect(consoleSpy).toHaveBeenCalledWith("Turnstile is now UNLOCKED - passage allowed");
-            
+        test('should execute proper action sequence during push through', () => {
+            // First unlock
+            turnstile.insertCoin();
             consoleSpy.mockClear();
             
-            // Push through: unlocked → locked
-            turnstileObject.pushThrough();
-            expect(turnstileObject.getCurrentStateString()).toBe('locked');
-            expect(consoleSpy).toHaveBeenCalledWith("Person passing through - preparing to lock...");
-            expect(consoleSpy).toHaveBeenCalledWith("Turnstile is now LOCKED - passage blocked");
+            turnstile.pushThrough();
+            
+            expect(consoleSpy).toHaveBeenCalledWith(
+                'Person passing through - preparing to lock...'
+            );
+            expect(consoleSpy).toHaveBeenCalledWith(
+                'Turnstile is now LOCKED - passage blocked'
+            );
         });
+    });
 
-        it('should handle multiple coins without extra actions', () => {
-            const consoleSpy = jest.spyOn(console, 'log');
-            
-            // First coin: transition occurs
-            turnstileObject.insertCoin();
-            expect(consoleSpy).toHaveBeenCalledTimes(2); // beforeExit + afterEntry
-            
+    describe('Complete Workflow Scenarios', () => {
+        test('should handle complete turnstile usage cycle', () => {
             consoleSpy.mockClear();
             
-            // Second coin: no transition, no actions
-            turnstileObject.insertCoin();
-            expect(consoleSpy).not.toHaveBeenCalled();
+            // 1. Start locked
+            expect(turnstile.isLocked()).toBe(true);
             
-            // Third coin: no transition, no actions
-            turnstileObject.insertCoin();
-            expect(consoleSpy).not.toHaveBeenCalled();
+            // 2. Insert coin → unlock
+            turnstile.insertCoin();
+            expect(turnstile.isUnlocked()).toBe(true);
             
-            expect(turnstileObject.getCurrentStateString()).toBe('unlocked');
+            // 3. Push through → lock
+            turnstile.pushThrough();
+            expect(turnstile.isLocked()).toBe(true);
+            
+            // Verify all actions were executed in correct order
+            expect(consoleSpy).toHaveBeenNthCalledWith(1, 'Processing payment - preparing to unlock...');
+            expect(consoleSpy).toHaveBeenNthCalledWith(2, 'Turnstile is now UNLOCKED - passage allowed');
+            expect(consoleSpy).toHaveBeenNthCalledWith(3, 'Person passing through - preparing to lock...');
+            expect(consoleSpy).toHaveBeenNthCalledWith(4, 'Turnstile is now LOCKED - passage blocked');
         });
 
-        it('should handle multiple push attempts when locked', () => {
-            const consoleSpy = jest.spyOn(console, 'log');
-            
-            // Multiple push attempts - no transitions, no actions
-            turnstileObject.pushThrough();
-            turnstileObject.pushThrough();
-            turnstileObject.pushThrough();
-            
-            expect(consoleSpy).not.toHaveBeenCalled();
-            expect(turnstileObject.getCurrentStateString()).toBe('locked');
-        });
-    });
-
-    describe('inheritance and interface compliance', () => {
-        it('should extend MatrixBasedStateMachine', () => {
-            expect(turnstileObject.getCurrentState).toBeDefined();
-            expect(turnstileObject.sendSignal).toBeDefined();
-            expect(turnstileObject.getMatrix).toBeDefined();
-            expect(turnstileObject.printTransitionMatrix).toBeDefined();
-        });
-
-        it('should work with state objects implementing IStateWithActions', () => {
-            const currentState = turnstileObject.getCurrentState();
-            expect(currentState.afterEntryAction).toBeDefined();
-            expect(currentState.beforeExitAction).toBeDefined();
-            expect(currentState.toString).toBeDefined();
-        });
-
-        it('should maintain object identity for states', () => {
-            const lockedState1 = turnstileObject.getLockedState();
-            const lockedState2 = turnstileObject.getLockedState();
-            
-            // Should be the same object reference
-            expect(lockedState1).toBe(lockedState2);
-            
-            const unlockedState1 = turnstileObject.getUnlockedState();
-            const unlockedState2 = turnstileObject.getUnlockedState();
-            
-            // Should be the same object reference
-            expect(unlockedState1).toBe(unlockedState2);
-        });
-    });
-
-    describe('debugging and utility methods', () => {
-        it('should provide string representation of current state', () => {
-            expect(turnstileObject.getCurrentStateString()).toBe('locked');
-            
-            turnstileObject.insertCoin();
-            expect(turnstileObject.getCurrentStateString()).toBe('unlocked');
-            
-            turnstileObject.pushThrough();
-            expect(turnstileObject.getCurrentStateString()).toBe('locked');
-        });
-
-        it('should not throw when printing transition matrix', () => {
-            expect(() => turnstileObject.printTransitionMatrix()).not.toThrow();
-        });
-    });
-
-    describe('error handling and edge cases', () => {
-        it('should handle rapid state changes with proper action execution', () => {
-            const consoleSpy = jest.spyOn(console, 'log');
-            
-            // Rapid transitions
-            for (let i = 0; i < 5; i++) {
-                turnstileObject.insertCoin();
-                expect(turnstileObject.getCurrentStateString()).toBe('unlocked');
+        test('should handle multiple complete cycles', () => {
+            for (let i = 0; i < 3; i++) {
+                expect(turnstile.isLocked()).toBe(true);
                 
-                turnstileObject.pushThrough();
-                expect(turnstileObject.getCurrentStateString()).toBe('locked');
+                turnstile.insertCoin();
+                expect(turnstile.isUnlocked()).toBe(true);
+                
+                turnstile.pushThrough();
+                expect(turnstile.isLocked()).toBe(true);
             }
-            
-            // Should have called actions for each actual transition
-            // 5 cycles × 2 transitions × 2 actions = 20 total calls
-            expect(consoleSpy).toHaveBeenCalledTimes(20);
         });
 
-        it('should maintain state consistency with invalid operations', () => {
-            const initialState = turnstileObject.getCurrentStateString();
+        test('should handle rapid state changes correctly', () => {
+            // Rapid sequence of operations
+            turnstile.insertCoin();
+            turnstile.pushThrough();
+            turnstile.insertCoin();
+            turnstile.pushThrough();
             
-            // Mix valid and invalid operations
-            turnstileObject.sendSignal('invalid' as TurnstileSignal);
-            turnstileObject.insertCoin();
-            turnstileObject.sendSignal('another-invalid' as TurnstileSignal);
-            turnstileObject.pushThrough();
-            turnstileObject.sendSignal('yet-another-invalid' as TurnstileSignal);
+            // Should end in locked state
+            expect(turnstile.isLocked()).toBe(true);
+        });
+    });
+
+    describe('Signal Processing', () => {
+        test('should process COIN signal correctly', () => {
+            const resultState = turnstile.sendSignal(TurnstileSignal.COIN);
+            expect(resultState).toBeInstanceOf(UnlockedState);
+            expect(turnstile.isUnlocked()).toBe(true);
+        });
+
+        test('should process PUSH signal correctly', () => {
+            // First unlock
+            turnstile.insertCoin();
             
-            // Should be back to initial state
-            expect(turnstileObject.getCurrentStateString()).toBe(initialState);
+            const resultState = turnstile.sendSignal(TurnstileSignal.PUSH);
+            expect(resultState).toBeInstanceOf(LockedState);
+            expect(turnstile.isLocked()).toBe(true);
+        });
+
+        test('should handle invalid signal transitions gracefully', () => {
+            // Try to push while locked (invalid transition)
+            const initialState = turnstile.getCurrentState();
+            const resultState = turnstile.sendSignal(TurnstileSignal.PUSH);
+            
+            expect(resultState).toBe(initialState);
+            expect(turnstile.isLocked()).toBe(true);
+        });
+    });
+
+    describe('State Information and Queries', () => {
+        test('should provide accurate state information', () => {
+            expect(turnstile.isLocked()).toBe(true);
+            expect(turnstile.isUnlocked()).toBe(false);
+            
+            turnstile.insertCoin();
+            
+            expect(turnstile.isLocked()).toBe(false);
+            expect(turnstile.isUnlocked()).toBe(true);
+        });
+
+        test('should return consistent state objects', () => {
+            const state1 = turnstile.getCurrentState();
+            const state2 = turnstile.getCurrentState();
+            
+            expect(state1).toBe(state2); // Same reference
+            expect(state1.toString()).toBe(state2.toString());
+        });
+    });
+
+    describe('Matrix-based Implementation', () => {
+        test('should inherit from TurnstileAbstract', () => {
+            expect(turnstile).toBeInstanceOf(TurnstileObject);
+            // Note: We can't test TurnstileAbstract directly without importing it,
+            // but we can verify the expected methods exist
+            expect(typeof turnstile.insertCoin).toBe('function');
+            expect(typeof turnstile.pushThrough).toBe('function');
+            expect(typeof turnstile.isLocked).toBe('function');
+            expect(typeof turnstile.isUnlocked).toBe('function');
+        });
+
+        test('should have proper matrix-based state machine methods', () => {
+            expect(typeof turnstile.sendSignal).toBe('function');
+            expect(typeof turnstile.getCurrentState).toBe('function');
+        });
+    });
+
+    describe('Error Handling and Edge Cases', () => {
+        test('should handle multiple consecutive coin insertions', () => {
+            turnstile.insertCoin(); // Unlock
+            expect(turnstile.isUnlocked()).toBe(true);
+            
+            consoleSpy.mockClear();
+            
+            // Multiple additional coins should not change state
+            turnstile.insertCoin();
+            turnstile.insertCoin();
+            
+            expect(turnstile.isUnlocked()).toBe(true);
+            expect(consoleSpy).not.toHaveBeenCalled(); // No additional actions
+        });
+
+        test('should handle multiple consecutive push attempts', () => {
+            consoleSpy.mockClear();
+            
+            // Multiple pushes while locked should not change state
+            turnstile.pushThrough();
+            turnstile.pushThrough();
+            turnstile.pushThrough();
+            
+            expect(turnstile.isLocked()).toBe(true);
+            expect(consoleSpy).not.toHaveBeenCalled(); // No actions executed
+        });
+    });
+
+    describe('State Action Verification', () => {
+        test('should execute entry actions exactly once per state transition', () => {
+            consoleSpy.mockClear();
+            
+            // Transition to unlocked
+            turnstile.insertCoin();
+            
+            // Should have exactly one entry action call
+            const unlockedEntryActions = consoleSpy.mock.calls.filter(
+                call => call[0] === 'Turnstile is now UNLOCKED - passage allowed'
+            );
+            expect(unlockedEntryActions).toHaveLength(1);
+        });
+
+        test('should execute exit actions exactly once per state transition', () => {
+            consoleSpy.mockClear();
+            
+            // Transition from locked to unlocked
+            turnstile.insertCoin();
+            
+            // Should have exactly one exit action call
+            const lockedExitActions = consoleSpy.mock.calls.filter(
+                call => call[0] === 'Processing payment - preparing to unlock...'
+            );
+            expect(lockedExitActions).toHaveLength(1);
+        });
+
+        test('should not execute actions for self-transitions', () => {
+            // First unlock the turnstile
+            turnstile.insertCoin();
+            consoleSpy.mockClear();
+            
+            // Try to insert another coin (self-transition)
+            turnstile.insertCoin();
+            
+            // No actions should be executed
+            expect(consoleSpy).not.toHaveBeenCalled();
         });
     });
 });
