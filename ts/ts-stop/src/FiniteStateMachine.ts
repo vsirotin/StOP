@@ -130,7 +130,7 @@ export interface IFiniteStateMachine<STATE, SIGNAL> {
  * // Output: 🎯 Entered locked: Payment required
  * ```
  */
-export class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateMachine<STATE, SIGNAL> {
+export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateMachine<STATE, SIGNAL> {
     /**
      * The current state of the state machine.
      * Protected to allow subclass access while maintaining encapsulation.
@@ -306,4 +306,24 @@ export class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateMachine<ST
     getTransitions(): ITransition<STATE, SIGNAL>[] {
         return [...this.transitions];
     }
+
+    /**
+     * Checks if a signal is valid in the state machine.
+     * @param signal - The signal to check
+     * @returns True if the signal is valid, false otherwise.
+     */
+    hasSignal(signal: SIGNAL): boolean {
+        return this.getAllSignals().includes(signal);
+    }
+
+    /**
+     * Checks if a given state exists in the state machine.
+     * 
+     * @param state - The state to check
+     * @returns true if the state exists, false otherwise
+     */
+    hasState(state: STATE): boolean {
+        return this.getAllStates().includes(state);
+    }
+
 }

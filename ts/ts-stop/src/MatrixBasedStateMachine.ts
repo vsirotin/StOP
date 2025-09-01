@@ -43,7 +43,7 @@ import { TransitionMatrix } from './TransitionMatrix';
  * }
  * ```
  */
-abstract class MatrixBasedStateMachine<STATE, SIGNAL> extends FiniteStateMachine<STATE, SIGNAL> {
+export abstract class MatrixBasedStateMachine<STATE, SIGNAL> extends FiniteStateMachine<STATE, SIGNAL> {
     /**
      * The transition matrix used to define state transitions.
      * Stored for potential debugging or inspection purposes.
@@ -155,67 +155,4 @@ abstract class MatrixBasedStateMachine<STATE, SIGNAL> extends FiniteStateMachine
         console.log(`\n${this.constructor.name} Transition Matrix:`);
         this.matrix.printMatrix();
     }
-
-    /**
-     * Gets all possible states from the matrix.
-     * 
-     * @returns Array of all states in the state machine
-     */
-    getAllStates(): STATE[] {
-        return this.matrix.getStates();
-    }
-
-    /**
-     * Gets all possible signals from the matrix.
-     * 
-     * @returns Array of all signals in the state machine
-     */
-    getAllSignals(): SIGNAL[] {
-        return this.matrix.getSignals();
-    }
-
-    /**
-     * Checks if a given state exists in the state machine.
-     * 
-     * @param state - The state to check
-     * @returns true if the state exists, false otherwise
-     */
-    hasState(state: STATE): boolean {
-        return this.matrix.getStates().includes(state);
-    }
-
-    /**
-     * Checks if a given signal exists in the state machine.
-     * 
-     * @param signal - The signal to check  
-     * @returns true if the signal exists, false otherwise
-     */
-    hasSignal(signal: SIGNAL): boolean {
-        return this.matrix.getSignals().includes(signal);
-    }
-
-    /**
-     * Gets all valid transitions from the current state.
-     * 
-     * @returns Array of signals that can trigger transitions from the current state
-     */
-    getValidSignalsFromCurrentState(): SIGNAL[] {
-        const currentState = this.getCurrentState();
-        return this.matrix.getTransitions()
-            .filter(t => t.from === currentState)
-            .map(t => t.signal);
-    }
-
-    /**
-     * Checks if a signal is valid from the current state.
-     * 
-     * @param signal - The signal to check
-     * @returns true if the signal can cause a transition from the current state
-     */
-    isValidSignalFromCurrentState(signal: SIGNAL): boolean {
-        return this.getValidSignalsFromCurrentState().includes(signal);
-    }
 }
-
-// Export the class
-export { MatrixBasedStateMachine };
