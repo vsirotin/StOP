@@ -1,3 +1,4 @@
+import { IDefaultState } from './IDefaultState';
 import { IStateWithAfterEntryAction, IStateWithBeforeExitAction } from './IStateWithActions';
 
 /**
@@ -137,6 +138,12 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
      */
     protected currentState: STATE;
 
+        /**
+     * The default state that handles invalid signals.
+     * Set to null if no state implements IDefaultState.
+     */
+    private defaultState: (STATE & IDefaultState) | null = null;
+
     /**
      * Creates a new finite state machine.
      * 
@@ -151,6 +158,23 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
         protected transitions: ITransition<STATE, SIGNAL>[], 
         protected startState: STATE
     ) {
+           // Find states that implement IDefaultState
+    const defaultStates = states.filter(state => this.hasDefaultStateInterface(state));
+    
+        // Validate default state count
+        if (defaultStates.length > 1) {
+            throw new Error(
+                `Multiple states implement IDefaultState interface. ` +
+                `Only one state can handle invalid signals. ` +
+                `Found ${defaultStates.length} states with IDefaultState.`
+            );
+        }
+        
+        // Set default state if exactly one found
+        if (defaultStates.length === 1) {
+            this.defaultState = defaultStates[0] as STATE & IDefaultState;
+        }
+
         // Initialize the machine to its starting state
         this.currentState = startState;
         
@@ -203,11 +227,30 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
                 // Execute after entry action on new state
                 this.executeEntryAction(newState);
             }
+        } else if (this.defaultState) {
+            // No valid transition found, but default state exists
+            // Execute default state's actions (entry/exit if implemented)
+            this.executeEntryAction(this.defaultState);
+            this.executeExitAction(this.defaultState);
+            // Current state remains unchanged
         }
         
         // Return the current state (whether changed or not)
         return this.currentState;
     }
+
+/**
+ * Type guard to check if a state implements IDefaultState.
+ * 
+ * @param state - The state to check
+ * @returns true if the state implements IDefaultState interface
+ */
+protected hasDefaultStateInterface(state: STATE): state is STATE & IDefaultState {
+    return typeof state === 'object' && 
+           state !== null && 
+           'isDefaultState' in state &&
+           typeof (state as any).isDefaultState === 'function';
+}
 
     /**
      * Type guard to check if a state implements IStateWithAfterEntryAction.
@@ -325,5 +368,22 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
     hasState(state: STATE): boolean {
         return this.getAllStates().includes(state);
     }
-
+    
+        /**
+     * Gets the default state that handles invalid signals.
+     * 
+     * @returns The default state or null if none exists
+     */
+    getDefaultState(): (STATE & IDefaultState) | null {
+        return this.defaultState;
+    }
+    
+    /**
+     * Checks if the state machine has a default state.
+     * 
+     * @returns true if a default state exists
+     */
+    hasDefaultState(): boolean {
+        return this.defaultState !== null;
+    }
 }
