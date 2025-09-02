@@ -32,14 +32,14 @@ fun main() {
         "language" to "Kotlin"
     )
     
-    println("\n=== State Processing Demo ===")
+    println("=== State Processing Demo ===")
     println("Initial state: $initialState")
     
     val processedState = stopInstance2.processState(initialState)
     println("Processed state: $processedState")
     
     // Demonstrate state transformation with data class
-    println("\n=== Data Class State Demo ===")
+    println("=== Data Class State Demo ===")
     val demoState = DemoState(
         name = "Kotlin Advanced Demo",
         version = "2.0.0", 
@@ -58,7 +58,7 @@ fun main() {
     println("Transformed state: $transformedState")
     
     // Demonstrate typed state processing
-    println("\n=== Typed State Processing Demo ===")
+    println("=== Typed State Processing Demo ===")
     val typedProcessedState = stopInstance2.processTypedState(demoState) { state ->
         state.copy(name = "Processed ${state.name}")
     }
@@ -66,7 +66,7 @@ fun main() {
     println("Typed processed state: $typedProcessedState")
     
     // Demonstrate extension function
-    println("\n=== Extension Function Demo ===")
+    println("=== Extension Function Demo ===")
     val extProcessedState = demoState.processWithStop(stopInstance2) { state ->
         state.copy(
             name = "Extended ${state.name}",
@@ -77,7 +77,7 @@ fun main() {
     println("Extension processed state: $extProcessedState")
     
     // Demonstrate StateContainer
-    println("\n=== State Container Demo ===")
+    println("=== State Container Demo ===")
     val stateContainer = StateContainer(
         data = demoState,
         metadata = mapOf(
@@ -103,8 +103,8 @@ fun main() {
         )
     )
     
-    println("\n=== Final State ===")
+    println("=== Final State ===")
     println("Final processed state: $finalState")
     
-    println("\nKotlin example completed successfully!")
+    println("Kotlin example completed successfully!")
 }

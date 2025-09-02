@@ -152,7 +152,7 @@ export abstract class MatrixBasedStateMachine<STATE, SIGNAL> extends FiniteState
      * transition table, making it easier to understand and debug the logic.
      */
     printTransitionMatrix(): void {
-        console.log(`\n${this.constructor.name} Transition Matrix:`);
+        console.log(`${this.constructor.name} Transition Matrix:`);
         this.matrix.printMatrix();
     }
 }

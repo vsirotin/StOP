@@ -1,63 +1,22 @@
-import { NonEmpty, TransitionMatrix, transitionMatrix } from '../../../src/TransitionMatrix';
-import { IStateWithActions } from '../../../src/IStateWithActions';
-import { TurnstileAbstract } from './TurnstileAbstract';
-import { TurnstileSignal } from './TurnstileSignal';
+import { IStateWithActions } from "../../../src/IStateWithActions";
+import { NonEmpty, transitionMatrix, TransitionMatrix } from "../../../src/TransitionMatrix";
+import { TurnstileAbstract } from "../objects/TurnstileAbstract";
+import { TurnstileSignal } from '../objects/TurnstileSignal';
+import { BarrierArms } from "./devices/BarrierArms";
+import { CoinAcceptor } from "./devices/CoinAcceptor";
+import { StatusIndicator } from "./devices/StatusIndicator";
+import { LockedStateRealistic } from "./LockedStateRealistic";
+import { UnlockedStateRealistic } from "./UnlockedStateRealistic";
 
-/**
- * Locked state object with entry and exit actions.
- */
-export class LockedState implements IStateWithActions {
-    /**
-     * Action executed after entering the locked state.
-     */
-    afterEntryAction(): void {
-        console.log("Turnstile is now LOCKED - passage blocked");
-    }
+// Device simulators
 
-    /**
-     * Action executed before exiting the locked state.
-     */
-    beforeExitAction(): void {
-        console.log("Processing payment - preparing to unlock...");
-    }
+const coinAcceptor = new CoinAcceptor();
+const barrierArms = new BarrierArms();
+const statusIndicator = new StatusIndicator();
 
-    /**
-     * String representation of the state.
-     */
-    toString(): string {
-        return "locked";
-    }
-}
-
-/**
- * Unlocked state object with entry and exit actions.
- */
-export class UnlockedState implements IStateWithActions {
-    /**
-     * Action executed after entering the unlocked state.
-     */
-    afterEntryAction(): void {
-        console.log("Turnstile is now UNLOCKED - passage allowed");
-    }
-
-    /**
-     * Action executed before exiting the unlocked state.
-     */
-    beforeExitAction(): void {
-        console.log("Person passing through - preparing to lock...");
-    }
-
-    /**
-     * String representation of the state.
-     */
-    toString(): string {
-        return "unlocked";
-    }
-}
-
-// Create state instances outside the class
-const l = new LockedState();
-const u = new UnlockedState();
+// Create state instances 
+const l = new LockedStateRealistic(coinAcceptor, barrierArms, statusIndicator);
+const u = new UnlockedStateRealistic(coinAcceptor, barrierArms, statusIndicator);
 
 // Create short aliases for signals
 const coin = TurnstileSignal.COIN;
@@ -123,10 +82,8 @@ const turnstileMatrix : TransitionMatrix<NonEmpty<IStateWithActions>, NonEmpty<T
  * ```
  */
 
-export class TurnstileObject extends TurnstileAbstract {
+export class TurnstileRealistic extends TurnstileAbstract {
     constructor() {
         super(turnstileMatrix);
     }
 }
-
-

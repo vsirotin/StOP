@@ -111,7 +111,7 @@ export class TransitionMatrix<STATE, SIGNAL> {
      * Print the matrix for debugging.
      */
     printMatrix(): void {
-        console.log('\nTransition Matrix:');
+        console.log('Transition Matrix:');
         
         // Header row
         const header = ['Signal', ...this.states.map(s => String(s))];

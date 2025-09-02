@@ -21,14 +21,14 @@
 //     active: true
 // };
 
-// console.log('\n=== State Processing Demo ===');
+// console.log('=== State Processing Demo ===');
 // console.log('Initial state:', initialState);
 
 // const processedState = stopInstance2.processState(initialState);
 // console.log('Processed state:', processedState);
 
 // // Demonstrate state transformation
-// console.log('\n=== State Transformation Demo ===');
+// console.log('=== State Transformation Demo ===');
 // const transformedState = transformState(initialState, (state) => ({
 //     ...state,
 //     transformed: true,
@@ -38,4 +38,4 @@
 
 // console.log('Transformed state:', transformedState);
 
-// console.log('\n=== JavaScript Example Completed ===');
+// console.log('=== JavaScript Example Completed ===');

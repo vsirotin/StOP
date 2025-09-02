@@ -1,7 +1,7 @@
 import { IStateWithActions } from "../../../src/IStateWithActions";
 import { MatrixBasedStateMachine } from "../../../src/MatrixBasedStateMachine";
 import { NonEmpty, TransitionMatrix } from "../../../src/TransitionMatrix";
-import { TurnstileSignal } from "./TurnstileObjects";
+import { TurnstileSignal } from './TurnstileSignal';
 
 /**
  * Turnstile implementation using state objects with actions.
@@ -12,7 +12,6 @@ import { TurnstileSignal } from "./TurnstileObjects";
  */
 export abstract class TurnstileAbstract extends MatrixBasedStateMachine<IStateWithActions, TurnstileSignal> {
     // Reference to the state objects
-   
 
     constructor(matrix : TransitionMatrix<NonEmpty<IStateWithActions>, NonEmpty<TurnstileSignal>> ,
          private lockedState : IStateWithActions = matrix.getStates()[0],

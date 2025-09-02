@@ -31,14 +31,14 @@ public class Main {
         initialState.put("active", true);
         initialState.put("language", "Java");
         
-        System.out.println("\n=== State Processing Demo ===");
+        System.out.println("=== State Processing Demo ===");
         System.out.println("Initial state: " + initialState);
         
         Map<String, Object> processedState = stopInstance2.processState(initialState);
         System.out.println("Processed state: " + processedState);
         
         // Demonstrate state transformation
-        System.out.println("\n=== State Transformation Demo ===");
+        System.out.println("=== State Transformation Demo ===");
         
         Function1<Map<String, Object>, Map<String, Object>> transformer = state -> {
             Map<String, Object> newState = new HashMap<>(state);
@@ -52,7 +52,7 @@ public class Main {
         System.out.println("Transformed state: " + transformedState);
         
         // Demonstrate StateContainer
-        System.out.println("\n=== State Container Demo ===");
+        System.out.println("=== State Container Demo ===");
         
         Map<String, Object> metadata = new HashMap<>();
         metadata.put("creator", "Java Example");
@@ -75,7 +75,7 @@ public class Main {
         System.out.println("Updated container: " + updatedContainer);
         
         // Demonstrate multiple transformations
-        System.out.println("\n=== Multiple Transformations Demo ===");
+        System.out.println("=== Multiple Transformations Demo ===");
         
         Map<String, Object> currentState = new HashMap<>(initialState);
         
@@ -103,11 +103,11 @@ public class Main {
         stopInstance2.setMessage("Updated message from Java!");
         Map<String, Object> finalState = stopInstance2.processState(currentState);
         
-        System.out.println("\n=== Final State ===");
+        System.out.println("=== Final State ===");
         System.out.println("Final processed state: " + finalState);
         
         // Demonstrate creating multiple instances
-        System.out.println("\n=== Multiple Instances Demo ===");
+        System.out.println("=== Multiple Instances Demo ===");
         StopLibrary[] instances = {
             StopLibraryKt.createStopInstance("Java Instance A"),
             StopLibraryKt.createStopInstance("Java Instance B"),
@@ -118,6 +118,6 @@ public class Main {
             System.out.println("Instance " + (i + 1) + ": " + instances[i].getGreeting());
         }
         
-        System.out.println("\nJava example completed successfully!");
+        System.out.println("Java example completed successfully!");
     }
 }

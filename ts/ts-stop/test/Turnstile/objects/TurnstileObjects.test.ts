@@ -1,4 +1,6 @@
-import { TurnstileObject, TurnstileSignal, LockedState, UnlockedState } from './TurnstileObjects';
+/// <reference types="jest" />
+import { TurnstileObject, LockedState, UnlockedState } from './TurnstileObjects';
+import { TurnstileSignal } from './TurnstileSignal';
 
 describe('TurnstileObject', () => {
     let turnstile: TurnstileObject;
