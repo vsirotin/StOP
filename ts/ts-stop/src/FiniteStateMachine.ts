@@ -1,5 +1,6 @@
 import { IDefaultState } from './IDefaultState';
 import { IStateWithAfterEntryAction, IStateWithBeforeExitAction } from './IStateWithActions';
+import { IStateWithOutputSignal } from './IStateWithOutputSigmal';
 
 /**
  * Represents a transition in a finite state machine.
@@ -217,13 +218,29 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
         } else if (this.defaultState) {
             // No valid transition found, but default state exists
             // Execute default state's actions (entry/exit if implemented)
-            this.executeDefaultStateActions();
+            this.executeStateActions(this.defaultState as STATE);
             // Current state remains unchanged
         }
         
-        // Return the current state (whether changed or not)
+        if(this.isStateWithOutputSignal(this.currentState)){ 
+            // Processing of behaviour for state with inside calculated output signal
+            this.executeStateActions(this.currentState);
+            const stateWithOutputSignal = this.currentState as IStateWithOutputSignal<SIGNAL>;
+            const outputSignal = stateWithOutputSignal.getOutputSignal();
+            this.sendSignal(outputSignal);
+        }
+
         return this.currentState;
     }
+
+    private isStateWithOutputSignal<S>(state: STATE): boolean {   
+        const obj = state as any;
+        return (
+            typeof obj === 'object' &&
+            obj !== null &&
+            typeof obj.getOutputSignal === 'function'
+        );
+}
 
     private executeStateTransition(transition: ITransition<STATE, SIGNAL>) {
         const oldState = this.currentState;
@@ -242,9 +259,9 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
         }
     }
 
-    private executeDefaultStateActions() {
-        this.executeEntryAction(this.defaultState as STATE);
-        this.executeExitAction(this.defaultState as STATE);
+    private executeStateActions(state: STATE) {
+        this.executeEntryAction(state);
+        this.executeExitAction(state);
     }
 
 /**
