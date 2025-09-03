@@ -213,30 +213,38 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
         
         // If valid transition found, handle state change with actions
         if (transition) {
-            const oldState = this.currentState;
-            const newState = transition.to;
-
-            // Only execute actions if there's an actual state change
-            if (oldState !== newState) {
-                // Execute before exit action on current state
-                this.executeExitAction(oldState);
-
-                // Change state
-                this.currentState = newState;
-
-                // Execute after entry action on new state
-                this.executeEntryAction(newState);
-            }
+            this.executeStateTransition(transition);
         } else if (this.defaultState) {
             // No valid transition found, but default state exists
             // Execute default state's actions (entry/exit if implemented)
-            this.executeEntryAction(this.defaultState);
-            this.executeExitAction(this.defaultState);
+            this.executeDefaultStateActions();
             // Current state remains unchanged
         }
         
         // Return the current state (whether changed or not)
         return this.currentState;
+    }
+
+    private executeStateTransition(transition: ITransition<STATE, SIGNAL>) {
+        const oldState = this.currentState;
+        const newState = transition.to;
+
+        // Only execute actions if there's an actual state change
+        if (oldState !== newState) {
+            // Execute before exit action on current state
+            this.executeExitAction(oldState);
+
+            // Change state
+            this.currentState = newState;
+
+            // Execute after entry action on new state
+            this.executeEntryAction(newState);
+        }
+    }
+
+    private executeDefaultStateActions() {
+        this.executeEntryAction(this.defaultState as STATE);
+        this.executeExitAction(this.defaultState as STATE);
     }
 
 /**
