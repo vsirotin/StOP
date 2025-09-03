@@ -85,9 +85,6 @@
                 <mxCell id="29" value="Push" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="454" y="110" width="60" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="30" style="edgeStyle=none;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.538;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="4" target="4">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
                 <mxCell id="32" value="CoinValidation" style="html=1;align=center;verticalAlign=top;rounded=1;absoluteArcSize=1;arcSize=10;dashed=0;whiteSpace=wrap;fillColor=#FFFFCC;" vertex="1" parent="1">
                     <mxGeometry x="60" y="260" width="140" height="40" as="geometry"/>
                 </mxCell>
