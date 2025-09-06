@@ -1,7 +1,7 @@
-import { IStateWithBeforeExitAction } from "../../../src/IStateWithActions";
-import { BarrierArms } from "./devices/BarrierArms";
-import { CoinAcceptor } from "./devices/CoinAcceptor";
-import { StatusIndicator } from "./devices/StatusIndicator";
+import { IStateWithBeforeExitAction } from "../../../../src/IStateWithActions";
+import { BarrierArms } from "../devices/BarrierArms";
+import { CoinAcceptor } from "../devices/CoinAcceptor";
+import { StatusIndicator } from "../devices/StatusIndicator";
 /**
  * Unlocked state with integrated technical device control.
  */

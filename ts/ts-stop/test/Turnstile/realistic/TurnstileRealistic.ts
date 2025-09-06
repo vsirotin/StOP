@@ -5,8 +5,8 @@ import { TurnstileSignal } from '../objects/TurnstileSignal';
 import { BarrierArms } from "./devices/BarrierArms";
 import { CoinAcceptor } from "./devices/CoinAcceptor";
 import { StatusIndicator } from "./devices/StatusIndicator";
-import { LockedStateRealistic } from "./LockedStateRealistic";
-import { UnlockedStateRealistic } from "./UnlockedStateRealistic";
+import { LockedStateRealistic } from "./states/LockedStateRealistic";
+import { UnlockedStateRealistic } from "./states/UnlockedStateRealistic";
 
 // Device simulators
 

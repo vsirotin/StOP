@@ -1,6 +1,6 @@
 import { IDefaultState } from "../../../../src/IDefaultState";
 import { IStateWithActions } from "../../../../src/IStateWithActions";
-import { Bell } from "./devices/Bell";
+import { Bell } from "../devices/Bell";
 
 /**
  * Error state that handles invalid operations by ringing a bell.

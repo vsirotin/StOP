@@ -1,8 +1,8 @@
 import { TurnstileRealisticWithBell } from './TurnstileRealisticWithBell';
-import { LockedStateRealistic } from '../LockedStateRealistic';
-import { UnlockedStateRealistic } from '../UnlockedStateRealistic';
-import { Bell } from './devices/Bell';
-import { ErrorAttemptState } from './ErrorAttemptState';
+import { LockedStateRealistic } from '../states/LockedStateRealistic';
+import { UnlockedStateRealistic } from '../states/UnlockedStateRealistic';
+import { Bell } from '../devices/Bell';
+import { ErrorAttemptState } from '../states/ErrorAttemptState';
 
 describe('TurnstileRealisticWithBell - ErrorAttemptState Tests', () => {
     let turnstile: TurnstileRealisticWithBell;

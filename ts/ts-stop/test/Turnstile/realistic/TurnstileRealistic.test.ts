@@ -4,8 +4,8 @@ import { BarrierArms } from './devices/BarrierArms';
 import { StatusIndicator } from './devices/StatusIndicator';
 import { Light } from './devices/Light';
 import { TurnstileSignal } from '../objects/TurnstileSignal';
-import { LockedStateRealistic } from './LockedStateRealistic';
-import { UnlockedStateRealistic } from './UnlockedStateRealistic';
+import { LockedStateRealistic } from './states/LockedStateRealistic';
+import { UnlockedStateRealistic } from './states/UnlockedStateRealistic';
 
 describe('TurnstileRealistic', () => {
     let turnstile: TurnstileRealistic;

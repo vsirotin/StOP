@@ -1,15 +1,16 @@
 // Add these imports to existing TurnstileRealistic.ts
+
 import { IStateWithActions } from "../../../../src/IStateWithActions";
 import { NonEmpty, transitionMatrix, TransitionMatrix } from "../../../../src/TransitionMatrix";
 import { TurnstileAbstract } from "../../objects/TurnstileAbstract";
 import { TurnstileSignal } from "../../objects/TurnstileSignal";
+import { Bell } from "../devices/Bell";
+import { ErrorAttemptState } from "../states/ErrorAttemptState";
 import { BarrierArms } from "../devices/BarrierArms";
 import { CoinAcceptor } from "../devices/CoinAcceptor";
 import { StatusIndicator } from "../devices/StatusIndicator";
 import { LockedStateRealistic } from "../states/LockedStateRealistic";
 import { UnlockedStateRealistic } from "../states/UnlockedStateRealistic";
-import { Bell } from "../devices/Bell";
-import { ErrorAttemptState } from "../states/ErrorAttemptState";
 
 // Device simulators
 
@@ -37,9 +38,10 @@ const turnstileMatrixWithBell: TransitionMatrix<NonEmpty<IStateWithActions>, Non
     [ push ,   , l ,    ]
 ]);
 
-export class TurnstileRealisticWithBell extends TurnstileAbstract {
+export class TurnstileRealisticWithSignalObjects extends TurnstileAbstract {
     constructor() {
         // Pass error state in states array to enable default state behavior
         super(turnstileMatrixWithBell);
     }
 }
+
