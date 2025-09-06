@@ -60,47 +60,9 @@ export class TurnstileBase extends FiniteStateMachine<string, string> {
         );
     }
 
-    /**
-     * Processes a coin insertion signal.
-     * 
-     * Convenience method that sends a 'coin' signal to the state machine.
-     * If the turnstile is locked, it will transition to unlocked.
-     * If already unlocked, the state remains unchanged.
-     * 
-     * @returns The resulting state after processing the coin
-     */
-    insertCoin(): string {
-        return this.sendSignal('coin');
-    }
-
-    /**
-     * Processes a push/passage signal.
-     * 
-     * Convenience method that sends a 'push' signal to the state machine.
-     * If the turnstile is unlocked, it will transition to locked.
-     * If already locked, the state remains unchanged (blocked passage).
-     * 
-     * @returns The resulting state after attempting to push through
-     */
-    pushThrough(): string {
-        return this.sendSignal('push');
-    }
-
-    /**
-     * Checks if the turnstile is currently locked.
-     * 
-     * @returns true if the turnstile is in the "locked" state, false otherwise
-     */
-    isLocked(): boolean {
-        return this.getCurrentState() === 'locked';
-    }
-
-    /**
-     * Checks if the turnstile is currently unlocked and allows passage.
-     * 
-     * @returns true if the turnstile is in the "unlocked" state, false otherwise
-     */
-    isUnlocked(): boolean {
-        return this.getCurrentState() === 'unlocked';
-    }
+ // Convenience methods
+    insertCoin(): string { return this.sendSignal('coin'); }
+    pushThrough(): string { return this.sendSignal('push'); }
+    isLocked(): boolean { return this.getCurrentState() === 'locked'; }
+    isUnlocked(): boolean { return this.getCurrentState() === 'unlocked'; }
 }

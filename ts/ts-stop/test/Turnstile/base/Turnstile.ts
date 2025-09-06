@@ -21,10 +21,3 @@ export class Turnstile extends MatrixBasedStateMachine<string, string> {
     isLocked(): boolean { return this.getCurrentState() === 'locked'; }
     isUnlocked(): boolean { return this.getCurrentState() === 'unlocked'; }
 }
-
-/**  -----------------Usage
-const turnstile = new TurnstileMatrix();
-turnstile.printTransitionMatrix(); // Debug output
-console.log(turnstile.getCurrentState()); // "locked"
-console.log(turnstile.getValidSignalsFromCurrentState()); // ["coin"]
-*/
