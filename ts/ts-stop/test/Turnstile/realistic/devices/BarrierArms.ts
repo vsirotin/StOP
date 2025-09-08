@@ -9,7 +9,6 @@ export class BarrierArms {
      */
     unlock(): void {
         if (this.isLocked) {
-            console.log("🔓 Barrier Arms: Unlocking mechanism - Arms rotating to OPEN position");
             this.isLocked = false;
         }
     }
@@ -19,13 +18,13 @@ export class BarrierArms {
      */
     lock(): void {
         if (!this.isLocked) {
-            console.log("🔒 Barrier Arms: Locking mechanism - Arms rotating to CLOSED position");
-              this.isLocked = true;
+            this.isLocked = true;
         }
     }
 
     /**
      * Gets current lock status.
+     * @returns True if arms are locked (CLOSED), false if unlocked (OPEN)
      */
     getIsLocked(): boolean {
         return this.isLocked;

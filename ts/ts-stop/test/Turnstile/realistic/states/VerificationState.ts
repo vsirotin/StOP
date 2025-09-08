@@ -1,6 +1,6 @@
 import { IDefaultState } from "../../../../src/IDefaultState";
 import { IStateWithActions } from "../../../../src/IStateWithActions";
-import { Bell } from "../devices/Bell";
+import { Buzzer } from "../devices/Buzzer";
 import { CoinAcceptorWithMemory } from "../devices/CoinAcceptor";
 
 /**

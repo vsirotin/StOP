@@ -1,0 +1,70 @@
+<mxfile host="65bd71144e">
+    <diagram name="TurnstileObject UML" id="turnstile-object-uml">
+        <mxGraphModel dx="1359" dy="1603" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry y="-450" width="790" height="640" as="geometry"/>
+                </mxCell>
+                <mxCell id="turnstile-object" value="&lt;&lt;class&gt;&gt;&#xa;TurnstileObject&#xa;&#xa;+ constructor()&#xa;+ insertCoin(): IStateWithActions&#xa;+ pushThrough(): IStateWithActions" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+                    <mxGeometry x="345" y="-220" width="300" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="iturnstile" value="&lt;&lt;interface&gt;&gt;&#xa;ITurnstile&lt;STATE&gt;&#xa;&#xa;+ insertCoin(): STATE&#xa;+ pushThrough(): STATE" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="370" y="-370" width="250" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="locked-state" value="&lt;&lt;class&gt;&gt;&#xa;LockedState&#xa;&#xa;+ afterEntryAction(): void&#xa;+ beforeExitAction(): void&#xa;+ toString(): string" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="240" y="-60" width="200" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="unlocked-state" value="&lt;&lt;class&gt;&gt;&#xa;UnlockedState&#xa;&#xa;+ afterEntryAction(): void&#xa;+ beforeExitAction(): void&#xa;+ toString(): string" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="520" y="-60" width="200" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="istate-with-actions" value="&lt;&lt;interface&gt;&gt;&#xa;IStateWithActions&#xa;&#xa;+ afterEntryAction(): void&#xa;+ beforeExitAction(): void" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="370" y="90" width="200" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="turnstile-signal" value="&lt;&lt;enum&gt;&gt;&#xa;TurnstileSignal&#xa;&#xa;+ COIN: &quot;coin&quot;&#xa;+ PUSH: &quot;push&quot;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="-220" width="200" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="implements1" value="" style="endArrow=block;endSize=16;endFill=0;html=1;dashed=1;" parent="1" source="turnstile-object" target="iturnstile" edge="1">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="680" y="50" as="sourcePoint"/>
+                        <mxPoint x="810" y="50" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="implements2" value="" style="endArrow=block;endSize=16;endFill=0;html=1;dashed=1;" parent="1" source="locked-state" target="istate-with-actions" edge="1">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="20" y="200" as="sourcePoint"/>
+                        <mxPoint x="50" y="250" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="implements3" value="" style="endArrow=block;endSize=16;endFill=0;html=1;dashed=1;" parent="1" source="unlocked-state" target="istate-with-actions" edge="1">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="190" y="200" as="sourcePoint"/>
+                        <mxPoint x="90" y="250" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uses1" value="uses" style="endArrow=open;endSize=12;dashed=1;html=1;" parent="1" source="turnstile-object" target="turnstile-signal" edge="1">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="360" y="30" as="sourcePoint"/>
+                        <mxPoint x="130" y="-40" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uses2" value="uses" style="endArrow=open;endSize=12;dashed=1;html=1;" parent="1" source="turnstile-object" target="locked-state" edge="1">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="360" y="70" as="sourcePoint"/>
+                        <mxPoint x="130" y="130" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uses3" value="uses" style="endArrow=open;endSize=12;dashed=1;html=1;" parent="1" source="turnstile-object" target="unlocked-state" edge="1">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="390" y="90" as="sourcePoint"/>
+                        <mxPoint x="250" y="110" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="title" value="TurnstileObject System - UML Class Diagram" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="220" y="-430" width="400" height="30" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

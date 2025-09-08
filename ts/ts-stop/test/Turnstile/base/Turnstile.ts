@@ -1,10 +1,11 @@
 import { MatrixBasedStateMachine } from '../../../src/MatrixBasedStateMachine';
 import { transitionMatrix } from '../../../src/TransitionMatrix';
+import { ITurnstile } from './ITurnstile';
 
 /**
  * Turnstile implementation using matrix-based state machine.
  */
-export class Turnstile extends MatrixBasedStateMachine<string, string> {
+export class Turnstile extends MatrixBasedStateMachine<string, string> implements ITurnstile<string> {
     constructor() {
         const matrix = transitionMatrix([
             [           , "locked"    , "unlocked" ],

@@ -145,14 +145,4 @@ export abstract class MatrixBasedStateMachine<STATE, SIGNAL> extends FiniteState
         return this.matrix;
     }
 
-    /**
-     * Prints the transition matrix for debugging purposes.
-     * 
-     * This method provides a visual representation of the state machine's
-     * transition table, making it easier to understand and debug the logic.
-     */
-    printTransitionMatrix(): void {
-        console.log(`${this.constructor.name} Transition Matrix:`);
-        this.matrix.printMatrix();
-    }
 }

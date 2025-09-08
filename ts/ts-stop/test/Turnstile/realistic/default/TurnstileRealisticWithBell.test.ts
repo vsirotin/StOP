@@ -1,13 +1,13 @@
 import { TurnstileRealisticWithBell } from './TurnstileRealisticWithBell';
 import { LockedStateRealistic } from '../states/LockedStateRealistic';
 import { UnlockedStateRealistic } from '../states/UnlockedStateRealistic';
-import { Bell } from '../devices/Bell';
+import { Buzzer } from '../devices/Buzzer';
 import { ErrorAttemptState } from '../states/ErrorAttemptState';
 
 describe('TurnstileRealisticWithBell - ErrorAttemptState Tests', () => {
     let turnstile: TurnstileRealisticWithBell;
     let errorState: ErrorAttemptState;
-    let bell: Bell;
+    let bell: Buzzer;
 
     function isLocked(): boolean {
         return turnstile.getCurrentState() instanceof LockedStateRealistic;
@@ -26,7 +26,7 @@ describe('TurnstileRealisticWithBell - ErrorAttemptState Tests', () => {
     });
 
     afterEach(() => {
-        bell.resetRingsCount();
+        bell.reset();
     });
 
     describe('Default State Behavior - ErrorAttemptState', () => {
@@ -35,7 +35,7 @@ describe('TurnstileRealisticWithBell - ErrorAttemptState Tests', () => {
         });
 
         test('should have bell instance', () => {
-            expect(bell).toBeInstanceOf(Bell);
+            expect(bell).toBeInstanceOf(Buzzer);
         });
 
         test('should ring bell when pushing while locked (invalid operation)', () => {
@@ -50,7 +50,7 @@ describe('TurnstileRealisticWithBell - ErrorAttemptState Tests', () => {
             expect(resultState).toBeInstanceOf(LockedStateRealistic);
             
             // Should have triggered bell and error message
-            expect(bell.getRingsCount()).toBe(1);
+            expect(bell.getBuzzCount()).toBe(1);
         });
 
         test('should ring bell when inserting coin while unlocked (invalid operation)', () => {
@@ -67,7 +67,7 @@ describe('TurnstileRealisticWithBell - ErrorAttemptState Tests', () => {
             expect(resultState).toBeInstanceOf(UnlockedStateRealistic);
             
             // Should have triggered bell and error message
-             expect(bell.getRingsCount()).toBe(1);
+             expect(bell.getBuzzCount()).toBe(1);
         });
 
 
@@ -81,7 +81,7 @@ describe('TurnstileRealisticWithBell - ErrorAttemptState Tests', () => {
             expect(isLocked()).toBe(true);
             
             // Bell should have rung 3 times
-              expect(bell.getRingsCount()).toBe(3);
+              expect(bell.getBuzzCount()).toBe(3);
             
         });
 
@@ -96,7 +96,7 @@ describe('TurnstileRealisticWithBell - ErrorAttemptState Tests', () => {
             expect(isLocked()).toBe(true);
             
             // Should NOT have triggered bell for valid operations
-            expect(bell.getRingsCount()).toBe(0);
+            expect(bell.getBuzzCount()).toBe(0);
             
         });
 
@@ -119,7 +119,7 @@ describe('TurnstileRealisticWithBell - ErrorAttemptState Tests', () => {
             expect(isLocked()).toBe(true);
             
             // Should have exactly 2 bell rings (for the 2 invalid operations)
-            expect(bell.getRingsCount()).toBe(2);
+            expect(bell.getBuzzCount()).toBe(2);
         });
 
         test('should maintain state machine integrity after error attempts', () => {
@@ -145,7 +145,7 @@ describe('TurnstileRealisticWithBell - ErrorAttemptState Tests', () => {
             expect(isLocked()).toBe(true);
             
             // Final verification: 4 invalid operations total
-            expect(bell.getRingsCount()).toBe(4);
+            expect(bell.getBuzzCount()).toBe(4);
         });
     });
 

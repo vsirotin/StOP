@@ -20,7 +20,7 @@ export interface ITransition<STATE, SIGNAL> {
  * @template STATE - The type representing possible states in the state machine
  * @template SIGNAL - The type representing signals/events that trigger state transitions
  */
-export interface IFiniteStateMachine<STATE, SIGNAL> {
+export interface IFiniteStateMachine<STATE> {
     /**
      * Gets the current state of the state machine.
      * 
@@ -28,13 +28,6 @@ export interface IFiniteStateMachine<STATE, SIGNAL> {
      */
     getCurrentState(): STATE;
     
-    /**
-     * Sends a signal to the state machine to potentially trigger a state transition.
-     * 
-     * @param signal - The signal/event to process
-     * @returns The resulting state after processing the signal
-     */
-    sendSignal(signal: SIGNAL): STATE;
 }
 
 /**
@@ -65,39 +58,10 @@ export interface IFiniteStateMachine<STATE, SIGNAL> {
  *         );
  *     }
  * 
- *     insertCoin(): string {
- *         return this.sendSignal('coin');
- *     }
- * 
- *     pushThrough(): string {
- *         return this.sendSignal('push');
- *     }
- * 
- *     isLocked(): boolean {
- *         return this.getCurrentState() === 'locked';
- *     }
- * 
- *     isUnlocked(): boolean {
- *         return this.getCurrentState() === 'unlocked';
- *     }
+ * ...
  * }
  * 
- * // Enhanced turnstile with state actions
- * class ActionState implements IStateWithActions {
- *     constructor(private name: string, private message: string) {}
- * 
- *     afterEntryAction(): void {
- *         console.log(`🎯 Entered ${this.name}: ${this.message}`);
- *     }
- * 
- *     beforeExitAction(): void {
- *         console.log(`🚀 Leaving ${this.name}`);
- *     }
- * 
- *     toString(): string {
- *         return this.name;
- *     }
- * }
+ 
  * 
  * class TurnstileWithActions extends FiniteStateMachine<ActionState, string> {
  *     private locked = new ActionState('locked', 'Payment required');
@@ -119,20 +83,9 @@ export interface IFiniteStateMachine<STATE, SIGNAL> {
  *     pushThrough(): ActionState { return this.sendSignal('push'); }
  * }
  * 
- * // Usage example:
- * const turnstile = new TurnstileWithActions();
- * // Output: 🎯 Entered locked: Payment required
- * 
- * turnstile.insertCoin();
- * // Output: 🚀 Leaving locked
- * // Output: 🎯 Entered unlocked: Please proceed
- * 
- * turnstile.pushThrough();
- * // Output: 🚀 Leaving unlocked  
- * // Output: 🎯 Entered locked: Payment required
  * ```
  */
-export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateMachine<STATE, SIGNAL> {
+export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateMachine<STATE> {
     /**
      * The current state of the state machine.
      * Protected to allow subclass access while maintaining encapsulation.
@@ -206,7 +159,7 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
      * @param signal - The signal/event to process
      * @returns The resulting state after processing the signal
      */
-    sendSignal(signal: SIGNAL): STATE {
+    protected sendSignal(signal: SIGNAL): STATE {
         // Find a transition that matches current state and signal
         const transition = this.transitions.find(t => 
             t.from === this.currentState && t.signal === signal

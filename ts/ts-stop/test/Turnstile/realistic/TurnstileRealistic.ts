@@ -15,8 +15,8 @@ const barrierArms = new BarrierArms();
 const statusIndicator = new StatusIndicator();
 
 // Create state instances 
-const l = new LockedStateRealistic(coinAcceptor, barrierArms, statusIndicator);
-const u = new UnlockedStateRealistic(coinAcceptor, barrierArms, statusIndicator);
+const l = new LockedStateRealistic(coinAcceptor, statusIndicator);
+const u = new UnlockedStateRealistic(barrierArms);
 
 // Create short aliases for signals
 const coin = TurnstileSignal.COIN;
@@ -72,13 +72,10 @@ const turnstileMatrix : TransitionMatrix<NonEmpty<IStateWithActions>, NonEmpty<T
  * @example
  * ```typescript
  * const turnstile = new TurnstileObject();
- * console.log(turnstile.isLocked()); // true
  * 
  * turnstile.insertCoin();
- * console.log(turnstile.isUnlocked()); // true
  * 
  * turnstile.pushThrough();
- * console.log(turnstile.isLocked()); // true
  * ```
  */
 

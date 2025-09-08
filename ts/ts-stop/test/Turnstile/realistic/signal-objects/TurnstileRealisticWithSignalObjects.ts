@@ -2,7 +2,7 @@
 
 import { IStateWithActions } from "../../../../src/IStateWithActions";
 import { NonEmpty, transitionMatrix, TransitionMatrix } from "../../../../src/TransitionMatrix";
-import { Bell } from "../devices/Bell";
+import { Buzzer } from "../devices/Buzzer";
 import { ErrorAttemptState } from "../states/ErrorAttemptState";
 import { BarrierArms } from "../devices/BarrierArms";
 import { CoinAcceptor } from "../devices/CoinAcceptor";
@@ -17,7 +17,7 @@ import { MatrixBasedStateMachine } from "../../../../src/MatrixBasedStateMachine
 const coinAcceptor = new CoinAcceptor();
 const barrierArms = new BarrierArms();
 const statusIndicator = new StatusIndicator();
-const bell = new Bell();
+const bell = new Buzzer();
 
 // Update state instances to include bell
 const l = new LockedStateRealistic(coinAcceptor, barrierArms, statusIndicator);

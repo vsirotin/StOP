@@ -91,34 +91,6 @@ describe('TurnstileMatrix', () => {
         });
     });
 
-    describe('sendSignal', () => {
-        it('should process coin signal correctly', () => {
-            const resultState = turnstileMatrix.sendSignal('coin');
-            expect(resultState).toBe('unlocked');
-            expect(turnstileMatrix.getCurrentState()).toBe('unlocked');
-        });
-
-        it('should process push signal correctly', () => {
-            // First unlock
-            turnstileMatrix.sendSignal('coin');
-            
-            // Then push through
-            const resultState = turnstileMatrix.sendSignal('push');
-            expect(resultState).toBe('locked');
-            expect(turnstileMatrix.getCurrentState()).toBe('locked');
-        });
-
-        it('should ignore invalid signals', () => {
-            const initialState = turnstileMatrix.getCurrentState();
-            
-            // Act: send invalid signal
-            const resultState = turnstileMatrix.sendSignal('invalid-signal');
-            
-            // Assert: state should remain unchanged
-            expect(resultState).toBe(initialState);
-            expect(turnstileMatrix.getCurrentState()).toBe(initialState);
-        });
-    });
 
     describe('matrix-specific methods', () => {
         describe('hasState', () => {
@@ -175,11 +147,6 @@ describe('TurnstileMatrix', () => {
             });
         });
 
-        describe('printTransitionMatrix', () => {
-            it('should not throw when printing matrix', () => {
-                expect(() => turnstileMatrix.printTransitionMatrix()).not.toThrow();
-            });
-        });
     });
 
     describe('state checking methods', () => {
@@ -264,7 +231,6 @@ describe('TurnstileMatrix', () => {
         it('should properly extend MatrixBasedStateMachine', () => {
             expect(turnstileMatrix).toBeInstanceOf(Turnstile);
             expect(turnstileMatrix.getCurrentState).toBeDefined();
-            expect(turnstileMatrix.sendSignal).toBeDefined();
             expect(turnstileMatrix.getMatrix).toBeDefined();
         });
 
@@ -287,19 +253,6 @@ describe('TurnstileMatrix', () => {
             }
         });
 
-        it('should maintain state consistency', () => {
-            const initialState = turnstileMatrix.getCurrentState();
-            
-            // Perform various operations
-            turnstileMatrix.sendSignal('invalid');
-            turnstileMatrix.insertCoin();
-            turnstileMatrix.sendSignal('another-invalid');
-            turnstileMatrix.pushThrough();
-            turnstileMatrix.sendSignal('yet-another-invalid');
-            
-            // Should be back to initial state
-            expect(turnstileMatrix.getCurrentState()).toBe(initialState);
-        });
     });
 
     // 🎯 COMPARISON TESTS WITH ORIGINAL TURNSTILE
@@ -330,40 +283,6 @@ describe('TurnstileMatrix', () => {
                 expect(matrixSignals).toEqual(expectedSignals);
             });
 
-            it('should have equivalent transition behavior', () => {
-                // Test all possible state-signal combinations
-                const testCases = [
-                    { fromState: 'locked', signal: 'coin', expectedState: 'unlocked' },
-                    { fromState: 'locked', signal: 'push', expectedState: 'locked' },
-                    { fromState: 'unlocked', signal: 'coin', expectedState: 'unlocked' },
-                    { fromState: 'unlocked', signal: 'push', expectedState: 'locked' }
-                ];
-
-                for (const testCase of testCases) {
-                    // Reset both turnstiles to the test starting state
-                    const matrixTurnstile = new Turnstile();
-                    const originalTurnstile = new TurnstileBase();
-
-                    // Move to the desired starting state if needed
-                    if (testCase.fromState === 'unlocked') {
-                        matrixTurnstile.insertCoin();
-                        originalTurnstile.insertCoin();
-                    }
-
-                    // Verify both are in the expected starting state
-                    expect(matrixTurnstile.getCurrentState()).toBe(testCase.fromState);
-                    expect(originalTurnstile.getCurrentState()).toBe(testCase.fromState);
-
-                    // Send the signal to both
-                    const matrixResult = matrixTurnstile.sendSignal(testCase.signal);
-                    const originalResult = originalTurnstile.sendSignal(testCase.signal);
-
-                    // Verify identical behavior
-                    expect(matrixResult).toBe(originalResult);
-                    expect(matrixResult).toBe(testCase.expectedState);
-                    expect(matrixTurnstile.getCurrentState()).toBe(originalTurnstile.getCurrentState());
-                }
-            });
         });
 
         describe('behavioral equivalence', () => {
@@ -420,21 +339,6 @@ describe('TurnstileMatrix', () => {
                 }
             });
 
-            it('should handle invalid signals identically', () => {
-                const invalidSignals = ['invalid', 'open', 'close', 'reset', ''];
-
-                for (const signal of invalidSignals) {
-                    // Reset to known state
-                    const matrixTurnstile = new Turnstile();
-                    const originalTurnstile = new TurnstileBase();
-
-                    const matrixResult = matrixTurnstile.sendSignal(signal);
-                    const originalResult = originalTurnstile.sendSignal(signal);
-
-                    expect(matrixResult).toBe(originalResult);
-                    expect(matrixTurnstile.getCurrentState()).toBe(originalTurnstile.getCurrentState());
-                }
-            });
         });
 
 
@@ -462,11 +366,6 @@ describe('TurnstileMatrix', () => {
                     );
                     expect(found).toBeDefined();
                 }
-
-                // Final verification: both implementations should be functionally identical
-                console.log('✅ TurnstileMatrix and Turnstile are functionally equivalent');
-                console.log('📊 Matrix transitions:', matrixTransitions);
-                console.log('🎯 Both implement the same turnstile state machine logic');
             });
         });
     });

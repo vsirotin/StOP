@@ -1,4 +1,5 @@
 import { FiniteStateMachine } from '../../../src/FiniteStateMachine';
+import { ITurnstile } from './ITurnstile';
 
 /**
  * Turnstile finite state machine implementation.
@@ -18,19 +19,9 @@ import { FiniteStateMachine } from '../../../src/FiniteStateMachine';
  *      +------push---------+
  * ```
  * 
- * @example
- * ```typescript
- * const turnstile = new Turnstile();
- * console.log(turnstile.getCurrentState()); // "locked"
- * 
- * turnstile.sendSignal('coin');
- * console.log(turnstile.getCurrentState()); // "unlocked"
- * 
- * turnstile.sendSignal('push');
- * console.log(turnstile.getCurrentState()); // "locked"
  * ```
  */
-export class TurnstileBase extends FiniteStateMachine<string, string> {
+export class TurnstileBase extends FiniteStateMachine<string, string> implements ITurnstile<string> {
     /**
      * Creates a new turnstile in the locked state.
      * 

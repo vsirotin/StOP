@@ -18,7 +18,6 @@ export class StatusIndicator {
     showRed(): void {
         this.greenLight.turnOff();
         this.redLight.turnOn();
-        console.log("🔴 Status Indicator: RED light ON - Access denied");
     }
 
     /**
@@ -27,16 +26,6 @@ export class StatusIndicator {
     showGreen(): void {
         this.redLight.turnOff();
         this.greenLight.turnOn();
-        console.log("🟢 Status Indicator: GREEN light ON - Access granted");
-    }
-
-    /**
-     * Turns off all lights.
-     */
-    turnOff(): void {
-        this.redLight.turnOff();
-        this.greenLight.turnOff();
-        console.log("⚫ Status Indicator: All lights OFF");
     }
 
 }

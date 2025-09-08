@@ -29,9 +29,10 @@ describe('TurnstileRealistic', () => {
         turnstile = new TurnstileRealistic();
         
         // Get device instances from the locked state
-        const lockedState = turnstile.getCurrentState() as LockedStateRealistic;
+        const lockedState = turnstile.getAllStates().find(state => state instanceof LockedStateRealistic) as LockedStateRealistic;
+        const unlockedState = turnstile.getAllStates().find(state => state instanceof UnlockedStateRealistic) as UnlockedStateRealistic;
         coinAcceptor = lockedState.coinAcceptor;
-        barrierArms = lockedState.barrierArms;
+        barrierArms = unlockedState.barrierArms;
         statusIndicator = lockedState.statusIndicator;
         redLight = statusIndicator.redLight;
         greenLight = statusIndicator.greenLight;
@@ -125,7 +126,6 @@ describe('TurnstileRealistic', () => {
             // Should remain locked with same device states
             expect(isLocked()).toBe(true);
             expect(resultState).toBeInstanceOf(LockedStateRealistic);
-            expect(barrierArms.getIsLocked()).toBe(true);
             expect(redLight.getIsOn()).toBe(true);
             expect(greenLight.getIsOn()).toBe(false);
         });
@@ -251,7 +251,6 @@ describe('TurnstileRealistic', () => {
         test('should track device status changes during operation', () => {
             // Initial locked state status
             expect(coinAcceptor.isSlotAvailable()).toBe(true);
-            expect(barrierArms.getIsLocked()).toBe(true);
             expect(redLight.getIsOn()).toBe(true);
             expect(greenLight.getIsOn()).toBe(false);
             

@@ -7,20 +7,21 @@ import { CoinAcceptor } from "../devices/CoinAcceptor";
 import { StatusIndicator } from "../devices/StatusIndicator";
 import { LockedStateRealistic } from "../states/LockedStateRealistic";
 import { UnlockedStateRealistic } from "../states/UnlockedStateRealistic";
-import { Bell } from "../devices/Bell";
+import { Buzzer } from "../devices/Buzzer";
 import { ErrorAttemptState } from "../states/ErrorAttemptState";
 import { MatrixBasedStateMachine } from "../../../../src/MatrixBasedStateMachine";
+import { ITurnstile } from "../../base/ITurnstile";
 
 // Device simulators
 
 const coinAcceptor = new CoinAcceptor();
 const barrierArms = new BarrierArms();
 const statusIndicator = new StatusIndicator();
-const bell = new Bell();
+const bell = new Buzzer();
 
 // Update state instances to include bell
-const l = new LockedStateRealistic(coinAcceptor, barrierArms, statusIndicator);
-const u = new UnlockedStateRealistic(coinAcceptor, barrierArms, statusIndicator);
+const l = new LockedStateRealistic(coinAcceptor, statusIndicator);
+const u = new UnlockedStateRealistic(barrierArms);
 
 // Add error state
 const e = new ErrorAttemptState(bell);
@@ -37,8 +38,10 @@ const turnstileMatrixWithBell: TransitionMatrix<NonEmpty<IStateWithActions>, Non
     [ push ,   , l ,    ]
 ]);
 
-export class TurnstileRealisticWithBell extends MatrixBasedStateMachine<IStateWithActions, TurnstileSignal> {
-    constructor( )
+export class TurnstileRealisticWithBell extends MatrixBasedStateMachine<IStateWithActions, TurnstileSignal> 
+    implements ITurnstile<IStateWithActions> {
+    
+        constructor( )
     {
         super(turnstileMatrixWithBell);
         

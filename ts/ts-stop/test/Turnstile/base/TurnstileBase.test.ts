@@ -85,34 +85,6 @@ describe('Turnstile', () => {
         });
     });
 
-    describe('sendSignal', () => {
-        it('should process coin signal correctly', () => {
-            const resultState = turnstile.sendSignal('coin');
-            expect(resultState).toBe('unlocked');
-            expect(turnstile.getCurrentState()).toBe('unlocked');
-        });
-
-        it('should process push signal correctly', () => {
-            // First unlock
-            turnstile.sendSignal('coin');
-            
-            // Then push through
-            const resultState = turnstile.sendSignal('push');
-            expect(resultState).toBe('locked');
-            expect(turnstile.getCurrentState()).toBe('locked');
-        });
-
-        it('should ignore invalid signals', () => {
-            const initialState = turnstile.getCurrentState();
-            
-            // Act: send invalid signal
-            const resultState = turnstile.sendSignal('invalid-signal');
-            
-            // Assert: state should remain unchanged
-            expect(resultState).toBe(initialState);
-            expect(turnstile.getCurrentState()).toBe(initialState);
-        });
-    });
 
     describe('state checking methods', () => {
         describe('isLocked', () => {
@@ -196,7 +168,6 @@ describe('Turnstile', () => {
         it('should properly extend FiniteStateMachine', () => {
             expect(turnstile).toBeInstanceOf(TurnstileBase);
             expect(turnstile.getCurrentState).toBeDefined();
-            expect(turnstile.sendSignal).toBeDefined();
         });
 
         it('should have working getCurrentState method', () => {
@@ -216,20 +187,6 @@ describe('Turnstile', () => {
                 turnstile.pushThrough();
                 expect(turnstile.getCurrentState()).toBe('locked');
             }
-        });
-
-        it('should maintain state consistency', () => {
-            const initialState = turnstile.getCurrentState();
-            
-            // Perform various operations
-            turnstile.sendSignal('invalid');
-            turnstile.insertCoin();
-            turnstile.sendSignal('another-invalid');
-            turnstile.pushThrough();
-            turnstile.sendSignal('yet-another-invalid');
-            
-            // Should be back to initial state
-            expect(turnstile.getCurrentState()).toBe(initialState);
         });
     });
 });

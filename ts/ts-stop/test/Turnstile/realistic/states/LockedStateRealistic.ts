@@ -9,7 +9,6 @@ import { StatusIndicator } from "../devices/StatusIndicator";
 export class LockedStateRealistic implements IStateWithActions {
     constructor(
         public coinAcceptor: CoinAcceptor,
-        public barrierArms: BarrierArms,
         public statusIndicator: StatusIndicator
     ) {}
 
@@ -17,14 +16,10 @@ export class LockedStateRealistic implements IStateWithActions {
      * Action executed after entering the locked state.
      */
     afterEntryAction(): void {
-        console.log("Start of afterEntryAction");
 
         // Configure devices for locked state
         this.coinAcceptor.openSlot();           // Ready to receive payments
-        this.barrierArms.lock();                // Block passage
         this.statusIndicator.showRed();         // Indicate access denied
-        
-        console.log("🔒 Turnstile: LOCKED - Insert coin to proceed");
     }
 
     /**
@@ -32,6 +27,7 @@ export class LockedStateRealistic implements IStateWithActions {
      */
     beforeExitAction(): void {
        this.coinAcceptor.closeSlot();  // Stop receiving payments
+       this.statusIndicator.showGreen(); // Turn off status indicator
   
     }
 

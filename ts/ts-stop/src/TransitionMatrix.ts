@@ -106,32 +106,6 @@ export class TransitionMatrix<STATE, SIGNAL> {
     getTransitions(): { from: STATE; to: STATE; signal: SIGNAL }[] {
         return [...this.transitions];
     }
-
-    /**
-     * Print the matrix for debugging.
-     */
-    printMatrix(): void {
-        console.log('Transition Matrix:');
-        
-        // Header row
-        const header = ['Signal', ...this.states.map(s => String(s))];
-        console.log(header.join('\t| '));
-        console.log('-'.repeat(header.join('\t| ').length));
-
-        // Signal rows
-        for (const signal of this.signals) {
-            const row = [String(signal)];
-            
-            for (const state of this.states) {
-                const transition = this.transitions.find(t => 
-                    t.from === state && t.signal === signal
-                );
-                row.push(transition ? String(transition.to) : '');
-            }
-            
-            console.log(row.join('\t| '));
-        }
-    }
 }
 
 /**

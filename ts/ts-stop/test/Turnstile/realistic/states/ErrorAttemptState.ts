@@ -1,6 +1,6 @@
 import { IDefaultState } from "../../../../src/IDefaultState";
 import { IStateWithActions } from "../../../../src/IStateWithActions";
-import { Bell } from "../devices/Bell";
+import { Buzzer } from "../devices/Buzzer";
 
 /**
  * Error state that handles invalid operations by ringing a bell.
@@ -8,7 +8,7 @@ import { Bell } from "../devices/Bell";
 export class ErrorAttemptState implements IStateWithActions, IDefaultState {
 
     constructor(
-         public bell: Bell
+         public bell: Buzzer
     ) {}
     
     isDefaultState(): boolean {
@@ -16,8 +16,7 @@ export class ErrorAttemptState implements IStateWithActions, IDefaultState {
     }
 
     afterEntryAction(): void {
-        this.bell.ring();
-        console.log("Invalid operation!");
+        this.bell.buzz();
     }
 
     beforeExitAction(): void {

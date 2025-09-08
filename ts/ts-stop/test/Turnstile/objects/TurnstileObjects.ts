@@ -2,6 +2,7 @@ import { NonEmpty, TransitionMatrix, transitionMatrix } from '../../../src/Trans
 import { IStateWithActions } from '../../../src/IStateWithActions';
 import { TurnstileSignal } from './TurnstileSignal';
 import { MatrixBasedStateMachine } from '../../../src/MatrixBasedStateMachine';
+import { ITurnstile } from '../base/ITurnstile';
 
 /**
  * Locked state object with entry and exit actions.
@@ -108,7 +109,9 @@ const turnstileMatrix : TransitionMatrix<NonEmpty<IStateWithActions>, NonEmpty<T
  * 3. Push through → transitions back to LOCKED
  */
 
-export class TurnstileObject extends MatrixBasedStateMachine<IStateWithActions, TurnstileSignal> {
+export class TurnstileObject extends MatrixBasedStateMachine<IStateWithActions, TurnstileSignal> 
+    implements ITurnstile<IStateWithActions> { 
+    
     constructor( )
     {
         super(turnstileMatrix);
