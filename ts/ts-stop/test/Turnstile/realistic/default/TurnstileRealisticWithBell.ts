@@ -1,7 +1,6 @@
 // Add these imports to existing TurnstileRealistic.ts
 import { IStateWithActions } from "../../../../src/IStateWithActions";
 import { NonEmpty, transitionMatrix, TransitionMatrix } from "../../../../src/TransitionMatrix";
-import { TurnstileAbstract } from "../../objects/TurnstileAbstract";
 import { TurnstileSignal } from "../../objects/TurnstileSignal";
 import { BarrierArms } from "../devices/BarrierArms";
 import { CoinAcceptor } from "../devices/CoinAcceptor";
@@ -10,6 +9,7 @@ import { LockedStateRealistic } from "../states/LockedStateRealistic";
 import { UnlockedStateRealistic } from "../states/UnlockedStateRealistic";
 import { Bell } from "../devices/Bell";
 import { ErrorAttemptState } from "../states/ErrorAttemptState";
+import { MatrixBasedStateMachine } from "../../../../src/MatrixBasedStateMachine";
 
 // Device simulators
 
@@ -37,9 +37,30 @@ const turnstileMatrixWithBell: TransitionMatrix<NonEmpty<IStateWithActions>, Non
     [ push ,   , l ,    ]
 ]);
 
-export class TurnstileRealisticWithBell extends TurnstileAbstract {
-    constructor() {
-        // Pass error state in states array to enable default state behavior
+export class TurnstileRealisticWithBell extends MatrixBasedStateMachine<IStateWithActions, TurnstileSignal> {
+    constructor( )
+    {
         super(turnstileMatrixWithBell);
+        
+        // Execute initial state entry action
+        this.getCurrentState().afterEntryAction();
+    }
+
+        /**
+     * Convenience method to insert a coin.
+     * 
+     * @returns The resulting state after inserting coin
+     */
+    insertCoin(): IStateWithActions {
+        return this.sendSignal(TurnstileSignal.COIN);
+    }
+
+    /**
+     * Convenience method to push through the turnstile.
+     * 
+     * @returns The resulting state after pushing through
+     */
+    pushThrough(): IStateWithActions {
+        return this.sendSignal(TurnstileSignal.PUSH);
     }
 }

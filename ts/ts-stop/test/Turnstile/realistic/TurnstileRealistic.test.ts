@@ -3,7 +3,6 @@ import { CoinAcceptor } from './devices/CoinAcceptor';
 import { BarrierArms } from './devices/BarrierArms';
 import { StatusIndicator } from './devices/StatusIndicator';
 import { Light } from './devices/Light';
-import { TurnstileSignal } from '../objects/TurnstileSignal';
 import { LockedStateRealistic } from './states/LockedStateRealistic';
 import { UnlockedStateRealistic } from './states/UnlockedStateRealistic';
 
@@ -16,6 +15,14 @@ describe('TurnstileRealistic', () => {
     let statusIndicator: StatusIndicator;
     let redLight: Light;
     let greenLight: Light;
+
+    function isLocked(): boolean {
+        return turnstile.getCurrentState() instanceof LockedStateRealistic;
+    }
+
+    function isUnlocked(): boolean {
+        return turnstile.getCurrentState() instanceof UnlockedStateRealistic;
+    }
 
     beforeEach(() => {
         // Create turnstile instance with real devices
@@ -39,8 +46,8 @@ describe('TurnstileRealistic', () => {
 
     describe('Constructor and Initial State', () => {
         test('should initialize in locked state', () => {
-            expect(turnstile.isLocked()).toBe(true);
-            expect(turnstile.isUnlocked()).toBe(false);
+            expect(isLocked()).toBe(true);
+            expect(isUnlocked()).toBe(false);
         });
 
         test('should have correct initial state type', () => {
@@ -66,12 +73,12 @@ describe('TurnstileRealistic', () => {
     describe('State Transitions - insertCoin()', () => {
         test('should transition from locked to unlocked when coin inserted successfully', () => {
             
-            expect(turnstile.isLocked()).toBe(true);
+            expect(isLocked()).toBe(true);
             
             const resultState = turnstile.insertCoin();
             
-            expect(turnstile.isUnlocked()).toBe(true);
-            expect(turnstile.isLocked()).toBe(false);
+            expect(isUnlocked()).toBe(true);
+            expect(isLocked()).toBe(false);
             expect(resultState).toBeInstanceOf(UnlockedStateRealistic);
         });
 
@@ -97,13 +104,13 @@ describe('TurnstileRealistic', () => {
         test('should remain unlocked when coin inserted while already unlocked', () => {
 
             turnstile.insertCoin();
-            expect(turnstile.isUnlocked()).toBe(true);
+            expect(isUnlocked()).toBe(true);
             
             // Insert another coin
             const resultState = turnstile.insertCoin();
             
             // Should remain unlocked with same device states
-            expect(turnstile.isUnlocked()).toBe(true);
+            expect(isUnlocked()).toBe(true);
             expect(resultState).toBeInstanceOf(UnlockedStateRealistic);
             expect(barrierArms.getIsLocked()).toBe(false);
             expect(greenLight.getIsOn()).toBe(true);
@@ -113,12 +120,12 @@ describe('TurnstileRealistic', () => {
 
     describe('State Transitions - pushThrough()', () => {
         test('should remain locked when pushing while locked', () => {
-            expect(turnstile.isLocked()).toBe(true);
+            expect(isLocked()).toBe(true);
             
             const resultState = turnstile.pushThrough();
             
             // Should remain locked with same device states
-            expect(turnstile.isLocked()).toBe(true);
+            expect(isLocked()).toBe(true);
             expect(resultState).toBeInstanceOf(LockedStateRealistic);
             expect(barrierArms.getIsLocked()).toBe(true);
             expect(redLight.getIsOn()).toBe(true);
@@ -128,14 +135,14 @@ describe('TurnstileRealistic', () => {
         test('should transition from unlocked to locked when pushing through', () => {
 
             turnstile.insertCoin();
-            expect(turnstile.isUnlocked()).toBe(true);
+            expect(isUnlocked()).toBe(true);
             
             // Mock successful push detection
             
             const resultState = turnstile.pushThrough();
             
-            expect(turnstile.isLocked()).toBe(true);
-            expect(turnstile.isUnlocked()).toBe(false);
+            expect(isLocked()).toBe(true);
+            expect(isUnlocked()).toBe(false);
             expect(resultState).toBeInstanceOf(LockedStateRealistic);
         });
 
@@ -169,7 +176,7 @@ describe('TurnstileRealistic', () => {
             const resultState = turnstile.pushThrough();
             
             // Should still transition to locked (state machine rule)
-            expect(turnstile.isLocked()).toBe(true);
+            expect(isLocked()).toBe(true);
             expect(resultState).toBeInstanceOf(LockedStateRealistic);
             expect(barrierArms.getIsLocked()).toBe(true);
             expect(redLight.getIsOn()).toBe(true);
@@ -180,20 +187,20 @@ describe('TurnstileRealistic', () => {
         test('should handle complete turnstile usage cycle', () => {
             
             // 1. Start locked
-            expect(turnstile.isLocked()).toBe(true);
+            expect(isLocked()).toBe(true);
             expect(redLight.getIsOn()).toBe(true);
             expect(greenLight.getIsOn()).toBe(false);
             
             // 2. Insert coin → unlock
             turnstile.insertCoin();
-            expect(turnstile.isUnlocked()).toBe(true);
+            expect(isUnlocked()).toBe(true);
             expect(redLight.getIsOn()).toBe(false);
             expect(greenLight.getIsOn()).toBe(true);
             expect(barrierArms.getIsLocked()).toBe(false);
             
             // 3. Push through → lock
             turnstile.pushThrough();
-            expect(turnstile.isLocked()).toBe(true);
+            expect(isLocked()).toBe(true);
             expect(redLight.getIsOn()).toBe(true);
             expect(greenLight.getIsOn()).toBe(false);
             expect(barrierArms.getIsLocked()).toBe(true);
@@ -204,19 +211,19 @@ describe('TurnstileRealistic', () => {
             
             for (let i = 0; i < 3; i++) {
                 // Start of each cycle - locked
-                expect(turnstile.isLocked()).toBe(true);
+                expect(isLocked()).toBe(true);
                 expect(redLight.getIsOn()).toBe(true);
                 expect(greenLight.getIsOn()).toBe(false);
                 
                 // Insert coin - unlocked
                 turnstile.insertCoin();
-                expect(turnstile.isUnlocked()).toBe(true);
+                expect(isUnlocked()).toBe(true);
                 expect(redLight.getIsOn()).toBe(false);
                 expect(greenLight.getIsOn()).toBe(true);
                 
                 // Push through - locked again
                 turnstile.pushThrough();
-                expect(turnstile.isLocked()).toBe(true);
+                expect(isLocked()).toBe(true);
                 expect(redLight.getIsOn()).toBe(true);
                 expect(greenLight.getIsOn()).toBe(false);
             }
@@ -226,13 +233,13 @@ describe('TurnstileRealistic', () => {
 
     describe('State Information and Queries', () => {
         test('should provide accurate state information', () => {
-            expect(turnstile.isLocked()).toBe(true);
-            expect(turnstile.isUnlocked()).toBe(false);
+            expect(isLocked()).toBe(true);
+            expect(isUnlocked()).toBe(false);
             
             turnstile.insertCoin();
             
-            expect(turnstile.isLocked()).toBe(false);
-            expect(turnstile.isUnlocked()).toBe(true);
+            expect(isLocked()).toBe(false);
+            expect(isUnlocked()).toBe(true);
         });
 
     });

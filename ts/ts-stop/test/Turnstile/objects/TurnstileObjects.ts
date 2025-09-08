@@ -1,7 +1,7 @@
 import { NonEmpty, TransitionMatrix, transitionMatrix } from '../../../src/TransitionMatrix';
 import { IStateWithActions } from '../../../src/IStateWithActions';
-import { TurnstileAbstract } from './TurnstileAbstract';
 import { TurnstileSignal } from './TurnstileSignal';
+import { MatrixBasedStateMachine } from '../../../src/MatrixBasedStateMachine';
 
 /**
  * Locked state object with entry and exit actions.
@@ -106,26 +106,33 @@ const turnstileMatrix : TransitionMatrix<NonEmpty<IStateWithActions>, NonEmpty<T
  * 1. Initialize turnstile (starts in LOCKED state)
  * 2. Insert coin → transitions to UNLOCKED
  * 3. Push through → transitions back to LOCKED
- * 4. Repeat cycle
- * 
- * @extends TurnstileAbstract
- * @implements Matrix-based state machine pattern
- * @example
- * ```typescript
- * const turnstile = new TurnstileObject();
- * console.log(turnstile.isLocked()); // true
- * 
- * turnstile.insertCoin();
- * console.log(turnstile.isUnlocked()); // true
- * 
- * turnstile.pushThrough();
- * console.log(turnstile.isLocked()); // true
- * ```
  */
 
-export class TurnstileObject extends TurnstileAbstract {
-    constructor() {
+export class TurnstileObject extends MatrixBasedStateMachine<IStateWithActions, TurnstileSignal> {
+    constructor( )
+    {
         super(turnstileMatrix);
+        
+        // Execute initial state entry action
+        this.getCurrentState().afterEntryAction();
+    }
+
+        /**
+     * Convenience method to insert a coin.
+     * 
+     * @returns The resulting state after inserting coin
+     */
+    insertCoin(): IStateWithActions {
+        return this.sendSignal(TurnstileSignal.COIN);
+    }
+
+    /**
+     * Convenience method to push through the turnstile.
+     * 
+     * @returns The resulting state after pushing through
+     */
+    pushThrough(): IStateWithActions {
+        return this.sendSignal(TurnstileSignal.PUSH);
     }
 }
 

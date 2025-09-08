@@ -62,3 +62,15 @@ export class CoinAcceptor {
     }
 }
 
+export class CoinAcceptorWithMemory extends CoinAcceptor {
+    private lastCoinValue: number = 0;
+
+    setLastCoinValue(value: number): void {
+        this.lastCoinValue = value;
+    }
+
+    getLastCoinValue(): number {
+        return this.lastCoinValue;
+    }
+}
+

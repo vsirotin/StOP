@@ -1,6 +1,6 @@
 import { IStateWithActions } from "../../../src/IStateWithActions";
+import { MatrixBasedStateMachine } from "../../../src/MatrixBasedStateMachine";
 import { NonEmpty, transitionMatrix, TransitionMatrix } from "../../../src/TransitionMatrix";
-import { TurnstileAbstract } from "../objects/TurnstileAbstract";
 import { TurnstileSignal } from '../objects/TurnstileSignal';
 import { BarrierArms } from "./devices/BarrierArms";
 import { CoinAcceptor } from "./devices/CoinAcceptor";
@@ -82,8 +82,30 @@ const turnstileMatrix : TransitionMatrix<NonEmpty<IStateWithActions>, NonEmpty<T
  * ```
  */
 
-export class TurnstileRealistic extends TurnstileAbstract {
-    constructor() {
+export class TurnstileRealistic extends MatrixBasedStateMachine<IStateWithActions, TurnstileSignal> {
+    constructor( )
+    {
         super(turnstileMatrix);
+        
+        // Execute initial state entry action
+        this.getCurrentState().afterEntryAction();
+    }
+
+        /**
+     * Convenience method to insert a coin.
+     * 
+     * @returns The resulting state after inserting coin
+     */
+    insertCoin(): IStateWithActions {
+        return this.sendSignal(TurnstileSignal.COIN);
+    }
+
+    /**
+     * Convenience method to push through the turnstile.
+     * 
+     * @returns The resulting state after pushing through
+     */
+    pushThrough(): IStateWithActions {
+        return this.sendSignal(TurnstileSignal.PUSH);
     }
 }
