@@ -36,8 +36,6 @@ describe('TurnstileRealistic', () => {
         redLight = statusIndicator.redLight;
         greenLight = statusIndicator.greenLight;
         
-        // Mock only return values for device methods we need to control
-        jest.spyOn(coinAcceptor, 'processCoin');
     });
 
     afterEach(() => {
@@ -207,7 +205,6 @@ describe('TurnstileRealistic', () => {
         });
 
         test('should handle multiple complete cycles', () => {
-            (coinAcceptor.processCoin as jest.Mock).mockReturnValue(true);
             
             for (let i = 0; i < 3; i++) {
                 // Start of each cycle - locked
@@ -248,7 +245,6 @@ describe('TurnstileRealistic', () => {
         test('should provide accurate device status information', () => {
             
             expect(typeof coinAcceptor.isSlotAvailable()).toBe('boolean');
-            expect(typeof coinAcceptor.getCoinCount()).toBe('number');
             expect(typeof barrierArms.getIsLocked()).toBe('boolean');
         });
 

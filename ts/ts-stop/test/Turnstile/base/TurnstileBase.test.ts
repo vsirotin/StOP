@@ -3,6 +3,13 @@ import { TurnstileBase } from './TurnstileBase';
 describe('Turnstile', () => {
     let turnstile: TurnstileBase;
 
+    function isLocked(): boolean { 
+        return turnstile.getCurrentState() === 'locked'; 
+    }
+    function isUnlocked(): boolean { 
+        return turnstile.getCurrentState() === 'unlocked'; 
+    }
+
     beforeEach(() => {
         turnstile = new TurnstileBase();
     });
@@ -13,8 +20,8 @@ describe('Turnstile', () => {
         });
 
         it('should be locked initially', () => {
-            expect(turnstile.isLocked()).toBe(true);
-            expect(turnstile.isUnlocked()).toBe(false);
+            expect(isLocked()).toBe(true);
+            expect(isUnlocked()).toBe(false);
         });
     });
 
@@ -29,8 +36,8 @@ describe('Turnstile', () => {
             // Assert: should be unlocked
             expect(resultState).toBe('unlocked');
             expect(turnstile.getCurrentState()).toBe('unlocked');
-            expect(turnstile.isUnlocked()).toBe(true);
-            expect(turnstile.isLocked()).toBe(false);
+            expect(isUnlocked()).toBe(true);
+            expect(isLocked()).toBe(false);
         });
 
         it('should remain unlocked when already unlocked', () => {
@@ -44,7 +51,7 @@ describe('Turnstile', () => {
             // Assert: should remain unlocked
             expect(resultState).toBe('unlocked');
             expect(turnstile.getCurrentState()).toBe('unlocked');
-            expect(turnstile.isUnlocked()).toBe(true);
+            expect(isUnlocked()).toBe(true);
         });
     });
 
@@ -60,8 +67,8 @@ describe('Turnstile', () => {
             // Assert: should be locked again
             expect(resultState).toBe('locked');
             expect(turnstile.getCurrentState()).toBe('locked');
-            expect(turnstile.isLocked()).toBe(true);
-            expect(turnstile.isUnlocked()).toBe(false);
+            expect(isLocked()).toBe(true);
+            expect(isUnlocked()).toBe(false);
         });
 
         it('should remain locked when already locked', () => {
@@ -74,7 +81,7 @@ describe('Turnstile', () => {
             // Assert: should remain locked (blocked passage)
             expect(resultState).toBe('locked');
             expect(turnstile.getCurrentState()).toBe('locked');
-            expect(turnstile.isLocked()).toBe(true);
+            expect(isLocked()).toBe(true);
         });
     });
 
@@ -110,23 +117,23 @@ describe('Turnstile', () => {
     describe('state checking methods', () => {
         describe('isLocked', () => {
             it('should return true when locked', () => {
-                expect(turnstile.isLocked()).toBe(true);
+                expect(isLocked()).toBe(true);
             });
 
             it('should return false when unlocked', () => {
                 turnstile.insertCoin();
-                expect(turnstile.isLocked()).toBe(false);
+                expect(isLocked()).toBe(false);
             });
         });
 
         describe('isUnlocked', () => {
             it('should return false when locked', () => {
-                expect(turnstile.isUnlocked()).toBe(false);
+                expect(isUnlocked()).toBe(false);
             });
 
             it('should return true when unlocked', () => {
                 turnstile.insertCoin();
-                expect(turnstile.isUnlocked()).toBe(true);
+                expect(isUnlocked()).toBe(true);
             });
         });
     });

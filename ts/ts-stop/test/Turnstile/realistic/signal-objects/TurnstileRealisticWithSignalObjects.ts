@@ -2,8 +2,6 @@
 
 import { IStateWithActions } from "../../../../src/IStateWithActions";
 import { NonEmpty, transitionMatrix, TransitionMatrix } from "../../../../src/TransitionMatrix";
-import { TurnstileAbstract } from "../../objects/TurnstileAbstract";
-import { TurnstileSignal } from "../../objects/TurnstileSignal";
 import { Bell } from "../devices/Bell";
 import { ErrorAttemptState } from "../states/ErrorAttemptState";
 import { BarrierArms } from "../devices/BarrierArms";
@@ -11,6 +9,8 @@ import { CoinAcceptor } from "../devices/CoinAcceptor";
 import { StatusIndicator } from "../devices/StatusIndicator";
 import { LockedStateRealistic } from "../states/LockedStateRealistic";
 import { UnlockedStateRealistic } from "../states/UnlockedStateRealistic";
+import { VerificationState } from "../states/VerificationState";
+import { MatrixBasedStateMachine } from "../../../../src/MatrixBasedStateMachine";
 
 // Device simulators
 
@@ -22,26 +22,59 @@ const bell = new Bell();
 // Update state instances to include bell
 const l = new LockedStateRealistic(coinAcceptor, barrierArms, statusIndicator);
 const u = new UnlockedStateRealistic(coinAcceptor, barrierArms, statusIndicator);
-
-// Add error state
 const e = new ErrorAttemptState(bell);
+const v = new VerificationState(coinAcceptor);
 
-// Create short aliases for signals
-const coin = TurnstileSignal.COIN;
-const push = TurnstileSignal.PUSH;
+export class TurnstileRealisticSignal{};
+
+const push  = new TurnstileRealisticSignal();
+const wrong  = new TurnstileRealisticSignal();
+const ok  = new TurnstileRealisticSignal();
+const reset  = new TurnstileRealisticSignal();
+
+export class SignalCoin extends TurnstileRealisticSignal {
+    constructor(public value: number) {
+        super();
+    }
+}
+const coin  = new SignalCoin(0);
+
 
 // Same transition matrix as before
-const turnstileMatrixWithBell: TransitionMatrix<NonEmpty<IStateWithActions>, NonEmpty<TurnstileSignal>>  
-        = transitionMatrix<IStateWithActions, TurnstileSignal>([
-    [      , l , u ,  e ],
-    [ coin , u ,   ,    ],
-    [ push ,   , l ,    ]
+const turnstileMatrixWithBell: TransitionMatrix<NonEmpty<IStateWithActions>, NonEmpty<TurnstileRealisticSignal>>  
+        = transitionMatrix<IStateWithActions, TurnstileRealisticSignal>([
+    [       , l , u ,  v,  e ],
+    [ coin  , v ,   ,   ,    ],
+    [ push  ,   , l ,    ,   ],
+    [ reset ,   , l ,    ,   ],
+    [ wrong ,   , l ,    ,   ],
+    [ ok    ,   , l ,    ,   ],
 ]);
 
-export class TurnstileRealisticWithSignalObjects extends TurnstileAbstract {
-    constructor() {
-        // Pass error state in states array to enable default state behavior
-        super(turnstileMatrixWithBell);
+export class TurnstileRealisticWithSignalObjects extends MatrixBasedStateMachine<IStateWithActions, TurnstileRealisticSignal> {
+    // Reference to the state objects
+
+    constructor(matrix : TransitionMatrix<NonEmpty<IStateWithActions>, NonEmpty<TurnstileRealisticSignal>> ,
+         private lockedState : IStateWithActions = matrix.getStates()[0],
+         private unlockedState : IStateWithActions = matrix.getStates()[1]) 
+    {
+        super(matrix);
+        
+        // Execute initial state entry action
+        this.getCurrentState().afterEntryAction();
+    }
+
+    insertCoin(value: number): IStateWithActions {
+        coinAcceptor.insertCoin(value);
+        return this.sendSignal(coin);
+    }
+
+    pushThrough(): IStateWithActions { 
+        return this.sendSignal(push); 
+    }
+
+    reset(): IStateWithActions {        
+        return this.sendSignal(reset); 
     }
 }
 

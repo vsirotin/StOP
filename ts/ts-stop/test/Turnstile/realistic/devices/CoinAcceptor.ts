@@ -3,56 +3,30 @@
  */
 export class CoinAcceptor {
     private isSlotOpen: boolean = true;
-    private coinsReceived: number = 0;
+     private lastCoinValue: number = 0;
+
+    insertCoin(value: number): void {
+        this.lastCoinValue = value;
+    }
+
+    getInsertedCoinValue(): number {
+        return this.lastCoinValue;
+    }
 
     /**
      * Opens the coin slot for receiving payments.
      */
     openSlot(): void {
         this.isSlotOpen = true;
-        console.log("Slot is opened");
     }
 
     /**
      * Closes the coin slot to prevent additional payments.
      */
-    private closeSlot(): void {
+    closeSlot(): void {
         this.isSlotOpen = false;
-        console.log("Slot is closed");
     }
 
-
-    /**
-     * Processes a received coin and validates it.
-     * 
-     * @returns true if coin is valid and slot is open
-     */
-    processCoin(): boolean {
-        if (!this.isSlotOpen) {
-            console.warn("Slot is closed");
-            return false;
-        }
-        
-        this.coinsReceived++;
-        this.closeSlot();
-        console.log(`💰 Coin acceptor: Valid coin received (Total: ${this.coinsReceived})`);
-        return true;
-    }
-
-    /**
-     * Resets the coin counter (maintenance operation).
-     */
-    reset(): void {
-        this.coinsReceived = 0;
-        console.log("Coin acceptor: reset done");
-    }
-
-        /**
-     * Gets the current coin count.
-     */
-    getCoinCount(): number {
-        return this.coinsReceived;
-    }
 
     /**
      * Checks if slot is currently open.
@@ -62,15 +36,4 @@ export class CoinAcceptor {
     }
 }
 
-export class CoinAcceptorWithMemory extends CoinAcceptor {
-    private lastCoinValue: number = 0;
-
-    setLastCoinValue(value: number): void {
-        this.lastCoinValue = value;
-    }
-
-    getLastCoinValue(): number {
-        return this.lastCoinValue;
-    }
-}
 

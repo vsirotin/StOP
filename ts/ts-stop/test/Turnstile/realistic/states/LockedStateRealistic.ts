@@ -31,12 +31,8 @@ export class LockedStateRealistic implements IStateWithActions {
      * Action executed before exiting the locked state.
      */
     beforeExitAction(): void {
-        console.log("Start of beforeExitAction");
-
-        // Process the payment
-        if (this.coinAcceptor.processCoin()) {
-            console.log("Payment accepted - Preparing to unlock...");
-        }
+       this.coinAcceptor.closeSlot();  // Stop receiving payments
+  
     }
 
     toString(): string {

@@ -4,6 +4,12 @@ import { TurnstileBase } from './TurnstileBase';
 describe('TurnstileMatrix', () => {
     let turnstileMatrix: Turnstile;
 
+    function isLocked(): boolean { 
+        return turnstileMatrix.getCurrentState() === 'locked'; 
+    }
+    function isUnlocked(): boolean { 
+        return turnstileMatrix.getCurrentState() === 'unlocked'; 
+    }
     beforeEach(() => {
         turnstileMatrix = new Turnstile();
     });
@@ -14,8 +20,8 @@ describe('TurnstileMatrix', () => {
         });
 
         it('should be locked initially', () => {
-            expect(turnstileMatrix.isLocked()).toBe(true);
-            expect(turnstileMatrix.isUnlocked()).toBe(false);
+            expect(isLocked()).toBe(true);
+            expect(isUnlocked()).toBe(false);
         });
 
         it('should have transition matrix accessible', () => {
@@ -36,8 +42,8 @@ describe('TurnstileMatrix', () => {
             // Assert: should be unlocked
             expect(resultState).toBe('unlocked');
             expect(turnstileMatrix.getCurrentState()).toBe('unlocked');
-            expect(turnstileMatrix.isUnlocked()).toBe(true);
-            expect(turnstileMatrix.isLocked()).toBe(false);
+            expect(isUnlocked()).toBe(true);
+            expect(isLocked()).toBe(false);
         });
 
         it('should remain unlocked when already unlocked', () => {
@@ -51,7 +57,7 @@ describe('TurnstileMatrix', () => {
             // Assert: should remain unlocked
             expect(resultState).toBe('unlocked');
             expect(turnstileMatrix.getCurrentState()).toBe('unlocked');
-            expect(turnstileMatrix.isUnlocked()).toBe(true);
+            expect(isUnlocked()).toBe(true);
         });
     });
 
@@ -67,8 +73,8 @@ describe('TurnstileMatrix', () => {
             // Assert: should be locked again
             expect(resultState).toBe('locked');
             expect(turnstileMatrix.getCurrentState()).toBe('locked');
-            expect(turnstileMatrix.isLocked()).toBe(true);
-            expect(turnstileMatrix.isUnlocked()).toBe(false);
+            expect(isLocked()).toBe(true);
+            expect(isUnlocked()).toBe(false);
         });
 
         it('should remain locked when already locked', () => {
@@ -81,7 +87,7 @@ describe('TurnstileMatrix', () => {
             // Assert: should remain locked (blocked passage)
             expect(resultState).toBe('locked');
             expect(turnstileMatrix.getCurrentState()).toBe('locked');
-            expect(turnstileMatrix.isLocked()).toBe(true);
+            expect(isLocked()).toBe(true);
         });
     });
 
@@ -179,23 +185,23 @@ describe('TurnstileMatrix', () => {
     describe('state checking methods', () => {
         describe('isLocked', () => {
             it('should return true when locked', () => {
-                expect(turnstileMatrix.isLocked()).toBe(true);
+                expect(isLocked()).toBe(true);
             });
 
             it('should return false when unlocked', () => {
                 turnstileMatrix.insertCoin();
-                expect(turnstileMatrix.isLocked()).toBe(false);
+                expect(isLocked()).toBe(false);
             });
         });
 
         describe('isUnlocked', () => {
             it('should return false when locked', () => {
-                expect(turnstileMatrix.isUnlocked()).toBe(false);
+                expect(isUnlocked()).toBe(false);
             });
 
             it('should return true when unlocked', () => {
                 turnstileMatrix.insertCoin();
-                expect(turnstileMatrix.isUnlocked()).toBe(true);
+                expect(isUnlocked()).toBe(true);
             });
         });
     });
@@ -431,35 +437,6 @@ describe('TurnstileMatrix', () => {
             });
         });
 
-        describe('convenience method equivalence', () => {
-            it('should have identical isLocked behavior', () => {
-                // Test in locked state
-                expect(turnstileMatrix.isLocked()).toBe(originalTurnstile.isLocked());
-                expect(turnstileMatrix.isLocked()).toBe(true);
-
-                // Move to unlocked state
-                turnstileMatrix.insertCoin();
-                originalTurnstile.insertCoin();
-
-                // Test in unlocked state
-                expect(turnstileMatrix.isLocked()).toBe(originalTurnstile.isLocked());
-                expect(turnstileMatrix.isLocked()).toBe(false);
-            });
-
-            it('should have identical isUnlocked behavior', () => {
-                // Test in locked state
-                expect(turnstileMatrix.isUnlocked()).toBe(originalTurnstile.isUnlocked());
-                expect(turnstileMatrix.isUnlocked()).toBe(false);
-
-                // Move to unlocked state
-                turnstileMatrix.insertCoin();
-                originalTurnstile.insertCoin();
-
-                // Test in unlocked state
-                expect(turnstileMatrix.isUnlocked()).toBe(originalTurnstile.isUnlocked());
-                expect(turnstileMatrix.isUnlocked()).toBe(true);
-            });
-        });
 
         describe('implementation verification', () => {
             it('should demonstrate that both implementations produce identical state machines', () => {

@@ -9,7 +9,6 @@ export class Light {
      */
     turnOn(): void {
         this.isOn = true;
-        console.log(`💡 Light: ON`);
     }
 
     /**
@@ -17,7 +16,6 @@ export class Light {
      */
     turnOff(): void {
         this.isOn = false;
-        console.log(`💡 Light: OFF`);
     }
 
     /**
