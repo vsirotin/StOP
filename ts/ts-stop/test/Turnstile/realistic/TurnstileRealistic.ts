@@ -67,14 +67,6 @@ const turnstileMatrix : TransitionMatrix<NonEmpty<IStateWithActions>, NonEmpty<T
  * 4. Repeat cycle
  * 
  * @implements Matrix-based state machine pattern
- * @example
- * ```typescript
- * const turnstile = new TurnstileObject();
- * 
- * turnstile.insertCoin();
- * 
- * turnstile.pushThrough();
- * ```
  */
 
 export class TurnstileRealistic extends MatrixBasedStateMachine<IStateWithActions, TurnstileSignal> {
