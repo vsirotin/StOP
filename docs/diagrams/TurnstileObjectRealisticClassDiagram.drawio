@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram name="TurnstileObject UML" id="turnstile-object-uml">
-        <mxGraphModel dx="1568" dy="1940" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+        <mxGraphModel dx="784" dy="1420" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -84,6 +84,12 @@
                 </mxCell>
                 <mxCell id="13" value="1" style="text;align=center;fontStyle=1;verticalAlign=middle;spacingLeft=3;spacingRight=3;strokeColor=none;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="1">
                     <mxGeometry x="390" y="224" width="80" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;exitX=0.548;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="345" y="110" as="sourcePoint"/>
+                        <mxPoint x="345" y="60" as="targetPoint"/>
+                    </mxGeometry>
                 </mxCell>
             </root>
         </mxGraphModel>
