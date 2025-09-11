@@ -150,17 +150,6 @@ describe('TurnstileObject', () => {
         });
     });
 
-    describe('Matrix-based Implementation', () => {
-        test('should inherit from TurnstileAbstract', () => {
-            expect(turnstile).toBeInstanceOf(TurnstileObject);
-            // Note: We can't test TurnstileAbstract directly without importing it,
-            // but we can verify the expected methods exist
-            expect(typeof turnstile.insertCoin).toBe('function');
-            expect(typeof turnstile.pushThrough).toBe('function');
-        });
-
-    });
-
     describe('Error Handling and Edge Cases', () => {
         test('should handle multiple consecutive coin insertions', () => {
             turnstile.insertCoin(); // Unlock

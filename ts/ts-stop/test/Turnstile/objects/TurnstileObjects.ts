@@ -83,7 +83,6 @@ const turnstileMatrix : TransitionMatrix<NonEmpty<IStateWithActions>, NonEmpty<T
  * - **Matrix-based state machine**: Uses a transition matrix for clear state definition
  * - **Action-enabled states**: Each state executes specific actions on entry/exit
  * - **Type-safe signals**: Uses enum for signal definitions
- * - **Inheritance-based**: Extends TurnstileAbstract for shared functionality
  * 
  * ## State Machine Behavior:
  * ```
