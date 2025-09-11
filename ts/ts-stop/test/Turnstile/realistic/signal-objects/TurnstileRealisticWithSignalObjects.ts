@@ -20,10 +20,10 @@ const statusIndicator = new StatusIndicator();
 const bell = new Buzzer();
 
 // Update state instances to include bell
-const l = new LockedStateRealistic(coinAcceptor, barrierArms, statusIndicator);
-const u = new UnlockedStateRealistic(coinAcceptor, barrierArms, statusIndicator);
+const l = new LockedStateRealistic(coinAcceptor, statusIndicator);
+const u = new UnlockedStateRealistic(barrierArms);
 const e = new ErrorAttemptState(bell);
-const v = new VerificationState(coinAcceptor);
+const v = new VerificationState();
 
 export class TurnstileRealisticSignal{};
 
