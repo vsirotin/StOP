@@ -73,9 +73,6 @@ export class TurnstileRealistic extends MatrixBasedStateMachine<IStateWithAction
     constructor( )
     {
         super(turnstileMatrix);
-        
-        // Execute initial state entry action
-        this.getCurrentState().afterEntryAction();
     }
 
         /**

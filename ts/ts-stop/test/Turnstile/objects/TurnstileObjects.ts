@@ -114,9 +114,6 @@ export class TurnstileObject extends MatrixBasedStateMachine<IStateWithActions, 
     constructor( )
     {
         super(turnstileMatrix);
-        
-        // Execute initial state entry action
-        this.getCurrentState().afterEntryAction();
     }
 
         /**
