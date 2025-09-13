@@ -1,14 +1,12 @@
 import { FiniteStateMachine, ITransition } from "../src/FiniteStateMachine";
-import { IDefaultState } from "../src/IDefaultState";
+import { DefaultState } from "../src/DefaultState";
 import { IStateWithAfterEntryAction } from "../src/IStateWithActions";
 
 
-// Test implementation of IDefaultState
-class TestDefaultState implements IDefaultState {
-    constructor(private name: string) {}
-
-    isDefaultState(): boolean {
-        return true;
+// Test implementation extending DefaultState
+class TestDefaultState extends DefaultState {
+    constructor(private name: string) {
+        super();
     }
 
     toString(): string {
@@ -16,12 +14,10 @@ class TestDefaultState implements IDefaultState {
     }
 }
 
-// Another test implementation of IDefaultState
-class AnotherDefaultState implements IDefaultState {
-    constructor(private name: string) {}
-
-    isDefaultState(): boolean {
-        return true;
+// Another test implementation extending DefaultState
+class AnotherDefaultState extends DefaultState {
+    constructor(private name: string) {
+        super();
     }
 
     toString(): string {

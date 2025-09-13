@@ -1,15 +1,17 @@
-import { IDefaultState } from "../../../../src/IDefaultState";
+import { DefaultState } from "../../../../src/DefaultState";
 import { IStateWithActions } from "../../../../src/IStateWithActions";
 import { Buzzer } from "../devices/Buzzer";
 
 /**
  * Error state that handles invalid operations by ringing a bell.
  */
-export class ErrorAttemptState implements IStateWithActions, IDefaultState {
+export class ErrorAttemptState extends DefaultState implements IStateWithActions {
 
     constructor(
          public bell: Buzzer
-    ) {}
+    ) {
+        super();
+    }
     
     isDefaultState(): boolean {
         return true;

@@ -1,4 +1,4 @@
-import { IDefaultState } from './IDefaultState';
+import { DefaultState } from './DefaultState';
 import { IStateWithAfterEntryAction, IStateWithBeforeExitAction } from './IStateWithActions';
 import { IStateWithOutputSignal } from './IStateWithOutputSigmal';
 
@@ -96,7 +96,7 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
      * The default state that handles invalid signals.
      * Set to null if no state implements IDefaultState.
      */
-    private defaultState: (STATE & IDefaultState) | null = null;
+    private defaultState: DefaultState | null = null;
 
     /**
      * Creates a new finite state machine.
@@ -113,7 +113,7 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
         protected startState: STATE
     ) {
            // Find states that implement IDefaultState
-    const defaultStates = states.filter(state => this.hasDefaultStateInterface(state));
+    const defaultStates = states.filter(state => this.isDefaultState(state));
     
         // Validate default state count
         if (defaultStates.length > 1) {
@@ -126,7 +126,7 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
         
         // Set default state if exactly one found
         if (defaultStates.length === 1) {
-            this.defaultState = defaultStates[0] as STATE & IDefaultState;
+            this.defaultState = defaultStates[0] as DefaultState;
         }
 
         // Initialize the machine to its starting state
@@ -217,18 +217,15 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
         this.executeExitAction(state);
     }
 
-/**
- * Type guard to check if a state implements IDefaultState.
- * 
- * @param state - The state to check
- * @returns true if the state implements IDefaultState interface
- */
-protected hasDefaultStateInterface(state: STATE): state is STATE & IDefaultState {
-    return typeof state === 'object' && 
-           state !== null && 
-           'isDefaultState' in state &&
-           typeof (state as any).isDefaultState === 'function';
-}
+    /**
+     * Type guard to check if a state is an instance of DefaultState class.
+     * 
+     * @param state - The state to check
+     * @returns true if the state is an instance of DefaultState
+     */
+    protected isDefaultState(state: STATE): boolean {
+        return state instanceof DefaultState;
+    }
 
     /**
      * Type guard to check if a state implements IStateWithAfterEntryAction.
@@ -352,7 +349,7 @@ protected hasDefaultStateInterface(state: STATE): state is STATE & IDefaultState
      * 
      * @returns The default state or null if none exists
      */
-    getDefaultState(): (STATE & IDefaultState) | null {
+    getDefaultState(): DefaultState | null {
         return this.defaultState;
     }
     
@@ -365,3 +362,4 @@ protected hasDefaultStateInterface(state: STATE): state is STATE & IDefaultState
         return this.defaultState !== null;
     }
 }
+     

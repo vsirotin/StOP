@@ -166,5 +166,61 @@ describe('TurnstileRealisticWithBell - ErrorAttemptState Tests', () => {
             expect(stateAfter).toBe(stateBefore);
             expect(isLockedAfter).toBe(isLockedBefore);
         });
+
+        test('should verify afterEntryAction is NOT called when staying in same state after error', () => {
+            // Mock afterEntryAction to track calls
+            const originalAfterEntryAction = turnstile.getCurrentState().afterEntryAction;
+            const afterEntryActionSpy = jest.fn();
+            turnstile.getCurrentState().afterEntryAction = afterEntryActionSpy;
+            
+            // Clear any previous calls
+            afterEntryActionSpy.mockClear();
+            
+            // 1) Verify we're in a normal state (LockedStateRealistic)
+            expect(isLocked()).toBe(true);
+            expect(turnstile.getCurrentState()).toBeInstanceOf(LockedStateRealistic);
+            
+            // 2) Send unmatched signal (push while locked) - should trigger error state
+            const stateBefore = turnstile.getCurrentState();
+            turnstile.pushThrough();
+            
+            // 3) Verify FA automatically stays in state A and afterEntryAction is NOT called
+            const stateAfter = turnstile.getCurrentState();
+            expect(stateAfter).toBe(stateBefore); // Same instance
+            expect(isLocked()).toBe(true); // Still locked
+            expect(afterEntryActionSpy).not.toHaveBeenCalled(); // afterEntryAction NOT called
+            
+            // Verify error state was triggered (bell rang)
+            expect(bell.getBuzzCount()).toBe(1);
+            
+            // Restore original method
+            turnstile.getCurrentState().afterEntryAction = originalAfterEntryAction;
+        });
+
+        test('should verify afterEntryAction IS called when actually transitioning to a new state', () => {
+            // Start in locked state
+            expect(isLocked()).toBe(true);
+            
+            // Get the unlocked state that we'll transition to
+            turnstile.insertCoin(); // Transition to unlocked
+            const unlockedState = turnstile.getCurrentState();
+            expect(isUnlocked()).toBe(true);
+            
+            // Go back to locked for the test
+            turnstile.pushThrough();
+            expect(isLocked()).toBe(true);
+            
+            // Mock afterEntryAction on the unlocked state
+            const afterEntryActionSpy = jest.fn();
+            unlockedState.afterEntryAction = afterEntryActionSpy;
+            
+            // Now transition to unlocked state - this should call afterEntryAction
+            turnstile.insertCoin();
+            expect(isUnlocked()).toBe(true);
+            expect(afterEntryActionSpy).toHaveBeenCalledTimes(1);
+            
+            // Verify no bell was triggered for valid operation
+            expect(bell.getBuzzCount()).toBe(0);
+        });
     });
 });

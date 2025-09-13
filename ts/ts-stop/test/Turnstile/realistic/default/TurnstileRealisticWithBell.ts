@@ -30,7 +30,7 @@ const e = new ErrorAttemptState(bell);
 const coin = TurnstileSignal.COIN;
 const push = TurnstileSignal.PUSH;
 
-// Same transition matrix as before
+// Transition matrix as before
 const turnstileMatrixWithBell: TransitionMatrix<NonEmpty<IStateWithActions>, NonEmpty<TurnstileSignal>>  
         = transitionMatrix<IStateWithActions, TurnstileSignal>([
     [      , l , u ,  e ],
@@ -41,12 +41,8 @@ const turnstileMatrixWithBell: TransitionMatrix<NonEmpty<IStateWithActions>, Non
 export class TurnstileRealisticWithBell extends MatrixBasedStateMachine<IStateWithActions, TurnstileSignal> 
     implements ITurnstile<IStateWithActions> {
     
-        constructor( )
-    {
+    constructor( ){
         super(turnstileMatrixWithBell);
-        
-        // Execute initial state entry action
-        this.getCurrentState().afterEntryAction();
     }
 
         /**
