@@ -1,4 +1,3 @@
-import { IDefaultState } from "../../../../src/DefaultState";
 import { IStateWithActions } from "../../../../src/IStateWithActions";
 
 

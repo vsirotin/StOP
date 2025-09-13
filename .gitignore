@@ -83,9 +83,16 @@ gradle-app.setting
 *.temp
 .cache/
 
+# Build directories
+kotlin/java-example/bin/
+kotlin/kotlin-example/bin/
+kotlin/kotlin-stop/bin/
+
 # Environment files
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.gitignore
+
