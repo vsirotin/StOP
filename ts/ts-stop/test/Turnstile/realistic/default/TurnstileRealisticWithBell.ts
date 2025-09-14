@@ -1,5 +1,4 @@
 // Add these imports to existing TurnstileRealistic.ts
-import { IStateWithActions } from "../../../../src/IStateWithActions";
 import { NonEmpty, transitionMatrix, TransitionMatrix } from "../../../../src/TransitionMatrix";
 import { TurnstileSignal } from "../../objects/TurnstileSignal";
 import { BarrierArms } from "../devices/BarrierArms";
@@ -11,35 +10,36 @@ import { Buzzer } from "../devices/Buzzer";
 import { ErrorAttemptState } from "../states/ErrorAttemptState";
 import { MatrixBasedStateMachine } from "../../../../src/MatrixBasedStateMachine";
 import { ITurnstile } from "../../base/ITurnstile";
+import { IStateWithAfterEntryAction } from "../../../../src/IStateWithActions";
 
 // Device simulators
 
 const coinAcceptor = new CoinAcceptor();
 const barrierArms = new BarrierArms();
 const statusIndicator = new StatusIndicator();
-const bell = new Buzzer();
+const buzzer = new Buzzer();
 
 // Update state instances to include bell
 const l = new LockedStateRealistic(coinAcceptor, statusIndicator);
 const u = new UnlockedStateRealistic(barrierArms);
 
 // Add error state
-const e = new ErrorAttemptState(bell);
+const e = new ErrorAttemptState(buzzer);
 
 // Create short aliases for signals
 const coin = TurnstileSignal.COIN;
 const push = TurnstileSignal.PUSH;
 
-// Transition matrix as before
-const turnstileMatrixWithBell: TransitionMatrix<NonEmpty<IStateWithActions>, NonEmpty<TurnstileSignal>>  
-        = transitionMatrix<IStateWithActions, TurnstileSignal>([
+// Transition matrix 
+const turnstileMatrixWithBell: TransitionMatrix<NonEmpty<IStateWithAfterEntryAction>, NonEmpty<TurnstileSignal>>  
+        = transitionMatrix<IStateWithAfterEntryAction, TurnstileSignal>([
     [      , l , u ,  e ],
     [ coin , u ,   ,    ],
     [ push ,   , l ,    ]
 ]);
 
-export class TurnstileRealisticWithBell extends MatrixBasedStateMachine<IStateWithActions, TurnstileSignal> 
-    implements ITurnstile<IStateWithActions> {
+export class TurnstileRealisticWithBell extends MatrixBasedStateMachine<IStateWithAfterEntryAction, TurnstileSignal> 
+    implements ITurnstile<IStateWithAfterEntryAction> {
     
     constructor( ){
         super(turnstileMatrixWithBell);
@@ -50,7 +50,7 @@ export class TurnstileRealisticWithBell extends MatrixBasedStateMachine<IStateWi
      * 
      * @returns The resulting state after inserting coin
      */
-    insertCoin(): IStateWithActions {
+    insertCoin(): IStateWithAfterEntryAction {
         return this.sendSignal(TurnstileSignal.COIN);
     }
 
@@ -59,7 +59,7 @@ export class TurnstileRealisticWithBell extends MatrixBasedStateMachine<IStateWi
      * 
      * @returns The resulting state after pushing through
      */
-    pushThrough(): IStateWithActions {
+    pushThrough(): IStateWithAfterEntryAction {
         return this.sendSignal(TurnstileSignal.PUSH);
     }
 }

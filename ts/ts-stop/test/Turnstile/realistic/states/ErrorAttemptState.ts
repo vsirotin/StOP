@@ -1,28 +1,19 @@
 import { DefaultState } from "../../../../src/DefaultState";
-import { IStateWithActions } from "../../../../src/IStateWithActions";
+import { IStateWithActions, IStateWithAfterEntryAction } from "../../../../src/IStateWithActions";
 import { Buzzer } from "../devices/Buzzer";
 
 /**
- * Error state that handles invalid operations by ringing a bell.
+ * Error state that handles invalid operations by using a buzzer.
  */
-export class ErrorAttemptState extends DefaultState implements IStateWithActions {
+export class ErrorAttemptState extends DefaultState implements IStateWithAfterEntryAction {
 
     constructor(
-         public bell: Buzzer
+         public buzzer: Buzzer
     ) {
         super();
     }
-    
-    isDefaultState(): boolean {
-        return true;
-    }
 
     afterEntryAction(): void {
-        this.bell.buzz();
+        this.buzzer.buzz();
     }
-
-    beforeExitAction(): void {
-        // No exit action needed
-    }
-
 }

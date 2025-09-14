@@ -1,7 +1,7 @@
 /**
- * Marker interface for states that should handle invalid signals as default behavior.
- * Only one state in a state machine can implement this interface.
- * States implementing this interface will have their actions executed when invalid signals are received.
+ * Marker base class for states that should be used processed by invalid signals and 
+ * in situation, then no transitions set for pair (current signal, current state).
+ * Only one state in a state machine can have this role.
  */
 export abstract class DefaultState {
     isDefaultState(): boolean {

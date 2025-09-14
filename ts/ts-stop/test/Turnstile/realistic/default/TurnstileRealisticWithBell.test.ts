@@ -21,7 +21,7 @@ describe('TurnstileRealisticWithBell - ErrorAttemptState Tests', () => {
         turnstile = new TurnstileRealisticWithBell();
         errorState = turnstile.getDefaultState() as ErrorAttemptState;
         if (errorState) {
-            bell = errorState.bell;
+            bell = errorState.buzzer;
         }
     });
 
