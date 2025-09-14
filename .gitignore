@@ -96,3 +96,5 @@ kotlin/kotlin-stop/bin/
 .env.production.local
 .gitignore
 
+# Issues
+ISSUES/

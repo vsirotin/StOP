@@ -1,6 +1,6 @@
 import { DefaultState } from './DefaultState';
 import { IStateWithAfterEntryAction, IStateWithBeforeExitAction } from './IStateWithActions';
-import { IStateWithOutputSignal } from './IStateWithOutputSigmal';
+import { IStateWithOutputSignal } from './IStateWithOutputSignal';
 
 /**
  * Represents a transition in a finite state machine.
@@ -131,9 +131,12 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
 
         // Initialize the machine to its starting state
         this.currentState = startState;
+
+        // Check if a current state has output signal and process it
+        this.tryProcessStateWithOutputSignal();
         
         // Execute initial state entry action if supported
-        this.executeEntryAction(startState);
+        this.executeEntryAction(this.currentState);
     }
 
     /**
@@ -175,15 +178,23 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
             // Current state remains unchanged
         }
         
-        if(this.isStateWithOutputSignal(this.currentState)){ 
+        this.tryProcessStateWithOutputSignal();
+
+        return this.currentState;
+    }
+
+    private tryProcessStateWithOutputSignal() {
+        if (this.isStateWithOutputSignal(this.currentState)) {
             // Processing of behaviour for state with inside calculated output signal
             this.executeStateActions(this.currentState);
             const stateWithOutputSignal = this.currentState as IStateWithOutputSignal<SIGNAL>;
             const outputSignal = stateWithOutputSignal.getOutputSignal();
-            this.sendSignal(outputSignal);
+            
+            // Add null/undefined check to prevent errors
+            if (outputSignal !== null && outputSignal !== undefined) {
+                this.sendSignal(outputSignal);
+            }
         }
-
-        return this.currentState;
     }
 
     private isStateWithOutputSignal<S>(state: STATE): boolean {   
@@ -362,4 +373,4 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
         return this.defaultState !== null;
     }
 }
-     
+
