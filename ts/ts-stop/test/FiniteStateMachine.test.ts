@@ -1,6 +1,6 @@
-import { FiniteStateMachine, ITransition } from "../src/FiniteStateMachine";
-import { DefaultState } from "../src/DefaultState";
-import { IStateWithAfterEntryAction } from "../src/IStateWithActions";
+import { FiniteStateMachine, ITransition } from "@vsirotin/ts-stop";
+import { DefaultState } from "@vsirotin/ts-stop";
+import { IStateWithAfterEntryAction } from "@vsirotin/ts-stop";
 
 
 // Test implementation extending DefaultState

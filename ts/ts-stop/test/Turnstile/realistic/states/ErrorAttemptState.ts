@@ -1,5 +1,5 @@
-import { DefaultState } from "../../../../src/DefaultState";
-import { IStateWithActions, IStateWithAfterEntryAction } from "../../../../src/IStateWithActions";
+import { DefaultState } from "@vsirotin/ts-stop";
+import { IStateWithActions, IStateWithAfterEntryAction } from "@vsirotin/ts-stop";
 import { Buzzer } from "../devices/Buzzer";
 
 /**

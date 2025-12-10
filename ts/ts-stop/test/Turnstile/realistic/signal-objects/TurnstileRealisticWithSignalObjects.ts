@@ -1,7 +1,7 @@
 // Add these imports to existing TurnstileRealistic.ts
 
-import { IStateWithActions } from "../../../../src/IStateWithActions";
-import { NonEmpty, transitionMatrix, TransitionMatrix } from "../../../../src/TransitionMatrix";
+import { IStateWithActions } from "@vsirotin/ts-stop";
+import { NonEmpty, transitionMatrix, TransitionMatrix } from "@vsirotin/ts-stop";
 import { Buzzer } from "../devices/Buzzer";
 import { ErrorAttemptState } from "../states/ErrorAttemptState";
 import { BarrierArms } from "../devices/BarrierArms";
@@ -10,7 +10,7 @@ import { StatusIndicator } from "../devices/StatusIndicator";
 import { LockedStateRealistic } from "../states/LockedStateRealistic";
 import { UnlockedStateRealistic } from "../states/UnlockedStateRealistic";
 import { VerificationState } from "../states/VerificationState";
-import { MatrixBasedStateMachine } from "../../../../src/MatrixBasedStateMachine";
+import { MatrixBasedStateMachine } from "@vsirotin/ts-stop";
 
 // Device simulators
 

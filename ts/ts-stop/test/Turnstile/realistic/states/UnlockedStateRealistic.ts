@@ -1,4 +1,4 @@
-import { IStateWithBeforeExitAction } from "../../../../src/IStateWithActions";
+import { IStateWithBeforeExitAction } from "@vsirotin/ts-stop";
 import { BarrierArms } from "../devices/BarrierArms";
 /**
  * Unlocked state with integrated technical device control.

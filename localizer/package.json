@@ -1,0 +1,26 @@
+{
+  "name": "@vsirotin/localizer",
+  "version": "1.2.1",
+  "peerDependencies": {
+    "@vsirotin/log4ts": "^3.0.0",
+    "@vsirotin/keeper-master-data": "^3.1.1"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false,
+  "description": "This TypeScript library supports localization (using terms and texts in a given natural language) in web applications.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vsirotin/communist-web-shop/blob/27a176cca19c90156de625f77d0fd47f7d874774/projects/localizer"
+  },
+  "keywords": [
+    "localization",
+    "natural-language",
+    "typescript",
+    "angular",
+    "javascript"
+  ],
+  "author": "Dr. Viktor Sirotin. www.sirotin.eu",
+  "license": "Apache-2.0"
+}

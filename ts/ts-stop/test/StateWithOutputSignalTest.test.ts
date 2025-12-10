@@ -1,7 +1,7 @@
-import { FiniteStateMachine, ITransition } from "../src/FiniteStateMachine";
-import { DefaultState } from "../src/DefaultState";
-import { IStateWithAfterEntryAction } from "../src/IStateWithActions";
-import { IStateWithOutputSignal } from "../src/IStateWithOutputSignal";
+import { FiniteStateMachine, ITransition } from "@vsirotin/ts-stop";
+import { DefaultState } from "@vsirotin/ts-stop";
+import { IStateWithAfterEntryAction } from "@vsirotin/ts-stop";
+import { IStateWithOutputSignal } from "@vsirotin/ts-stop";
 
 // Regular state without output signal
 class RegularState {

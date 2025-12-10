@@ -1,4 +1,4 @@
-import { IFiniteStateMachine } from "../../../src/FiniteStateMachine";
+import { IFiniteStateMachine } from "@vsirotin/ts-stop";
 
 export interface ITurnstile<STATE> extends IFiniteStateMachine<STATE> {
        /**

@@ -1,5 +1,5 @@
-import { MatrixBasedStateMachine } from '../../../src/MatrixBasedStateMachine';
-import { transitionMatrix } from '../../../src/TransitionMatrix';
+import { MatrixBasedStateMachine } from '@vsirotin/ts-stop';
+import { transitionMatrix } from '@vsirotin/ts-stop';
 import { ITurnstile } from './ITurnstile';
 
 /**

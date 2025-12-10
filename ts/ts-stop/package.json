@@ -2,18 +2,18 @@
   "name": "@vsirotin/ts-stop",
   "version": "0.0.1",
   "description": "State Oriented Programming library for TypeScript",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "module": "dist/esm/index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "module": "lib/esm/index.js",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/index.js"
+      "types": "./lib/index.d.ts",
+      "import": "./lib/esm/index.js",
+      "require": "./lib/index.js"
     }
   },
   "files": [
-    "dist"
+    "lib"
   ],
   "scripts": {
     "build": "npm run build:cjs && npm run build:esm",
@@ -21,8 +21,9 @@
     "build:esm": "tsc -p tsconfig.esm.json",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "clean": "rm -rf dist coverage",
-    "publish:local": "./scripts/publish-local.sh"
+    "clean": "rm -rf lib coverage",
+    "publish:local": "./scripts/publish-local.sh",
+    "pack": "npm run build && npm pack"
   },
   "keywords": [
     "typescript",
@@ -40,5 +41,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@vsirotin/ts-stop": "file:vsirotin-ts-stop-0.0.1.tgz"
   }
 }

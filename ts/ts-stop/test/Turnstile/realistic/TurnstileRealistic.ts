@@ -1,6 +1,6 @@
-import { IStateWithActions } from "../../../src/IStateWithActions";
-import { MatrixBasedStateMachine } from "../../../src/MatrixBasedStateMachine";
-import { NonEmpty, transitionMatrix, TransitionMatrix } from "../../../src/TransitionMatrix";
+import { IStateWithActions } from "@vsirotin/ts-stop";
+import { MatrixBasedStateMachine } from "@vsirotin/ts-stop";
+import { NonEmpty, transitionMatrix, TransitionMatrix } from "@vsirotin/ts-stop";
 import { TurnstileSignal } from '../objects/TurnstileSignal';
 import { BarrierArms } from "./devices/BarrierArms";
 import { CoinAcceptor } from "./devices/CoinAcceptor";

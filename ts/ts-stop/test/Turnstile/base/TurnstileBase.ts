@@ -1,4 +1,4 @@
-import { FiniteStateMachine } from '../../../src/FiniteStateMachine';
+import { FiniteStateMachine } from '@vsirotin/ts-stop';
 import { ITurnstile } from './ITurnstile';
 
 /**

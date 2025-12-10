@@ -1,7 +1,7 @@
-import { NonEmpty, TransitionMatrix, transitionMatrix } from '../../../src/TransitionMatrix';
-import { IStateWithActions } from '../../../src/IStateWithActions';
+import { NonEmpty, TransitionMatrix, transitionMatrix } from '@vsirotin/ts-stop';
+import { IStateWithActions } from '@vsirotin/ts-stop';
 import { TurnstileSignal } from './TurnstileSignal';
-import { MatrixBasedStateMachine } from '../../../src/MatrixBasedStateMachine';
+import { MatrixBasedStateMachine } from '@vsirotin/ts-stop';
 import { ITurnstile } from '../base/ITurnstile';
 
 /**

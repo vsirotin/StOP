@@ -1,4 +1,4 @@
-import { IStateWithActions } from "../../../../src/IStateWithActions";
+import { IStateWithActions } from "@vsirotin/ts-stop";
 
 
 /**
