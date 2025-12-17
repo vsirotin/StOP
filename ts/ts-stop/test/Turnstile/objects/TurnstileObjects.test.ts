@@ -16,6 +16,7 @@ describe('TurnstileObject', () => {
     beforeEach(() => {
         // Create fresh instance for each test
         turnstile = new TurnstileObject();
+        console.log("turnstile initialized", JSON.stringify(turnstile));
     });
 
 

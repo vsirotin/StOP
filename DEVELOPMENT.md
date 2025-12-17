@@ -16,6 +16,26 @@ This guide covers global development setup and cross-project concerns.
   - Extension Pack for Java
   - PlantUML extension
 
+## Installed Dependencies
+
+### TypeScript Library (@vsirotin/ts-stop)
+The TypeScript library is installed locally from:
+```
+/Users/viktorsirotin/VSCodeProjects/StOP/ts/ts-stop/vsirotin-ts-stop-0.0.1.tgz
+```
+
+To update the installed package after changes:
+```bash
+# 1. Build and pack the library
+cd ts/ts-stop
+npm run build
+npm pack
+
+# 2. Reinstall in the main project
+cd ../..
+npm install ./ts/ts-stop/vsirotin-ts-stop-0.0.1.tgz --force
+```
+
 ## Global Build Scripts
 
 ### `./build-all.sh`
