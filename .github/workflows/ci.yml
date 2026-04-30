@@ -7,33 +7,38 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-test:
+  test:
+    name: Test ts-stop Library
     runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
     
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        
-    - name: Setup Java
-      uses: actions/setup-java@v4
-      with:
-        java-version: '22'
-        distribution: 'temurin'
-        
-    - name: Setup Gradle
-      uses: gradle/gradle-build-action@v2
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - uses: actions/checkout@v4
       
-    - name: Make scripts executable
-      run: |
-        chmod +x build-all.sh
-        chmod +x test-all.sh
-        chmod +x kotlin/gradlew
-        
-    - name: Build all projects
-      run: ./build-all.sh
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
       
-    - name: Test all projects
-      run: ./test-all.sh
+      - name: Install dependencies
+        working-directory: ./ts/ts-stop
+        run: npm ci
+      
+      - name: Build library
+        working-directory: ./ts/ts-stop
+        run: npm run build
+      
+      - name: Publish library locally (for tests)
+        working-directory: ./ts/ts-stop
+        run: npm run publish:local
+      
+      - name: Run tests
+        working-directory: ./ts/ts-stop
+        run: npm test
+      
+      - name: Generate coverage report
+        working-directory: ./ts/ts-stop
+        run: npm run test:coverage

@@ -1,0 +1,1 @@
+dist: Project: ts/ts-stop. Version: 1.0.1. Fixed unit tests, CI workflow, documentation.

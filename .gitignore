@@ -98,25 +98,5 @@ kotlin/kotlin-stop/bin/
 
 # Issues
 ISSUES/
-ts/ts-stop/lib/DefaultState.d.ts
-ts/ts-stop/lib/DefaultState.js
-ts/ts-stop/lib/FiniteStateMachine.d.ts
-ts/ts-stop/lib/FiniteStateMachine.js
-ts/ts-stop/lib/index.d.ts
-ts/ts-stop/lib/index.js
-ts/ts-stop/lib/IStateWithActions.d.ts
-ts/ts-stop/lib/IStateWithActions.js
-ts/ts-stop/lib/IStateWithOutputSignal.d.ts
-ts/ts-stop/lib/IStateWithOutputSignal.js
-ts/ts-stop/lib/MatrixBasedStateMachine.d.ts
-ts/ts-stop/lib/MatrixBasedStateMachine.js
-ts/ts-stop/lib/TransitionMatrix.d.ts
-ts/ts-stop/lib/TransitionMatrix.js
-ts/ts-stop/lib/esm/DefaultState.js
-ts/ts-stop/lib/esm/FiniteStateMachine.js
-ts/ts-stop/lib/esm/index.js
-ts/ts-stop/lib/esm/IStateWithActions.js
-ts/ts-stop/lib/esm/IStateWithOutputSignal.js
-ts/ts-stop/lib/esm/MatrixBasedStateMachine.js
-ts/ts-stop/lib/esm/TransitionMatrix.js
-ts/ts-stop/vsirotin-ts-stop-0.0.1.tgz
+ts/ts-stop/lib/
+TMP/
