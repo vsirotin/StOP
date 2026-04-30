@@ -175,7 +175,7 @@ describe('StateWithOutputSignal Tests', () => {
             expect(machine.getCurrentState()).toBe(regularState2);
         });
 
-        // TODO schoul be dtected as incorrect machine configuration
+        // TODO should be detected as incorrect machine configuration
         xtest('should handle output signal that has no valid transition', () => {
             const machine = new TestStateMachine(
                 [regularState1, outputState1],
@@ -362,7 +362,7 @@ describe('StateWithOutputSignal Tests', () => {
     });
 
     describe('Edge Cases and Error Handling', () => {
-        // TODO schoul be dtected as incorrect machine configuration
+        // TODO should be detected as incorrect machine configuration
         xtest('should handle output signal with no valid transition', () => {
             const isolatedOutputState = new StateWithOutputSignal('isolated', 'orphanSignal');
             

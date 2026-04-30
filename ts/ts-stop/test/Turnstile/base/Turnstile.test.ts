@@ -1,7 +1,7 @@
 import { Turnstile } from './Turnstile';
 import { TurnstileBase } from './TurnstileBase';
 
-describe('TurnstileMatrix', () => {
+describe('Turnstile (Matrix-based)', () => {
     let turnstileMatrix: Turnstile;
 
     function isLocked(): boolean { 

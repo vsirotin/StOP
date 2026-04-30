@@ -80,7 +80,7 @@ describe('FiniteStateMachine Constructor Tests', () => {
         stateWithAction = new StateWithAction('withAction');
     });
 
-    describe('Default State Validation ', () => {
+    describe('Default State Validation', () => {
         test('should throw error when multiple states implement IDefaultState', () => {
             expect(() => {
                 new TestStateMachine(
