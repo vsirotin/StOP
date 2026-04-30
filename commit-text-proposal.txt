@@ -1,1 +1,1 @@
-feat: Project: ts/ts-stop. Version: 1.1.0. Output-signal state validation in FSM constructor.
+feat: Project: ts/ts-stop. Version: 1.2.0. Dangling-ref validation + output-signal cycle detection in FSM.

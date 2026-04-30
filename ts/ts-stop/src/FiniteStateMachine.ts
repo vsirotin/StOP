@@ -118,7 +118,7 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
         // Validate default state count
         if (defaultStates.length > 1) {
             throw new Error(
-                `Multiple states implement IDefaultState interface. ` +
+                `ERROR-STOP-01: Multiple states implement IDefaultState interface. ` +
                 `Only one state can handle invalid signals. ` +
                 `Found ${defaultStates.length} states with IDefaultState.`
             );
@@ -129,8 +129,14 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
             this.defaultState = defaultStates[0] as DefaultState;
         }
 
+        // Validate that all transition and start-state references are defined
+        this.validateDanglingReferences();
+
         // Validate that all output signal states have at least one outgoing transition
         this.validateOutputSignalStates();
+
+        // Validate that output-signal states do not form cycles
+        this.validateOutputSignalCycles();
 
         // Initialize the machine to its starting state
         this.currentState = startState;
@@ -200,17 +206,101 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
         }
     }
 
+    private validateDanglingReferences(): void {
+        const stateSet = new Set(this.states);
+        const signalSet = new Set(this.signals);
+
+        if (!stateSet.has(this.startState)) {
+            throw new Error(
+                `ERROR-STOP-03: Start state '${this.startState}' is not in the states array. ` +
+                `The start state must be one of the provided states.`
+            );
+        }
+
+        for (const t of this.transitions) {
+            if (!stateSet.has(t.from)) {
+                throw new Error(
+                    `ERROR-STOP-04: Transition references unknown state '${t.from}' as 'from'. ` +
+                    `All transition states must be in the states array.`
+                );
+            }
+            if (!stateSet.has(t.to)) {
+                throw new Error(
+                    `ERROR-STOP-05: Transition references unknown state '${t.to}' as 'to'. ` +
+                    `All transition states must be in the states array.`
+                );
+            }
+            if (!signalSet.has(t.signal)) {
+                throw new Error(
+                    `ERROR-STOP-06: Transition references unknown signal '${String(t.signal)}'. ` +
+                    `All transition signals must be in the signals array.`
+                );
+            }
+        }
+    }
+
     private validateOutputSignalStates(): void {
         for (const state of this.states) {
             if (this.isStateWithOutputSignal(state)) {
                 const hasOutgoing = this.transitions.some(t => t.from === state);
                 if (!hasOutgoing) {
                     throw new Error(
-                        `Configuration error: State '${state}' implements IStateWithOutputSignal ` +
+                        `ERROR-STOP-02: Configuration error: State '${state}' implements IStateWithOutputSignal ` +
                         `but has no outgoing transitions. States with output signals must have ` +
                         `at least one outgoing transition.`
                     );
                 }
+            }
+        }
+    }
+
+    private validateOutputSignalCycles(): void {
+        const outputStateSet = new Set(this.states.filter(s => this.isStateWithOutputSignal(s)));
+        if (outputStateSet.size < 2) return;
+
+        // Build adjacency: output state → output states reachable via one transition
+        const adj = new Map<STATE, STATE[]>();
+        for (const state of outputStateSet) {
+            adj.set(
+                state,
+                this.transitions
+                    .filter(t => t.from === state && outputStateSet.has(t.to))
+                    .map(t => t.to)
+            );
+        }
+
+        // DFS-based cycle detection (colour: 0=unvisited, 1=in-stack, 2=done)
+        const visited = new Set<STATE>();
+        const onStack = new Set<STATE>();
+        const stackPath: STATE[] = [];
+
+        const dfs = (state: STATE): void => {
+            visited.add(state);
+            onStack.add(state);
+            stackPath.push(state);
+
+            for (const neighbor of (adj.get(state) ?? [])) {
+                if (onStack.has(neighbor)) {
+                    const cycleStart = stackPath.indexOf(neighbor);
+                    const cyclePath = [...stackPath.slice(cycleStart), neighbor];
+                    throw new Error(
+                        `ERROR-STOP-07: Circular dependency detected in output signals: ` +
+                        `${cyclePath.map(s => String(s)).join(' -> ')}. ` +
+                        `States with output signals cannot form cycles as this creates infinite loops.`
+                    );
+                }
+                if (!visited.has(neighbor)) {
+                    dfs(neighbor);
+                }
+            }
+
+            onStack.delete(state);
+            stackPath.pop();
+        };
+
+        for (const state of outputStateSet) {
+            if (!visited.has(state)) {
+                dfs(state);
             }
         }
     }

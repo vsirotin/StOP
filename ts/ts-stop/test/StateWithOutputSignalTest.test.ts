@@ -604,4 +604,81 @@ describe('StateWithOutputSignal Tests', () => {
             expect(machine.getCurrentState()).not.toBe(outputState1);
         });
     });
+
+    describe('Output Signal Cycle Detection', () => {
+        test('should throw ERROR-STOP-07 when two output states form a direct cycle', () => {
+            const outputA = new StateWithOutputSignal('outputA', 'signalA');
+            const outputB = new StateWithOutputSignal('outputB', 'signalB');
+
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1, outputA, outputB],
+                    ['trigger', 'signalA', 'signalB'],
+                    [
+                        { from: regularState1, signal: 'trigger', to: outputA },
+                        { from: outputA, signal: 'signalA', to: outputB },
+                        { from: outputB, signal: 'signalB', to: outputA }
+                    ],
+                    regularState1
+                );
+            }).toThrow('ERROR-STOP-07');
+        });
+
+        test('should throw ERROR-STOP-07 when three output states form an indirect cycle', () => {
+            const outputA = new StateWithOutputSignal('outputA', 'signalA');
+            const outputB = new StateWithOutputSignal('outputB', 'signalB');
+            const outputC = new StateWithOutputSignal('outputC', 'signalC');
+
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1, outputA, outputB, outputC],
+                    ['trigger', 'signalA', 'signalB', 'signalC'],
+                    [
+                        { from: regularState1, signal: 'trigger', to: outputA },
+                        { from: outputA, signal: 'signalA', to: outputB },
+                        { from: outputB, signal: 'signalB', to: outputC },
+                        { from: outputC, signal: 'signalC', to: outputA }
+                    ],
+                    regularState1
+                );
+            }).toThrow('ERROR-STOP-07');
+        });
+
+        test('should not throw for a chain of output states ending at a regular state', () => {
+            const outputA = new StateWithOutputSignal('outputA', 'signalA');
+            const outputB = new StateWithOutputSignal('outputB', 'signalB');
+
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1, outputA, outputB, regularState2],
+                    ['trigger', 'signalA', 'signalB'],
+                    [
+                        { from: regularState1, signal: 'trigger', to: outputA },
+                        { from: outputA, signal: 'signalA', to: outputB },
+                        { from: outputB, signal: 'signalB', to: regularState2 }
+                    ],
+                    regularState1
+                );
+            }).not.toThrow();
+        });
+
+        test('should not throw when output states have no transitions to other output states', () => {
+            const outputA = new StateWithOutputSignal('outputA', 'signalA');
+            const outputB = new StateWithOutputSignal('outputB', 'signalB');
+
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1, outputA, outputB, regularState2],
+                    ['toA', 'toB', 'signalA', 'signalB'],
+                    [
+                        { from: regularState1, signal: 'toA', to: outputA },
+                        { from: regularState1, signal: 'toB', to: outputB },
+                        { from: outputA, signal: 'signalA', to: regularState2 },
+                        { from: outputB, signal: 'signalB', to: regularState2 }
+                    ],
+                    regularState1
+                );
+            }).not.toThrow();
+        });
+    });
 });

@@ -239,15 +239,15 @@ describe('FiniteStateMachine Constructor Tests', () => {
     });
 
     describe('Constructor Edge Cases', () => {
-        test('should handle empty states array', () => {
+        test('should throw when start state is not in states array (empty states)', () => {
             expect(() => {
                 new TestStateMachine(
                     [],
                     ['signal1'],
                     [],
-                    regularState1 // This would be invalid but testing constructor behavior
+                    regularState1
                 );
-            }).not.toThrow();
+            }).toThrow('ERROR-STOP-03');
         });
 
         test('should handle empty signals array', () => {
@@ -364,7 +364,7 @@ describe('FiniteStateMachine Constructor Tests', () => {
             }).toThrow('Found 4 states with IDefaultState');
         });
 
-        test('should provide complete error message', () => {
+        test('should provide complete error message with ERROR-STOP-01 prefix', () => {
             expect(() => {
                 new TestStateMachine(
                     [defaultState1, defaultState2],
@@ -373,10 +373,67 @@ describe('FiniteStateMachine Constructor Tests', () => {
                     defaultState1
                 );
             }).toThrow(
-                'Multiple states implement IDefaultState interface. ' +
+                'ERROR-STOP-01: Multiple states implement IDefaultState interface. ' +
                 'Only one state can handle invalid signals. ' +
                 'Found 2 states with IDefaultState.'
             );
+        });
+    });
+
+    describe('Dangling Reference Validation', () => {
+        test('should throw ERROR-STOP-03 when start state is not in states array', () => {
+            expect(() => {
+                new TestStateMachine(
+                    [regularState2],
+                    ['signal1'],
+                    [],
+                    regularState1
+                );
+            }).toThrow('ERROR-STOP-03');
+        });
+
+        test('should throw ERROR-STOP-04 when transition.from references unknown state', () => {
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1],
+                    ['signal1'],
+                    [{ from: regularState2, signal: 'signal1', to: regularState1 }],
+                    regularState1
+                );
+            }).toThrow('ERROR-STOP-04');
+        });
+
+        test('should throw ERROR-STOP-05 when transition.to references unknown state', () => {
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1],
+                    ['signal1'],
+                    [{ from: regularState1, signal: 'signal1', to: regularState2 }],
+                    regularState1
+                );
+            }).toThrow('ERROR-STOP-05');
+        });
+
+        test('should throw ERROR-STOP-06 when transition.signal references unknown signal', () => {
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1, regularState2],
+                    ['signal1'],
+                    [{ from: regularState1, signal: 'unknownSignal', to: regularState2 }],
+                    regularState1
+                );
+            }).toThrow('ERROR-STOP-06');
+        });
+
+        test('should not throw for a fully valid configuration', () => {
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1, regularState2],
+                    ['signal1'],
+                    [{ from: regularState1, signal: 'signal1', to: regularState2 }],
+                    regularState1
+                );
+            }).not.toThrow();
         });
     });
 });
