@@ -55,9 +55,10 @@ class TestStateMachine extends FiniteStateMachine<TestDefaultState | AnotherDefa
         states: (TestDefaultState | AnotherDefaultState | RegularState | StateWithAction)[],
         signals: string[],
         transitions: ITransition<TestDefaultState | AnotherDefaultState | RegularState | StateWithAction, string>[],
-        startState: TestDefaultState | AnotherDefaultState | RegularState | StateWithAction
+        startState: TestDefaultState | AnotherDefaultState | RegularState | StateWithAction,
+        skipValidation: boolean = false
     ) {
-        super(states, signals, transitions, startState);
+        super(states, signals, transitions, startState, skipValidation);
     }
 
     public testSendSignal(signal: string) {
@@ -253,7 +254,7 @@ describe('FiniteStateMachine Constructor Tests', () => {
         test('should handle empty signals array', () => {
             expect(() => {
                 new TestStateMachine(
-                    [regularState1, regularState2],
+                    [regularState1],
                     [],
                     [],
                     regularState1
@@ -263,7 +264,7 @@ describe('FiniteStateMachine Constructor Tests', () => {
 
         test('should handle empty transitions array', () => {
             const machine = new TestStateMachine(
-                [regularState1, regularState2],
+                [regularState1],
                 ['signal1'],
                 [],
                 regularState1
@@ -317,9 +318,10 @@ describe('FiniteStateMachine Constructor Tests', () => {
 
         test('should validate default state interface correctly with mixed state types', () => {
             // This should work - one default state among other types
+            // regularState2 removed: it would be unreachable and this test is about default states
             expect(() => {
                 new TestStateMachine(
-                    [regularState1, stateWithAction, defaultState1, regularState2],
+                    [regularState1, stateWithAction, defaultState1],
                     ['signal1'],
                     [{ from: regularState1, signal: 'signal1', to: stateWithAction }],
                     regularState1
@@ -432,6 +434,79 @@ describe('FiniteStateMachine Constructor Tests', () => {
                     ['signal1'],
                     [{ from: regularState1, signal: 'signal1', to: regularState2 }],
                     regularState1
+                );
+            }).not.toThrow();
+        });
+    });
+
+    describe('Unreachable States Validation', () => {
+        test('should throw ERROR-STOP-08 when a regular state is unreachable from start state', () => {
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1, regularState2],
+                    ['signal1'],
+                    [],  // No transitions → regularState2 unreachable
+                    regularState1
+                );
+            }).toThrow('ERROR-STOP-08');
+        });
+
+        test('should throw ERROR-STOP-08 with correct state name in message', () => {
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1, regularState2],
+                    ['signal1'],
+                    [],
+                    regularState1
+                );
+            }).toThrow(`State 'regular2' is unreachable from start state 'regular1'`);
+        });
+
+        test('should not throw when all states are reachable', () => {
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1, regularState2],
+                    ['signal1', 'signal2'],
+                    [
+                        { from: regularState1, signal: 'signal1', to: regularState2 },
+                        { from: regularState2, signal: 'signal2', to: regularState1 }
+                    ],
+                    regularState1
+                );
+            }).not.toThrow();
+        });
+
+        test('should not flag DefaultState as unreachable (it handles invalid signals by design)', () => {
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1, regularState2, defaultState1],
+                    ['signal1'],
+                    [{ from: regularState1, signal: 'signal1', to: regularState2 }],
+                    regularState1
+                );
+            }).not.toThrow();
+        });
+
+        test('should not throw when skipValidation=true even with unreachable states', () => {
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1, regularState2],
+                    ['signal1'],
+                    [],  // regularState2 unreachable, but validation is skipped
+                    regularState1,
+                    true
+                );
+            }).not.toThrow();
+        });
+
+        test('should not throw when skipValidation=true with multiple default states', () => {
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1, defaultState1, defaultState2],
+                    ['signal1'],
+                    [],
+                    regularState1,
+                    true
                 );
             }).not.toThrow();
         });

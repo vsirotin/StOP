@@ -88,9 +88,10 @@ class TestStateMachine extends FiniteStateMachine<
         states: (RegularState | StateWithOutputSignal | StateWithOutputSignalAndAction | DynamicOutputState | DefaultStateWithOutput)[],
         signals: string[],
         transitions: ITransition<RegularState | StateWithOutputSignal | StateWithOutputSignalAndAction | DynamicOutputState | DefaultStateWithOutput, string>[],
-        startState: RegularState | StateWithOutputSignal | StateWithOutputSignalAndAction | DynamicOutputState | DefaultStateWithOutput
+        startState: RegularState | StateWithOutputSignal | StateWithOutputSignalAndAction | DynamicOutputState | DefaultStateWithOutput,
+        skipValidation: boolean = false
     ) {
-        super(states, signals, transitions, startState);
+        super(states, signals, transitions, startState, skipValidation);
     }
 
     public testSendSignal(signal: string) {
@@ -571,11 +572,13 @@ describe('StateWithOutputSignal Tests', () => {
         });
 
         test('should correctly identify states with output signals', () => {
-            // output states must have outgoing transitions to pass validation
+            // All output states must be reachable from regularState1
             const machine = new TestStateMachine(
                 [regularState1, outputState1, outputStateWithAction],
-                ['auto1', 'actionSignal'],
+                ['toOutput1', 'toOutputWithAction', 'auto1', 'actionSignal'],
                 [
+                    { from: regularState1, signal: 'toOutput1', to: outputState1 },
+                    { from: regularState1, signal: 'toOutputWithAction', to: outputStateWithAction },
                     { from: outputState1, signal: 'auto1', to: regularState1 },
                     { from: outputStateWithAction, signal: 'actionSignal', to: regularState1 }
                 ],

@@ -1,4 +1,7 @@
 # Project frontend. Release notes 
+## Version: 1.3.0 build 42
+feat: Added unreachable-state validation (ERROR-STOP-08) and skipValidation constructor parameter (default false). 8 new tests; 4 existing tests corrected to satisfy the new validation.
+
 ## Version: 1.2.0 build 41
 feat: Added dangling-reference validation (ERROR-STOP-03..06) and output-signal cycle detection (ERROR-STOP-07) in FiniteStateMachine constructor. All existing error messages prefixed with ERROR-STOP-01/02. 9 new tests added; 1 existing edge-case test updated.
 

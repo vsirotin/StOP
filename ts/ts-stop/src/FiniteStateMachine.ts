@@ -105,38 +105,45 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
      * @param signals - Array of all possible signals/events
      * @param transitions - Array of transition rules defining how signals move between states
      * @param startState - The initial state of the machine
+     * @param skipValidation - When true, all structural validations are skipped (default: false)
      */
     constructor(
         protected states: STATE[], 
         protected signals: SIGNAL[], 
         protected transitions: ITransition<STATE, SIGNAL>[], 
-        protected startState: STATE
+        protected startState: STATE,
+        skipValidation: boolean = false
     ) {
            // Find states that implement IDefaultState
     const defaultStates = states.filter(state => this.isDefaultState(state));
     
-        // Validate default state count
-        if (defaultStates.length > 1) {
-            throw new Error(
-                `ERROR-STOP-01: Multiple states implement IDefaultState interface. ` +
-                `Only one state can handle invalid signals. ` +
-                `Found ${defaultStates.length} states with IDefaultState.`
-            );
+        if (!skipValidation) {
+            // Validate default state count
+            if (defaultStates.length > 1) {
+                throw new Error(
+                    `ERROR-STOP-01: Multiple states implement IDefaultState interface. ` +
+                    `Only one state can handle invalid signals. ` +
+                    `Found ${defaultStates.length} states with IDefaultState.`
+                );
+            }
+
+            // Validate that all transition and start-state references are defined
+            this.validateDanglingReferences();
+
+            // Validate that all output signal states have at least one outgoing transition
+            this.validateOutputSignalStates();
+
+            // Validate that output-signal states do not form cycles
+            this.validateOutputSignalCycles();
+
+            // Validate that all states are reachable from the start state
+            this.validateUnreachableStates();
         }
-        
+
         // Set default state if exactly one found
         if (defaultStates.length === 1) {
             this.defaultState = defaultStates[0] as DefaultState;
         }
-
-        // Validate that all transition and start-state references are defined
-        this.validateDanglingReferences();
-
-        // Validate that all output signal states have at least one outgoing transition
-        this.validateOutputSignalStates();
-
-        // Validate that output-signal states do not form cycles
-        this.validateOutputSignalCycles();
 
         // Initialize the machine to its starting state
         this.currentState = startState;
@@ -202,6 +209,32 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
             // Add null/undefined check to prevent errors
             if (outputSignal !== null && outputSignal !== undefined) {
                 this.sendSignal(outputSignal);
+            }
+        }
+    }
+
+    private validateUnreachableStates(): void {
+        const reachable = new Set<STATE>();
+        const queue: STATE[] = [this.startState];
+        reachable.add(this.startState);
+
+        while (queue.length > 0) {
+            const current = queue.shift()!;
+            for (const t of this.transitions) {
+                if (t.from === current && !reachable.has(t.to)) {
+                    reachable.add(t.to);
+                    queue.push(t.to);
+                }
+            }
+        }
+
+        for (const state of this.states) {
+            if (this.isDefaultState(state)) continue; // DefaultState handles invalid signals — unreachable by design
+            if (!reachable.has(state)) {
+                throw new Error(
+                    `ERROR-STOP-08: State '${state}' is unreachable from start state '${this.startState}'. ` +
+                    `All non-default states must be reachable from the start state via the transition graph.`
+                );
             }
         }
     }
