@@ -1,5 +1,0 @@
-{
-  "dependencies": {
-    "@vsirotin/ts-stop": "file:ts/ts-stop/vsirotin-ts-stop-0.0.1.tgz"
-  }
-}
