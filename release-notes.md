@@ -1,4 +1,7 @@
 # Project frontend. Release notes 
+## Version: 1.1.0 build 40
+feat: Added output-signal state validation in FiniteStateMachine constructor. States implementing IStateWithOutputSignal without outgoing transitions now throw a clear configuration error at construction time. Converted 5 skipped (xtest) tests to active throw-tests; added 2 new positive tests; fixed 3 pre-existing tests whose configurations were invalid.
+
 ## Version: 1.0.1 build 39
 Fixed unit tests, CI workflow, and documentation to match project standards.
 

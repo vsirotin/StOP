@@ -129,6 +129,9 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
             this.defaultState = defaultStates[0] as DefaultState;
         }
 
+        // Validate that all output signal states have at least one outgoing transition
+        this.validateOutputSignalStates();
+
         // Initialize the machine to its starting state
         this.currentState = startState;
 
@@ -193,6 +196,21 @@ export abstract class FiniteStateMachine<STATE, SIGNAL> implements IFiniteStateM
             // Add null/undefined check to prevent errors
             if (outputSignal !== null && outputSignal !== undefined) {
                 this.sendSignal(outputSignal);
+            }
+        }
+    }
+
+    private validateOutputSignalStates(): void {
+        for (const state of this.states) {
+            if (this.isStateWithOutputSignal(state)) {
+                const hasOutgoing = this.transitions.some(t => t.from === state);
+                if (!hasOutgoing) {
+                    throw new Error(
+                        `Configuration error: State '${state}' implements IStateWithOutputSignal ` +
+                        `but has no outgoing transitions. States with output signals must have ` +
+                        `at least one outgoing transition.`
+                    );
+                }
             }
         }
     }

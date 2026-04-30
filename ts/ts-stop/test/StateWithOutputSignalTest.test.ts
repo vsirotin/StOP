@@ -175,41 +175,32 @@ describe('StateWithOutputSignal Tests', () => {
             expect(machine.getCurrentState()).toBe(regularState2);
         });
 
-        // TODO should be detected as incorrect machine configuration
-        xtest('should handle output signal that has no valid transition', () => {
-            const machine = new TestStateMachine(
-                [regularState1, outputState1],
-                ['trigger', 'auto1', 'invalid'],
-                [
-                    { from: regularState1, signal: 'trigger', to: outputState1 }
-                    // No transition for 'auto1' from outputState1
-                ],
-                regularState1
-            );
-
-            // Move to output state
-            machine.testSendSignal('trigger');
-
-            // Should remain at outputState1 since auto1 has no valid transition
-            expect(machine.getCurrentState()).toBe(outputState1);
+        test('should throw when output signal state has no outgoing transition', () => {
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1, outputState1],
+                    ['trigger', 'auto1', 'invalid'],
+                    [
+                        { from: regularState1, signal: 'trigger', to: outputState1 }
+                        // No transition for 'auto1' from outputState1
+                    ],
+                    regularState1
+                );
+            }).toThrow(`Configuration error: State 'output1' implements IStateWithOutputSignal but has no outgoing transitions. States with output signals must have at least one outgoing transition.`);
         });
 
-        xtest('should handle output signal with default state available', () => {
-            const machine = new TestStateMachine(
-                [regularState1, outputState1, defaultOutputState],
-                ['trigger', 'auto1'],
-                [
-                    { from: regularState1, signal: 'trigger', to: outputState1 }
-                    // No transition for 'auto1' from outputState1
-                ],
-                regularState1
-            );
-
-            // Move to output state
-            machine.testSendSignal('trigger');
-
-            // Should remain at outputState1, but default state should handle the invalid signal
-            expect(machine.getCurrentState()).toBe(outputState1);
+        test('should throw when output signal state has no outgoing transition even when default state present', () => {
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1, outputState1, defaultOutputState],
+                    ['trigger', 'auto1'],
+                    [
+                        { from: regularState1, signal: 'trigger', to: outputState1 }
+                        // No transition for 'auto1' from outputState1
+                    ],
+                    regularState1
+                );
+            }).toThrow(`Configuration error: State 'output1' implements IStateWithOutputSignal but has no outgoing transitions. States with output signals must have at least one outgoing transition.`);
         });
     });
 
@@ -362,23 +353,20 @@ describe('StateWithOutputSignal Tests', () => {
     });
 
     describe('Edge Cases and Error Handling', () => {
-        // TODO should be detected as incorrect machine configuration
-        xtest('should handle output signal with no valid transition', () => {
+        test('should throw when isolated output state has no outgoing transition', () => {
             const isolatedOutputState = new StateWithOutputSignal('isolated', 'orphanSignal');
-            
-            const machine = new TestStateMachine(
-                [regularState1, isolatedOutputState],
-                ['trigger', 'orphanSignal'],
-                [
-                    { from: regularState1, signal: 'trigger', to: isolatedOutputState }
-                    // No transition for 'orphanSignal' from isolatedOutputState
-                ],
-                regularState1
-            );
 
-            machine.testSendSignal('trigger');
-            // Should remain at isolatedOutputState since orphanSignal has no valid transition
-            expect(machine.getCurrentState()).toBe(isolatedOutputState);
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1, isolatedOutputState],
+                    ['trigger', 'orphanSignal'],
+                    [
+                        { from: regularState1, signal: 'trigger', to: isolatedOutputState }
+                        // No transition for 'orphanSignal' from isolatedOutputState
+                    ],
+                    regularState1
+                );
+            }).toThrow(`Configuration error: State 'isolated' implements IStateWithOutputSignal but has no outgoing transitions. States with output signals must have at least one outgoing transition.`);
         });
 
         test('should handle empty output signal', () => {
@@ -412,40 +400,41 @@ describe('StateWithOutputSignal Tests', () => {
             }
 
             const nullOutputState = new NullOutputState('nullOutput');
-            
+
+            // nullOutputState implements IStateWithOutputSignal but returns null;
+            // it must have an outgoing transition to pass construction validation.
             const machine = new TestStateMachine(
                 [regularState1, nullOutputState as any, regularState2],
-                ['trigger'],
+                ['trigger', 'next'],
                 [
-                    { from: regularState1, signal: 'trigger', to: nullOutputState as any }
+                    { from: regularState1, signal: 'trigger', to: nullOutputState as any },
+                    { from: nullOutputState as any, signal: 'next', to: regularState2 }
                 ],
                 regularState1
             );
 
-            // Should not throw an error and should remain at nullOutputState
+            // Should not throw when processing the null output signal at runtime
             expect(() => {
                 machine.testSendSignal('trigger');
             }).not.toThrow();
-            
+
+            // Null output signal means no auto-transition fires; state stays at nullOutputState
             expect(machine.getCurrentState()).toBe(nullOutputState);
         });
 
-        // TODO should be detected as incorrect machine configuration
-        xtest('should handle state with output signal that has no matching transition', () => {
+        test('should throw when output signal state has no outgoing transition (signal not registered)', () => {
             const unmatchedOutputState = new StateWithOutputSignal('unmatched', 'nonExistentSignal');
-            
-            const machine = new TestStateMachine(
-                [regularState1, unmatchedOutputState],
-                ['trigger', 'differentSignal'], // Note: 'nonExistentSignal' not in signals array
-                [
-                    { from: regularState1, signal: 'trigger', to: unmatchedOutputState }
-                ],
-                regularState1
-            );
 
-            machine.testSendSignal('trigger');
-            // Should remain at unmatchedOutputState
-            expect(machine.getCurrentState()).toBe(unmatchedOutputState);
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1, unmatchedOutputState],
+                    ['trigger', 'differentSignal'], // Note: 'nonExistentSignal' not in signals array
+                    [
+                        { from: regularState1, signal: 'trigger', to: unmatchedOutputState }
+                    ],
+                    regularState1
+                );
+            }).toThrow(`Configuration error: State 'unmatched' implements IStateWithOutputSignal but has no outgoing transitions. States with output signals must have at least one outgoing transition.`);
         });
 
         test('should maintain state machine integrity with complex output signal scenarios', () => {
@@ -476,23 +465,47 @@ describe('StateWithOutputSignal Tests', () => {
             expect(machine.getTransitions()).toHaveLength(4);
         });
 
-        // TODO should be detected as incorrect machine configuration
-        xtest('should handle terminal output states correctly', () => {
+        test('should throw when terminal output state has no outgoing transition', () => {
             const terminalOutputState = new StateWithOutputSignal('terminal', 'endSignal');
-            
-            const machine = new TestStateMachine(
-                [regularState1, terminalOutputState],
-                ['finish', 'endSignal'],
-                [
-                    { from: regularState1, signal: 'finish', to: terminalOutputState }
-                    // No transition from terminalOutputState - it's a terminal state
-                ],
-                regularState1
-            );
 
-            machine.testSendSignal('finish');
-            // Should end up at terminalOutputState and stay there
-            expect(machine.getCurrentState()).toBe(terminalOutputState);
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1, terminalOutputState],
+                    ['finish', 'endSignal'],
+                    [
+                        { from: regularState1, signal: 'finish', to: terminalOutputState }
+                        // No transition from terminalOutputState - it's a terminal state
+                    ],
+                    regularState1
+                );
+            }).toThrow(`Configuration error: State 'terminal' implements IStateWithOutputSignal but has no outgoing transitions. States with output signals must have at least one outgoing transition.`);
+        });
+
+        test('should not throw when output signal state has at least one outgoing transition', () => {
+            expect(() => {
+                new TestStateMachine(
+                    [regularState1, outputState1, regularState2],
+                    ['trigger', 'auto1'],
+                    [
+                        { from: regularState1, signal: 'trigger', to: outputState1 },
+                        { from: outputState1, signal: 'auto1', to: regularState2 }
+                    ],
+                    regularState1
+                );
+            }).not.toThrow();
+        });
+
+        test('should not throw when output state is start state with outgoing transition', () => {
+            expect(() => {
+                new TestStateMachine(
+                    [outputState1, regularState1],
+                    ['auto1'],
+                    [
+                        { from: outputState1, signal: 'auto1', to: regularState1 }
+                    ],
+                    outputState1
+                );
+            }).not.toThrow();
         });
     });
 
@@ -558,10 +571,14 @@ describe('StateWithOutputSignal Tests', () => {
         });
 
         test('should correctly identify states with output signals', () => {
+            // output states must have outgoing transitions to pass validation
             const machine = new TestStateMachine(
                 [regularState1, outputState1, outputStateWithAction],
-                ['signal1'],
-                [],
+                ['auto1', 'actionSignal'],
+                [
+                    { from: outputState1, signal: 'auto1', to: regularState1 },
+                    { from: outputStateWithAction, signal: 'actionSignal', to: regularState1 }
+                ],
                 regularState1
             );
 
@@ -572,11 +589,13 @@ describe('StateWithOutputSignal Tests', () => {
         });
 
         test('should handle state comparison correctly', () => {
+            // outputState1 must have an outgoing transition to pass validation
             const machine = new TestStateMachine(
                 [regularState1, outputState1],
                 ['trigger', 'auto1'],
                 [
-                    { from: regularState1, signal: 'trigger', to: outputState1 }
+                    { from: regularState1, signal: 'trigger', to: outputState1 },
+                    { from: outputState1, signal: 'auto1', to: regularState1 }
                 ],
                 regularState1
             );
