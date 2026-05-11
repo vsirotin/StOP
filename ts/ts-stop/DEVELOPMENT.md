@@ -8,13 +8,23 @@ This is the core TypeScript implementation of the StOP (State-Oriented Programmi
 - State actions (entry/exit hooks)
 - Output signals (auto-triggering transitions)
 - Default states for handling invalid signals
+- **Stacked Finite State Machine (SFSM)** — a stack-based engine for hierarchical, multi-component FA processing
 
-The library is consumed by test examples in `test/fa/` and by the `js-example` sub-project.
+The library is consumed by test examples in `test/fa/` and `test/sfsm/`, and by the `js-example` sub-project.
 
 ## Project structure
 
-- `src/fa/` - Core finite state machine implementation classes
-- `test/fa/` - Unit and integration tests, including Turnstile examples
+- `src/fa/` — Core finite state machine implementation classes (FA layer)
+- `src/sfsm/` — Stacked Finite State Machine engine (SFSM layer)
+  - `interfaces.ts` — `ICommandReceiver`, `ISignalReceiver`
+  - `types.ts` — `FaDefinition`, `FaNode`, `Transition`, `SfsmOptions`, `LogEntry`
+  - `FaResolver.ts` — Parses FA JSON into a flat indexed structure
+  - `Sfsm.ts` — Engine class: stack management, signal queue, rule processing, logging
+  - `index.ts` — Re-exports all public symbols
+- `test/fa/` — Unit and integration tests for the FA layer, including Turnstile examples
+- `test/sfsm/` — Unit and integration tests for the SFSM engine
+  - `simulators/` — Smart device simulators (TurnstileDevice, CoinAcceptor, Changer, etc.)
+  - `test-data/` — FA definition JSON files used by tests
 
 ## How to build
 

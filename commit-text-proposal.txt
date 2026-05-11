@@ -1,1 +1,1 @@
-fix: Project: ts/ts-stop. Version: 1.4.2. SFSM steps 4+5: engine bug fixes + edge-case tests, 197 tests passing.
+doc: Project: ts/ts-stop. Version: 1.4.3. SFSM step 6: API section and log format docs updated.

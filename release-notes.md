@@ -1,4 +1,7 @@
 # Project frontend. Release notes 
+## Version: 1.4.3 build 47
+doc: SFSM step 6 — replaced pseudo-code API section in 05-StOP-SFSM-Definition.md with real TypeScript API (Sfsm class, interfaces, options, usage example); log format rewritten as a table; DEVELOPMENT.md updated with sfsm module structure.
+
 ## Version: 1.4.2 build 46
 fix: SFSM engine — stackBefore captured before bubble-up splice (log accuracy); rule label correctly identifies '2.2.2.1' vs '2.1'. Added 18 new edge-case tests (policy, stack inspection, loadFA reset, log correctness). 197 total tests passing.
 

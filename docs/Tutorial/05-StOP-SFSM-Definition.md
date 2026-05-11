@@ -352,52 +352,129 @@ Our "external world" is extended with the following devices:
 }
 ```
 
-## Calling Convention and Configuration parameters
+## TypeScript API
 
-The call of SFSM have a signature loke
+The SFSM engine is available as the `Sfsm` class in the `@vsirotin/ts-stop` package (sub-path `sfsm`).
 
-```javascript
-const processor = Sfsm
-const log = processor(fa, make_log=md)
+### Interfaces
+
+```typescript
+/** Implement this on any external device that receives commands from the SFSM. */
+interface ICommandReceiver {
+    receiveCommand(command: string, data?: unknown): void;
+}
+
+/** Implement this on any object that accepts signals (the Sfsm class itself implements it). */
+interface ISignalReceiver {
+    receiveSignal(signal: string, data?: unknown): void;
+}
 ```
-where fa is FA definition (JSON object like example above).
-FA can be defined in shorted or in extended format. 
 
-By call can be used optipnal parameters:
-- **make_log** involve log generation. Values:
-- - md - result as markdown table
-- - csv - result as csv text with ";" as deliminator
-- - json - result as JSON object
-- - yaml - result as YAML text
-- **by_missing_data**: with values: 
-- - ignore (FA stil in current state), 
-- - log_warning (FA stil in current state, warning will insert in log logged, when log should be created), 
-- - error (processing will be stopped, an exeption raised)
-- **--by_missing_transition** values: 
-- - ignore (FA stil in current state), 
-- - log_warning (FA stil in current state, warning will insert in log logged, when log should be created), 
-- - error (processing will be stopped, an exeption raised)
+### Configuration
+
+```typescript
+type MissingDataPolicy       = 'ignore' | 'log_warning' | 'error';
+type MissingTransitionPolicy = 'ignore' | 'log_warning' | 'error';
+
+interface SfsmOptions {
+    /** Behaviour when a parameterised command is fired but the signal carries no data.
+     *  Default: 'error'. */
+    byMissingData?: MissingDataPolicy;
+
+    /** Behaviour when no transition matches the (state, signal) pair at any stack level.
+     *  Default: 'error'. */
+    byMissingTransition?: MissingTransitionPolicy;
+}
+```
+
+Policy values:
+
+| Value | Behaviour |
+|-------|-----------|
+| `'ignore'` | The SFSM stays in its current state; processing continues silently. |
+| `'log_warning'` | A `console.warn` message is emitted; the SFSM stays in its current state. |
+| `'error'` | An `Error` is thrown and processing stops. |
+
+### Sfsm class
+
+```typescript
+class Sfsm implements ISignalReceiver {
+
+    constructor(options?: SfsmOptions)
+
+    /** Register the single command receiver for this instance.
+     *  All commands are dispatched to this object regardless of which FA fires them.
+     *  Call before loadFA(). */
+    setCommandReceiver(receiver: ICommandReceiver): void
+
+    /** Parse the FA definition and initialise the engine.
+     *  The root FA is pushed onto the stack with active state "I".
+     *  Resets the log and clears any queued signals.
+     *  No signal is sent automatically — the caller must send the first signal
+     *  (e.g. "TS.s") to drive the machine out of state I. */
+    loadFA(definition: FaDefinition): void
+
+    /** Send a signal to the SFSM.
+     *  Re-entrant: if called from within a command receiver callback the signal
+     *  is queued and processed after the current step finishes (FIFO order).
+     *  This preserves deterministic signal ordering without stack corruption. */
+    receiveSignal(signal: string, data?: unknown): void
+
+    /** Return a copy of the accumulated log entries (one per processed signal step). */
+    getLog(): LogEntry[]
+
+    /** Return the FA name stack, index 0 = bottom (root), last index = head. */
+    getCurrentStack(): string[]
+
+    /** Return the active state abbreviation of the head FA. */
+    getHeadState(): string
+}
+```
+
+### Typical usage
+
+```typescript
+import { Sfsm, FaDefinition } from '@vsirotin/ts-stop/sfsm';
+import turnstileFa from './turnstile-fa.json';
+
+const sfsm = new Sfsm({ byMissingTransition: 'error' });
+
+// Wire the external world
+sfsm.setCommandReceiver(myCommandRouter);
+
+// Load the FA — engine is now at state I of the root FA
+sfsm.loadFA(turnstileFa as FaDefinition);
+
+// Drive the machine
+sfsm.receiveSignal('TS.s');          // I → L
+sfsm.receiveSignal('CR.cc$', { value: 2 });  // cascade through sub-FAs
+
+console.log(sfsm.getHeadState());    // 'U'
+console.log(sfsm.getLog());          // array of LogEntry
+```
 
 
 ## Log format
-Log format can be shorted or extended depends on format of processed FA's JSON (shorted or extended). 
-Below is list of log's columns. Mark (e) signalased, that this colummn only by external format will be presented.
-- Step N: step number, starts with 1.
-- Ctack content: Ordered list of FA-abbreviations in stack.
-- State : abbreviation of active state of FA in head of stack.
-- State name (e): Name of active state.
-- Signal: Abbreviation of signal that was send to FA in head of stack.
-- Signal name (e): Name of signal.
-- Rule: Number of applied rule. See a paragraph "## Processing rules" above, e.g. 2.1.1
-- New stack: State of stack after applying of rule.
-- New state: Abbreviation of new active state of FA in head of stack after applying of rule.
-- New state name (e): Name of new active state of FA in head of stack after.
-- Command: Abbreviation of command, that was send by activation of new state.
-- Command name (e): Name of applyed command
-- Receiver (e): Receiver of applied command.
+Log format can be compact or extended depending on the format of the processed FA JSON (compact or extended).
+Below is the list of log fields. Entries marked (e) are only present when the extended FA format is used.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `step` | number | Step number, starts at 1. |
+| `stack` | string[] | Ordered list of FA abbreviations in the stack at the moment the signal arrived (before any structural change). Index 0 = bottom (root), last = head. |
+| `state` | string | Abbreviation of the active state of the head FA before the transition. |
+| `stateName` | string (e) | Human-readable name of the active state before the transition. |
+| `signal` | string | Abbreviation of the signal that triggered this step. |
+| `signalName` | string (e) | Human-readable name of the signal. |
+| `rule` | string | Number of the applied processing rule, e.g. `"2.1"` or `"2.2.2.1"`. See §Processing rules. |
+| `newStack` | string[] | Stack after applying the rule. |
+| `newState` | string | Abbreviation of the new active state of the head FA after the transition. |
+| `newStateName` | string (e) | Human-readable name of the new active state. |
+| `command` | string | Abbreviation of the command sent when entering the new state (if any). |
+| `commandName` | string (e) | Human-readable name of the command. |
+| `receiver` | string (e) | Name of the command receiver. |
 
 
 ## Utilities
 TODO
-
 
