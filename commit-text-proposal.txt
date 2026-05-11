@@ -1,1 +1,1 @@
-refactor: Project: ts/ts-stop. Version: 1.3.1. Restructured source code into fa subdirectories.
+feat: Project: ts/ts-stop. Version: 1.4.0. SFSM engine step 1+2: types, FaResolver, Sfsm, simulators, 23 tests passing.

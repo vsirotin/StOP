@@ -368,6 +368,7 @@ By call can be used optipnal parameters:
 - - md - result as markdown table
 - - csv - result as csv text with ";" as deliminator
 - - json - result as JSON object
+- - yaml - result as YAML text
 - **by_missing_data**: with values: 
 - - ignore (FA stil in current state), 
 - - log_warning (FA stil in current state, warning will insert in log logged, when log should be created), 

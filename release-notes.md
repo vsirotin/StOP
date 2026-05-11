@@ -1,4 +1,7 @@
 # Project frontend. Release notes 
+## Version: 1.4.0 build 44
+feat: SFSM engine implementation step 1+2 — API interfaces, type definitions, FaResolver, Sfsm engine class (stubs → full engine), smart simulators, test skeleton, and 23 passing tests. Turnstile FA JSON extracted to docs and test-data. js-yaml added.
+
 ## Version: 1.3.1 build 43
 refactor: Restructured source code organization - moved core library classes from src/ to src/fa/ and corresponding tests from test/ to test/fa/. Maintains backward compatibility through re-exports in src/index.ts. All 152 tests passing.
 
