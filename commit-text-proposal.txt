@@ -1,1 +1,1 @@
-test: Project: ts/ts-stop. Version: 1.4.1. SFSM step 3: banknote path + sequential tests, 36 tests passing.
+fix: Project: ts/ts-stop. Version: 1.4.2. SFSM steps 4+5: engine bug fixes + edge-case tests, 197 tests passing.

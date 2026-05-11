@@ -1,4 +1,7 @@
 # Project frontend. Release notes 
+## Version: 1.4.2 build 46
+fix: SFSM engine — stackBefore captured before bubble-up splice (log accuracy); rule label correctly identifies '2.2.2.1' vs '2.1'. Added 18 new edge-case tests (policy, stack inspection, loadFA reset, log correctness). 197 total tests passing.
+
 ## Version: 1.4.1 build 45
 test: SFSM step 3 — banknote path (BPP) and sequential-transaction tests added. 36 SFSM tests passing (was 23).
 

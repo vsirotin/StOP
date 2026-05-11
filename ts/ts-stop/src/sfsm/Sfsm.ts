@@ -136,19 +136,22 @@ export class Sfsm implements ISignalReceiver {
 
         const { frameIndex, toState, command } = result;
 
-        // Rule 2.2.2.1 — pop frames above the matched FA
-        if (frameIndex < this.stack.length - 1) {
-            this.stack.splice(frameIndex + 1);
-        }
-
+        // Capture stack state BEFORE any structural changes
         const stackBefore = this.getCurrentStack();
         const stateBefore = this.stack[frameIndex].currentState;
+        // Bubble-up: signal was handled by an ancestor FA, not the head
+        const bubbledUp = frameIndex < this.stack.length - 1;
+
+        // Rule 2.2.2.1 — pop frames above the matched FA
+        if (bubbledUp) {
+            this.stack.splice(frameIndex + 1);
+        }
 
         // Update state
         this.stack[frameIndex].currentState = toState;
 
-        // Resolve rule label
-        const rule = frameIndex < this.stack.length - 1 ? '2.2.2.1' : '2.1';
+        // Rule label: 2.1 = head FA handled signal; 2.2.2.1 = ancestor handled after bubble-up
+        const rule = bubbledUp ? '2.2.2.1' : '2.1';
 
         // Rule 2.1.1 — send command if present
         let sentCommand: string | undefined;
