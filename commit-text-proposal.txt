@@ -1,1 +1,1 @@
-feat: Project: ts/ts-stop. Version: 1.4.0. SFSM engine step 1+2: types, FaResolver, Sfsm, simulators, 23 tests passing.
+test: Project: ts/ts-stop. Version: 1.4.1. SFSM step 3: banknote path + sequential tests, 36 tests passing.

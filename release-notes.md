@@ -1,4 +1,7 @@
 # Project frontend. Release notes 
+## Version: 1.4.1 build 45
+test: SFSM step 3 — banknote path (BPP) and sequential-transaction tests added. 36 SFSM tests passing (was 23).
+
 ## Version: 1.4.0 build 44
 feat: SFSM engine implementation step 1+2 — API interfaces, type definitions, FaResolver, Sfsm engine class (stubs → full engine), smart simulators, test skeleton, and 23 passing tests. Turnstile FA JSON extracted to docs and test-data. js-yaml added.
 
