@@ -9,7 +9,12 @@ This is the core TypeScript implementation of the StOP (State-Oriented Programmi
 - Output signals (auto-triggering transitions)
 - Default states for handling invalid signals
 
-The library is consumed by test examples in `test/` and by the `js-example` sub-project.
+The library is consumed by test examples in `test/fa/` and by the `js-example` sub-project.
+
+## Project structure
+
+- `src/fa/` - Core finite state machine implementation classes
+- `test/fa/` - Unit and integration tests, including Turnstile examples
 
 ## How to build
 

@@ -1,4 +1,7 @@
 # Project frontend. Release notes 
+## Version: 1.3.1 build 43
+refactor: Restructured source code organization - moved core library classes from src/ to src/fa/ and corresponding tests from test/ to test/fa/. Maintains backward compatibility through re-exports in src/index.ts. All 152 tests passing.
+
 ## Version: 1.3.0 build 42
 feat: Added unreachable-state validation (ERROR-STOP-08) and skipValidation constructor parameter (default false). 8 new tests; 4 existing tests corrected to satisfy the new validation.
 
