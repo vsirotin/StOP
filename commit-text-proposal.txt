@@ -1,1 +1,1 @@
-doc: Project: ts/ts-stop. Version: 1.4.3. SFSM step 6: API section and log format docs updated.
+feat: Project: ts/ts-stop. Version: 1.5.0. SFSM compact multi-FA format and reduceFA utility.

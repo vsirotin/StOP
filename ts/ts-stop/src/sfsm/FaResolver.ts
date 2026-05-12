@@ -34,30 +34,85 @@ export class FaResolver {
         return fa;
     }
 
-    /** Returns the name of the root FA (the single top-level key). */
+    /** Returns the name of the root FA.
+     *
+     * For single-key definitions (compact single FA or extended FA), the sole key is the root.
+     * For multi-key compact definitions (all values are Transition[]), the root is the FA whose
+     * name is never referenced as a target state (3rd element) in any other FA's transitions.
+     */
     getRootName(): string {
         const keys = Object.keys(this.definition);
-        if (keys.length !== 1) {
-            throw new Error(`SFSM: FA definition must have exactly one root FA, found: ${keys.join(', ')}`);
+
+        if (keys.length === 1) {
+            return keys[0];
         }
-        return keys[0];
+
+        // Multi-key: all values must be Transition[]
+        const allCompact = keys.every(k => Array.isArray(this.definition[k]));
+        if (!allCompact) {
+            throw new Error(`SFSM: Multi-key FA definition must use compact format (all values must be Transition[]).`);
+        }
+
+        // Collect all target state names referenced across all transitions
+        const referenced = new Set<string>();
+        for (const key of keys) {
+            const transitions = this.definition[key] as Transition[];
+            for (const t of transitions) {
+                referenced.add(t[2]); // newState is at index 2
+            }
+        }
+
+        // Root = the FA name that is never a target in any other FA's transitions
+        const roots = keys.filter(k => !referenced.has(k));
+        if (roots.length !== 1) {
+            throw new Error(
+                `SFSM: Cannot determine root FA. Candidates: [${roots.join(', ')}]. ` +
+                `All FA names: [${keys.join(', ')}].`
+            );
+        }
+        return roots[0];
     }
 
     private buildIndex(): void {
-        const rootName = this.getRootName();
-        const rootValue = this.definition[rootName];
+        const entries = Object.entries(this.definition);
+        const allCompact = entries.every(([, v]) => Array.isArray(v));
 
-        if (Array.isArray(rootValue)) {
-            // Compact format: value is directly a Transition[]
-            const node: FaNode = { ts: rootValue as Transition[] };
-            this.index.set(rootName, {
-                name: rootName,
-                transitions: rootValue as Transition[],
-                subFaNames: new Set(),
-                node
-            });
+        if (allCompact && entries.length > 1) {
+            // Multi-key compact format: index all FAs, sub-FA names derived from definition keys
+            this.buildCompactMultiIndex();
         } else {
-            this.indexNode(rootName, rootValue as FaNode);
+            const rootName = this.getRootName();
+            const rootValue = this.definition[rootName];
+
+            if (Array.isArray(rootValue)) {
+                // Single-key compact format
+                const node: FaNode = { ts: rootValue as Transition[] };
+                this.index.set(rootName, {
+                    name: rootName,
+                    transitions: rootValue as Transition[],
+                    subFaNames: new Set(),
+                    node
+                });
+            } else {
+                // Extended format
+                this.indexNode(rootName, rootValue as FaNode);
+            }
+        }
+    }
+
+    private buildCompactMultiIndex(): void {
+        const definedFaNames = new Set(Object.keys(this.definition));
+
+        for (const [name, value] of Object.entries(this.definition)) {
+            const transitions = value as Transition[];
+            // A state is a sub-FA if its name is a key in the definition
+            const subFaNames = new Set(
+                transitions
+                    .map(t => t[2])
+                    .filter(target => definedFaNames.has(target))
+            );
+            const node: FaNode = { ts: transitions };
+            this.index.set(name, { name, transitions, subFaNames, node });
         }
     }
 

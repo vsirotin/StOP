@@ -1,4 +1,7 @@
 # Project frontend. Release notes 
+## Version: 1.5.0 build 48
+feat: SFSM compact multi-FA format support + `reduceFA` utility. `FaResolver` extended for auto-root-detection in flat `Record<string, Transition[]>` definitions. `FaReducer.ts` added to strip extended metadata to compact. 246 tests passing.
+
 ## Version: 1.4.3 build 47
 doc: SFSM step 6 — replaced pseudo-code API section in 05-StOP-SFSM-Definition.md with real TypeScript API (Sfsm class, interfaces, options, usage example); log format rewritten as a table; DEVELOPMENT.md updated with sfsm module structure.
 
