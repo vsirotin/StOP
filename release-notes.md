@@ -1,4 +1,7 @@
-# Project frontend. Release notes 
+# Project ts-stop. Release notes 
+## Version: 1.8.0 build 53
+feat: Minimal Angular 17 browser demo in ts/ts-example. Two panels: FA turnstile (FiniteStateMachine) and SFSM turnstile (Sfsm, compact FA, banknote payment). ./sfsm sub-path export added to ts-stop package.json. DEVELOPMENT.md rewritten with 10-step developer workflow.
+
 ## Version: 1.7.0 build 52
 feat: updateCompactFA / updateFullFA library functions and update-compact-fa / update-full-fa CLI scripts. FaUpdate type. 20 new unit tests; 297 tests passing.
 

@@ -1,0 +1,49 @@
+{
+  "hash": "872e81b7",
+  "configHash": "ae524d2c",
+  "lockfileHash": "8ca1dbbb",
+  "browserHash": "f9a7932b",
+  "optimized": {
+    "@angular/common": {
+      "src": "../../../../../node_modules/@angular/common/fesm2022/common.mjs",
+      "file": "@angular_common.js",
+      "fileHash": "2064a337",
+      "needsInterop": false
+    },
+    "@angular/core": {
+      "src": "../../../../../node_modules/@angular/core/fesm2022/core.mjs",
+      "file": "@angular_core.js",
+      "fileHash": "8c660ca0",
+      "needsInterop": false
+    },
+    "@angular/platform-browser": {
+      "src": "../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
+      "file": "@angular_platform-browser.js",
+      "fileHash": "4e6f8828",
+      "needsInterop": false
+    },
+    "@vsirotin/ts-stop": {
+      "src": "../../../../../node_modules/@vsirotin/ts-stop/lib/esm/index.js",
+      "file": "@vsirotin_ts-stop.js",
+      "fileHash": "1f35c8a3",
+      "needsInterop": false
+    },
+    "@vsirotin/ts-stop/sfsm": {
+      "src": "../../../../../node_modules/@vsirotin/ts-stop/lib/esm/sfsm/index.js",
+      "file": "@vsirotin_ts-stop_sfsm.js",
+      "fileHash": "49eb3360",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-4OE45UPN": {
+      "file": "chunk-4OE45UPN.js"
+    },
+    "chunk-FC3UMPAI": {
+      "file": "chunk-FC3UMPAI.js"
+    },
+    "chunk-TXDUYLVM": {
+      "file": "chunk-TXDUYLVM.js"
+    }
+  }
+}

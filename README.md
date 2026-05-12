@@ -11,7 +11,7 @@ State Oriented Programming (StOP) is a programming paradigm that focuses on expl
 | Project | Description |
 |---------|-------------|
 | [ts-stop](./ts/ts-stop/DEVELOPMENT.md) | TypeScript/JavaScript library for State-Oriented Programming |
-| [js-example](./ts/js-example/DEVELOPMENT.md) | JavaScript example demonstrating local usage of ts-stop library |
+| [ts-example](./ts/ts-example/DEVELOPMENT.md) | JavaScript example demonstrating local usage of ts-stop library |
 
 ## Documentation
 

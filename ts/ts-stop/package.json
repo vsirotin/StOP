@@ -10,6 +10,11 @@
       "types": "./lib/index.d.ts",
       "import": "./lib/esm/index.js",
       "require": "./lib/index.js"
+    },
+    "./sfsm": {
+      "types": "./lib/sfsm/index.d.ts",
+      "import": "./lib/esm/sfsm/index.js",
+      "require": "./lib/sfsm/index.js"
     }
   },
   "files": [
