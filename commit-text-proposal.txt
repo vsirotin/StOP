@@ -1,1 +1,1 @@
-feat: Project: ts/ts-stop. Version: 1.5.0. SFSM compact multi-FA format and reduceFA utility.
+feat: Project: ts/ts-stop. Version: 1.5.1. loadFAFromFile helper, reduce-fa CLI, and Utilities docs.

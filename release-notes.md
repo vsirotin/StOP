@@ -1,4 +1,7 @@
 # Project frontend. Release notes 
+## Version: 1.5.1 build 49
+feat: loadFAFromFile helper, reduce-fa CLI script, and Utilities section in tutorial doc. 253 tests passing.
+
 ## Version: 1.5.0 build 48
 feat: SFSM compact multi-FA format support + `reduceFA` utility. `FaResolver` extended for auto-root-detection in flat `Record<string, Transition[]>` definitions. `FaReducer.ts` added to strip extended metadata to compact. 246 tests passing.
 

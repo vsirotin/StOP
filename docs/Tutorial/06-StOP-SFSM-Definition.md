@@ -477,4 +477,107 @@ Below is the list of log fields. Entries marked (e) are only present when the ex
 
 ## Utilities
 
+### `reduceFA` — Convert extended FA definition to compact format
+
+The `reduceFA` function strips all metadata (names, descriptions, senders, receivers) from an extended FA definition and returns a flat compact definition where every FA appears as a top-level key mapping to its `Transition[]`.
+
+**Signature**
+
+```typescript
+import { reduceFA, FaDefinition } from '@vsirotin/ts-stop/sfsm';
+
+function reduceFA(definition: FaDefinition): FaDefinition
+```
+
+**Behaviour**
+
+| Input | Output |
+|-------|--------|
+| Single-key extended FA (nested `FaNode` tree) | Flat `Record<string, Transition[]>` — each FA becomes a top-level key |
+| Already-compact definition | Same object returned unchanged |
+
+**Example**
+
+```typescript
+import { reduceFA, FaDefinition } from '@vsirotin/ts-stop/sfsm';
+import extendedFa from './turnstile-fa.json';
+
+const compact = reduceFA(extendedFa as FaDefinition);
+// compact = { "TS": [...], "PP": [...], "BPP": [...], "CPP": [...] }
+```
+
+> Log entries produced when running a compact FA will not contain metadata fields (`stateName`, `signalName`, etc.) — the same behaviour as when loading a hand-written compact definition.
+
+---
+
+### Multi-FA compact format
+
+For systems with nested sub-FAs, the compact format lists every FA at the top level. The root FA is auto-detected as the FA whose name is never referenced as a target state in any other FA's transitions.
+
+Example (turnstile system — root is `TS` because `TS` never appears as the 3rd element in another FA's transitions):
+
+```json
+{
+    "TS": [
+        ["I", "TS.s", "L"],
+        ["L", "CR.cc$", "PP"],
+        ["PP", "CA.n", "U", "TS.ut"]
+    ],
+    "PP": [
+        ["I", "CR.cc$", "CPP"],
+        ["CPP", "CA.n", "E_P"]
+    ],
+    "CPP": [
+        ["I", "CR.cc$", "CW", "CC.cw$"],
+        ["CW", "CC.p$", "CF", "CC.cf$"]
+    ]
+}
+```
+
+Both formats are accepted by `loadFA()` without any change to the calling code.
+
+---
+
+### `loadFAFromFile` — Load an FA definition from a JSON file (Node.js)
+
+**Signature**
+
+```typescript
+import { loadFAFromFile, FaDefinition } from '@vsirotin/ts-stop/sfsm';
+
+function loadFAFromFile(filePath: string): FaDefinition
+```
+
+Reads and parses a JSON file at `filePath`. Works with both extended and compact formats. Returns a `FaDefinition` ready to pass to `sfsm.loadFA()`.
+
+```typescript
+import { Sfsm, loadFAFromFile, FaDefinition } from '@vsirotin/ts-stop/sfsm';
+
+const sfsm = new Sfsm({ byMissingTransition: 'error' });
+sfsm.setCommandReceiver(myRouter);
+sfsm.loadFA(loadFAFromFile('./turnstile-fa.json'));
+sfsm.receiveSignal('TS.s');
+```
+
+> **Note:** This helper uses Node.js `fs` and is not available in browser environments.
+
+---
+
+### CLI: `reduce-fa` — Convert an FA file from extended to compact format
+
+```bash
+npm run reduce-fa -- <path/to/extended-fa.json>
+```
+
+Reads the extended FA JSON file, reduces it to compact format, and writes the result to a new file named `<basename>-compact.json` in the same directory.
+
+**Example**
+
+```bash
+npm run reduce-fa -- test/sfsm/test-data/turnstile-fa.json
+# Reduced FA written to: test/sfsm/test-data/turnstile-fa-compact.json
+```
+
+> **Note:** The library must be built (`npm run build`) before running this command.
+
 
