@@ -1,13 +1,12 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
-import { Sfsm, FaDefinition, LogEntry } from '../../src/sfsm';
+import { Sfsm, FaDefinition, LogEntry, ExternalWorldHub } from '../../src/sfsm';
 import { TurnstileService } from './simulators/TurnstileService';
 import { TurnstileDevice } from './simulators/TurnstileDevice';
 import { CoinChecker } from './simulators/CoinChecker';
 import { CoinAcceptor } from './simulators/CoinAcceptor';
 import { Changer } from './simulators/Changer';
-import { CommandRouter } from './simulators/CommandRouter';
 
 // ---------------------------------------------------------------------------
 // Run full "coin value=2, then passage" scenario and capture log
@@ -27,21 +26,22 @@ beforeAll(() => {
     const coinAcceptor = new CoinAcceptor(1);   // fare = 1
     const changer = new Changer();
 
-    device.connectSfsm(sfsm);
-    coinChecker.connectSfsm(sfsm);
-    coinAcceptor.connectSfsm(sfsm);
-    changer.connectSfsm(sfsm);
+    const service = new TurnstileService();
 
-    const router = new CommandRouter();
-    router.register('TS', device);
-    router.register('CC', coinChecker);
-    router.register('CA', coinAcceptor);
-    router.register('CH', changer);
+    new ExternalWorldHub()
+        .registerSignalSender(['TS.s'], service)
+        .registerSignalSender(['TS.to', 'TS.ps'], device)
+        .registerCommandReceiver(['TS.ut', 'TS.l'], device)
+        .registerSignalSender(['CC.p$', 'CC.r$'], coinChecker)
+        .registerCommandReceiver(['CC.cw$', 'CC.cf$'], coinChecker)
+        .registerSignalSender(['CA.c$', 'CA.n'], coinAcceptor)
+        .registerCommandReceiver(['CA.a$'], coinAcceptor)
+        .registerSignalSender(['CH.d'], changer)
+        .registerCommandReceiver(['CH.c$'], changer)
+        .connectTo(sfsm);
 
-    sfsm.setCommandReceiver(router);
     sfsm.loadFA(fa);
 
-    const service = new TurnstileService(sfsm);
     service.start();                              // step 1: I → L
     sfsm.receiveSignal('CR.cc$', { value: 2 });  // cascade: L → PP → CPP → ... → U
     device.triggerPassage();                      // U → L

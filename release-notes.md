@@ -1,4 +1,7 @@
 # Project frontend. Release notes 
+## Version: 1.6.0 build 51
+feat: ExternalWorldHub — standard wiring component for connecting external-world devices to the SFSM. New ISignalSender interface. registerSignalSender/registerCommandReceiver fluent API with explicit name lists for precise runtime error reporting. CommandRouter (test-only) removed. All simulators refactored to implement ISignalSender. 16 new unit tests; 266 tests passing.
+
 ## Version: 1.5.2 build 50
 feat: loadFAFromURL helper (browser & Node.js, fetch-based) with 8 mocked unit tests. 261 tests passing.
 

@@ -13,3 +13,11 @@ export interface ICommandReceiver {
 export interface ISignalReceiver {
     receiveSignal(signal: string, data?: unknown): void;
 }
+
+/**
+ * Interface for external objects that send signals to the SFSM.
+ * ExternalWorldHub calls connectSignalTarget() on every registered sender during connectTo().
+ */
+export interface ISignalSender {
+    connectSignalTarget(target: ISignalReceiver): void;
+}

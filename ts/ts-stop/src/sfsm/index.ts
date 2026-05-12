@@ -1,4 +1,5 @@
-export { ICommandReceiver, ISignalReceiver } from './interfaces';
+export { ICommandReceiver, ISignalReceiver, ISignalSender } from './interfaces';
+export { ExternalWorldHub } from './ExternalWorldHub';
 export { FaDefinition, FaNode, Transition, SfsmOptions, LogEntry, MissingDataPolicy, MissingTransitionPolicy } from './types';
 export { FaResolver, ResolvedFa } from './FaResolver';
 export { Sfsm } from './Sfsm';

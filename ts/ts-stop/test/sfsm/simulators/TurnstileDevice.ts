@@ -1,4 +1,4 @@
-import { ICommandReceiver, ISignalReceiver } from '../../../src/sfsm';
+import { ICommandReceiver, ISignalReceiver, ISignalSender } from '../../../src/sfsm';
 
 /**
  * Simulator for the Turnstile physical device.
@@ -7,14 +7,14 @@ import { ICommandReceiver, ISignalReceiver } from '../../../src/sfsm';
  *
  * In tests, call triggerPassage() or triggerTimeout() to simulate physical events.
  */
-export class TurnstileDevice implements ICommandReceiver {
+export class TurnstileDevice implements ICommandReceiver, ISignalSender {
 
     private sfsm: ISignalReceiver | null = null;
     private _locked = true;
     private commandsReceived: string[] = [];
 
-    connectSfsm(sfsm: ISignalReceiver): void {
-        this.sfsm = sfsm;
+    connectSignalTarget(target: ISignalReceiver): void {
+        this.sfsm = target;
     }
 
     receiveCommand(command: string, _data?: unknown): void {

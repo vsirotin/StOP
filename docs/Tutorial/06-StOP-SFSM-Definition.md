@@ -368,6 +368,14 @@ interface ICommandReceiver {
 interface ISignalReceiver {
     receiveSignal(signal: string, data?: unknown): void;
 }
+
+/**
+ * Implement this on any external device that sends signals to the SFSM.
+ * ExternalWorldHub calls connectSignalTarget() automatically during connectTo().
+ */
+interface ISignalSender {
+    connectSignalTarget(target: ISignalReceiver): void;
+}
 ```
 
 ### Configuration
@@ -431,23 +439,68 @@ class Sfsm implements ISignalReceiver {
 }
 ```
 
+### ExternalWorldHub class
+
+`ExternalWorldHub` is the standard wiring component that connects external-world devices to the SFSM. It routes commands dispatched by the SFSM to the correct receiver, and wires all signal senders to the SFSM during `connectTo()`.
+
+Each device is registered with the **explicit list of signal or command names** it handles. These lists enable precise runtime error messages and serve as the basis for FA-vs-wiring validation.
+
+```typescript
+class ExternalWorldHub implements ICommandReceiver {
+
+    /**
+     * Register a command receiver for the given list of exact command names.
+     * Throws if any name is already registered.
+     * Fluent — returns this.
+     */
+    registerCommandReceiver(commands: string[], receiver: ICommandReceiver): this
+
+    /**
+     * Register a signal sender for the given list of signal names it may emit.
+     * Fluent — returns this.
+     */
+    registerSignalSender(signals: string[], sender: ISignalSender): this
+
+    /**
+     * Wire this hub to the SFSM:
+     * - sets this hub as the SFSM's command receiver
+     * - calls connectSignalTarget(sfsm) on every registered signal sender.
+     * Fluent — returns this.
+     */
+    connectTo(sfsm: Sfsm): this
+
+    /** Returns all registered command names (for diagnostics / validation). */
+    getRegisteredCommands(): string[]
+
+    /** Returns all registered signal names (for diagnostics / validation). */
+    getRegisteredSignals(): string[]
+}
+```
+
 ### Typical usage
 
 ```typescript
-import { Sfsm, FaDefinition } from '@vsirotin/ts-stop/sfsm';
+import { Sfsm, FaDefinition, ExternalWorldHub } from '@vsirotin/ts-stop/sfsm';
 import turnstileFa from './turnstile-fa.json';
 
 const sfsm = new Sfsm({ byMissingTransition: 'error' });
 
-// Wire the external world
-sfsm.setCommandReceiver(myCommandRouter);
+// Declare which signals each sender can emit and which commands each receiver handles.
+// connectTo() wires everything: calls connectSignalTarget(sfsm) on all senders
+// and sets the hub as the SFSM's command receiver.
+new ExternalWorldHub()
+    .registerSignalSender(['TS.s'],           turnstileService)
+    .registerSignalSender(['TS.to', 'TS.ps'], turnstileDevice)
+    .registerCommandReceiver(['TS.ut', 'TS.l'], turnstileDevice)
+    // ... register remaining devices ...
+    .connectTo(sfsm);
 
 // Load the FA — engine is now at state I of the root FA
 sfsm.loadFA(turnstileFa as FaDefinition);
 
 // Drive the machine
-sfsm.receiveSignal('TS.s');          // I → L
-sfsm.receiveSignal('CR.cc$', { value: 2 });  // cascade through sub-FAs
+turnstileService.start();                    // sends TS.s: I → L
+sfsm.receiveSignal('CR.cc$', { value: 2 }); // cascade through sub-FAs
 
 console.log(sfsm.getHeadState());    // 'U'
 console.log(sfsm.getLog());          // array of LogEntry

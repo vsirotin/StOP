@@ -1,4 +1,4 @@
-import { ICommandReceiver, ISignalReceiver } from '../../../src/sfsm';
+import { ICommandReceiver, ISignalReceiver, ISignalSender } from '../../../src/sfsm';
 
 /**
  * Simulator for the Banknote Acceptor device.
@@ -9,14 +9,14 @@ import { ICommandReceiver, ISignalReceiver } from '../../../src/sfsm';
  *
  * @param fare The price of passage. Defaults to 1.
  */
-export class BanknoteAcceptor implements ICommandReceiver {
+export class BanknoteAcceptor implements ICommandReceiver, ISignalSender {
 
     private sfsm: ISignalReceiver | null = null;
 
     constructor(private fare: number = 1) {}
 
-    connectSfsm(sfsm: ISignalReceiver): void {
-        this.sfsm = sfsm;
+    connectSignalTarget(target: ISignalReceiver): void {
+        this.sfsm = target;
     }
 
     receiveCommand(command: string, data?: unknown): void {

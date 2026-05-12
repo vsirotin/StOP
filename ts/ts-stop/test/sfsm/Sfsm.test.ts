@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import { Sfsm, FaDefinition } from '../../src/sfsm';
+import { Sfsm, FaDefinition, ExternalWorldHub, ICommandReceiver } from '../../src/sfsm';
 import { TurnstileService } from './simulators/TurnstileService';
 import { TurnstileDevice } from './simulators/TurnstileDevice';
 import { CoinChecker } from './simulators/CoinChecker';
@@ -8,7 +8,6 @@ import { CoinAcceptor } from './simulators/CoinAcceptor';
 import { Changer } from './simulators/Changer';
 import { BanknoteChecker } from './simulators/BanknoteChecker';
 import { BanknoteAcceptor } from './simulators/BanknoteAcceptor';
-import { CommandRouter } from './simulators/CommandRouter';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -40,25 +39,25 @@ function buildHarness(fare = 1): Harness {
     const banknoteChecker = new BanknoteChecker();
     const banknoteAcceptor = new BanknoteAcceptor(fare);
 
-    device.connectSfsm(sfsm);
-    coinChecker.connectSfsm(sfsm);
-    coinAcceptor.connectSfsm(sfsm);
-    changer.connectSfsm(sfsm);
-    banknoteChecker.connectSfsm(sfsm);
-    banknoteAcceptor.connectSfsm(sfsm);
+    const service = new TurnstileService();
 
-    const router = new CommandRouter();
-    router.register('TS', device);
-    router.register('CC', coinChecker);
-    router.register('CA', coinAcceptor);
-    router.register('CH', changer);
-    router.register('BC', banknoteChecker);
-    router.register('BA', banknoteAcceptor);
+    new ExternalWorldHub()
+        .registerSignalSender(['TS.s'], service)
+        .registerSignalSender(['TS.to', 'TS.ps'], device)
+        .registerCommandReceiver(['TS.ut', 'TS.l'], device)
+        .registerSignalSender(['CC.p$', 'CC.r$'], coinChecker)
+        .registerCommandReceiver(['CC.cw$', 'CC.cf$'], coinChecker)
+        .registerSignalSender(['CA.c$', 'CA.n'], coinAcceptor)
+        .registerCommandReceiver(['CA.a$'], coinAcceptor)
+        .registerSignalSender(['CH.d'], changer)
+        .registerCommandReceiver(['CH.c$'], changer)
+        .registerSignalSender(['BC.p$', 'BC.r$'], banknoteChecker)
+        .registerCommandReceiver(['BC.c$'], banknoteChecker)
+        .registerSignalSender(['BA.c$', 'BA.n'], banknoteAcceptor)
+        .registerCommandReceiver(['BA.a$'], banknoteAcceptor)
+        .connectTo(sfsm);
 
-    sfsm.setCommandReceiver(router);
     sfsm.loadFA(loadTurnstileFa());
-
-    const service = new TurnstileService(sfsm);
 
     return { sfsm, service, device, coinChecker, coinAcceptor, changer, banknoteChecker, banknoteAcceptor };
 }
@@ -315,19 +314,18 @@ describe('SFSM – Stack inspection', () => {
     });
 
     it('stack grows to ["TS","PP"] when entering payment sub-FA', () => {
-        // Wire CoinChecker to NOT auto-respond (just observe stack mid-cascade)
-        // We achieve this by replacing the coin checker with one that blocks
-        const blockingRouter = new CommandRouter();
+        // Wire a blocking hub — absorbs all commands so the cascade stalls mid-way
         const device2 = new TurnstileDevice();
-        device2.connectSfsm(h.sfsm);
-        blockingRouter.register('TS', device2);
-        // BlockingCoinChecker: does not call receiveSignal back
-        blockingRouter.register('CC', { receiveCommand: () => { /* absorb */ } });
-        blockingRouter.register('CA', { receiveCommand: () => { /* absorb */ } });
-        blockingRouter.register('CH', { receiveCommand: () => { /* absorb */ } });
-        blockingRouter.register('BC', { receiveCommand: () => { /* absorb */ } });
-        blockingRouter.register('BA', { receiveCommand: () => { /* absorb */ } });
-        h.sfsm.setCommandReceiver(blockingRouter);
+        const absorb: ICommandReceiver = { receiveCommand: () => { /* absorb */ } };
+        new ExternalWorldHub()
+            .registerSignalSender(['TS.to', 'TS.ps'], device2)
+            .registerCommandReceiver(['TS.ut', 'TS.l'], device2)
+            .registerCommandReceiver(['CC.cw$', 'CC.cf$'], absorb)
+            .registerCommandReceiver(['CA.a$'], absorb)
+            .registerCommandReceiver(['CH.c$'], absorb)
+            .registerCommandReceiver(['BC.c$'], absorb)
+            .registerCommandReceiver(['BA.a$'], absorb)
+            .connectTo(h.sfsm);
 
         h.sfsm.receiveSignal('CR.cc$', { value: 1 });
         // CoinChecker absorbed CC.cw$ — engine is now waiting in CPP:CW

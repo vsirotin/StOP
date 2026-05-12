@@ -1,4 +1,4 @@
-import { ICommandReceiver, ISignalReceiver } from '../../../src/sfsm';
+import { ICommandReceiver, ISignalReceiver, ISignalSender } from '../../../src/sfsm';
 
 /**
  * Simulator for the Coin Checker device.
@@ -7,13 +7,13 @@ import { ICommandReceiver, ISignalReceiver } from '../../../src/sfsm';
  *
  * In tests that require a rejected coin, construct with rejectOnNext=true.
  */
-export class CoinChecker implements ICommandReceiver {
+export class CoinChecker implements ICommandReceiver, ISignalSender {
 
     private sfsm: ISignalReceiver | null = null;
     private _rejectOnNext = false;
 
-    connectSfsm(sfsm: ISignalReceiver): void {
-        this.sfsm = sfsm;
+    connectSignalTarget(target: ISignalReceiver): void {
+        this.sfsm = target;
     }
 
     setRejectOnNext(reject: boolean): void {

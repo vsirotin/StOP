@@ -2,7 +2,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { FaDefinition, Transition } from '../../src/sfsm';
 import { reduceFA } from '../../src/sfsm';
-import { Sfsm } from '../../src/sfsm';
+import { Sfsm, ExternalWorldHub } from '../../src/sfsm';
 import { TurnstileService } from './simulators/TurnstileService';
 import { TurnstileDevice } from './simulators/TurnstileDevice';
 import { CoinChecker } from './simulators/CoinChecker';
@@ -10,7 +10,6 @@ import { CoinAcceptor } from './simulators/CoinAcceptor';
 import { Changer } from './simulators/Changer';
 import { BanknoteChecker } from './simulators/BanknoteChecker';
 import { BanknoteAcceptor } from './simulators/BanknoteAcceptor';
-import { CommandRouter } from './simulators/CommandRouter';
 
 function loadExtendedFa(): FaDefinition {
     const p = path.resolve(__dirname, 'test-data/turnstile-fa.json');
@@ -142,25 +141,25 @@ describe('reduceFA – round-trip: reduce then load produces same behaviour', ()
         const banknoteChecker = new BanknoteChecker();
         const banknoteAcceptor = new BanknoteAcceptor(fare);
 
-        device.connectSfsm(sfsm);
-        coinChecker.connectSfsm(sfsm);
-        coinAcceptor.connectSfsm(sfsm);
-        changer.connectSfsm(sfsm);
-        banknoteChecker.connectSfsm(sfsm);
-        banknoteAcceptor.connectSfsm(sfsm);
+        const service = new TurnstileService();
 
-        const router = new CommandRouter();
-        router.register('TS', device);
-        router.register('CC', coinChecker);
-        router.register('CA', coinAcceptor);
-        router.register('CH', changer);
-        router.register('BC', banknoteChecker);
-        router.register('BA', banknoteAcceptor);
+        new ExternalWorldHub()
+            .registerSignalSender(['TS.s'], service)
+            .registerSignalSender(['TS.to', 'TS.ps'], device)
+            .registerCommandReceiver(['TS.ut', 'TS.l'], device)
+            .registerSignalSender(['CC.p$', 'CC.r$'], coinChecker)
+            .registerCommandReceiver(['CC.cw$', 'CC.cf$'], coinChecker)
+            .registerSignalSender(['CA.c$', 'CA.n'], coinAcceptor)
+            .registerCommandReceiver(['CA.a$'], coinAcceptor)
+            .registerSignalSender(['CH.d'], changer)
+            .registerCommandReceiver(['CH.c$'], changer)
+            .registerSignalSender(['BC.p$', 'BC.r$'], banknoteChecker)
+            .registerCommandReceiver(['BC.c$'], banknoteChecker)
+            .registerSignalSender(['BA.c$', 'BA.n'], banknoteAcceptor)
+            .registerCommandReceiver(['BA.a$'], banknoteAcceptor)
+            .connectTo(sfsm);
 
-        sfsm.setCommandReceiver(router);
         sfsm.loadFA(definition);
-
-        const service = new TurnstileService(sfsm);
         return { sfsm, service, device, changer };
     }
 
