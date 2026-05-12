@@ -1,0 +1,194 @@
+{
+    "remove": ["CPP"],
+    "add": {
+        "TS": {
+            "states": {
+                "PP": {
+                    "states": {
+                        "BPP": {
+                            "states": {
+                                "C": {
+                                    "name": "Check of banknote",
+                                    "description": "Checks if a banknote is an official and can be used as payment element"
+                                },
+                                "A": {
+                                    "name": "Acceptance of banknote",
+                                    "description": "Accept a real banknote and save it in internal tresor"
+                                }
+                            },
+                            "signals": {
+                                "BR.bc$": {
+                                    "name": "Banknote candidate",
+                                    "description": "Some artifact is putted in banknote slot. This signal contains data with this artifact",
+                                    "sender": "Banknote Receiver"
+                                },
+                                "BC.p$": {
+                                    "name": "Banknote is ok",
+                                    "description": "Banknote checker send this signal, when banknote is checked and can be used as payment element. This signal contains data with this banknote",
+                                    "sender": "Banknote Checker"
+                                },
+                                "BC.r$": {
+                                    "name": "Banknote is not ok (rejected)",
+                                    "description": "Banknote checker send this signal, when banknote is checked and can't be used as payment element. This signal contains data with this banknote",
+                                    "sender": "Banknote Checker"
+                                },
+                                "BA.c$": {
+                                    "name": "Change is needed",
+                                    "description": "Banknote Acceptor sends this signal when the accepted banknote requires change. Data contains the change value.",
+                                    "sender": "Banknote Acceptor"
+                                },
+                                "BA.n": {
+                                    "name": "Change is not needed",
+                                    "description": "Banknote Acceptor sends this signal when the accepted banknote requires no change.",
+                                    "sender": "Banknote Acceptor"
+                                }
+                            },
+                            "commands": {
+                                "BC.c$": {
+                                    "name": "Check banknote",
+                                    "description": "Command to banknote checker with data with banknote for checking",
+                                    "receiver": "Banknote Checker"
+                                },
+                                "BA.a$": {
+                                    "name": "Accept banknote",
+                                    "description": "Command to banknote acceptor with data with banknote for acceptance",
+                                    "receiver": "Banknote Acceptor"
+                                }
+                            },
+                            "ts": [
+                                ["I", "BR.bc$", "C",   "BC.c$"],
+                                ["C", "BC.p$",  "A",   "BA.a$"],
+                                ["C", "BC.r$",  "E_R"         ],
+                                ["A", "BA.c$",  "E_C"         ],
+                                ["A", "BA.n",   "E_N"         ]
+                            ]
+                        },
+                        "CCPP": {
+                            "states": {
+                                "C": {
+                                    "name": "Charge processing",
+                                    "description": "Credit card charge is being processed by the payment terminal"
+                                }
+                            },
+                            "signals": {
+                                "CCRD.sw$": {
+                                    "name": "Credit card swiped",
+                                    "description": "A credit card has been presented to the reader. This signal contains data with the card token.",
+                                    "sender": "Credit Card Reader"
+                                },
+                                "CCRD.a$": {
+                                    "name": "Card charge accepted",
+                                    "description": "Payment terminal confirms the charge was approved.",
+                                    "sender": "Credit Card Reader"
+                                },
+                                "CCRD.r$": {
+                                    "name": "Card charge rejected",
+                                    "description": "Payment terminal reports the charge was declined.",
+                                    "sender": "Credit Card Reader"
+                                }
+                            },
+                            "commands": {
+                                "CCRD.c$": {
+                                    "name": "Initiate card charge",
+                                    "description": "Command to the payment terminal to charge the card for the fare amount.",
+                                    "receiver": "Credit Card Reader"
+                                }
+                            },
+                            "ts": [
+                                ["I", "CCRD.sw$", "C",   "CCRD.c$"],
+                                ["C", "CCRD.a$",  "E_C"           ],
+                                ["C", "CCRD.r$",  "E_R"           ]
+                            ]
+                        }
+                    },
+                    "RE": {
+                        "name": "Rejection of artifact",
+                        "description": "Rejection of false artifacts (banknote or card) and return them to the user"
+                    },
+                    "CH": {
+                        "name": "Making change",
+                        "description": "Making change by changer and send it to change box"
+                    },
+                    "signals": {
+                        "RE.d": {
+                            "name": "Rejection done",
+                            "description": "Rejection of artifact is done.",
+                            "sender": "Rejector"
+                        },
+                        "CH.d": {
+                            "name": "Change is done",
+                            "description": "Making change is done.",
+                            "sender": "Changer"
+                        }
+                    },
+                    "commands": {
+                        "CH.c$": {
+                            "name": "Make change",
+                            "description": "Command to the Changer to dispense change. Data contains the change amount copied from the triggering signal.",
+                            "receiver": "Changer"
+                        }
+                    },
+                    "ts": [
+                        ["I",    "BR.bc$",   "BPP"         ],
+                        ["I",    "CCRD.sw$", "CCPP"        ],
+                        ["BPP",  "BC.r$",    "RE"          ],
+                        ["BPP",  "BA.c$",    "CH", "CH.c$" ],
+                        ["BPP",  "BA.n",     "E_N"         ],
+                        ["CCPP", "CCRD.r$",  "RE"          ],
+                        ["CCPP", "CCRD.a$",  "E_P"         ],
+                        ["RE",   "RE.d",     "E_R"         ],
+                        ["CH",   "CH.d",     "E_P"         ]
+                    ]
+                },
+                "L": {
+                    "name": "Locked",
+                    "description": "Turnstile is locked and doesn't let someone into the metro or a paid restroom"
+                },
+                "U": {
+                    "name": "Unlocked",
+                    "description": "Turnstile is unlocked and let someone into the metro or a paid restroom"
+                }
+            },
+            "signals": {
+                "TS.s": {
+                    "name": "System start",
+                    "description": "SFSM initialization signal that transitions the turnstile into its initial Locked state.",
+                    "sender": "SFSM"
+                },
+                "TS.to": {
+                    "name": "Turnstile timeout",
+                    "description": "Turnstile is in unlocked state too long and should be locked",
+                    "sender": "Turnstile"
+                },
+                "TS.ps": {
+                    "name": "Passage",
+                    "description": "Someone pass through turnstile and it should be locked",
+                    "sender": "Turnstile"
+                }
+            },
+            "commands": {
+                "TS.l": {
+                    "name": "Lock turnstile",
+                    "description": "Command to turnstile to lock itself",
+                    "receiver": "Turnstile"
+                },
+                "TS.ut": {
+                    "name": "Unlock turnstile",
+                    "description": "Command to turnstile to unlock itself and start a timeout for waiting of passage",
+                    "receiver": "Turnstile"
+                }
+            },
+            "ts": [
+                ["I",  "TS.s",     "L"           ],
+                ["L",  "BR.bc$",   "PP"          ],
+                ["L",  "CCRD.sw$", "PP"          ],
+                ["PP", "BA.n",     "U",  "TS.ut" ],
+                ["PP", "CH.d",     "U",  "TS.ut" ],
+                ["PP", "CCRD.a$",  "U",  "TS.ut" ],
+                ["PP", "RE.d",     "L",  "TS.l"  ],
+                ["U",  "TS.to",    "L",  "TS.l"  ],
+                ["U",  "TS.ps",    "L",  "TS.l"  ]
+            ]
+        }
+    }
+}

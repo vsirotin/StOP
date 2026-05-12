@@ -563,6 +563,53 @@ const compact = reduceFA(extendedFa as FaDefinition);
 
 ---
 
+### `updateCompactFA` / `updateFullFA` — Apply an incremental update to an FA definition
+
+These functions apply a structured update descriptor to an existing FA definition without requiring you to rewrite the entire file.
+
+**Signatures**
+
+```typescript
+import { updateCompactFA, updateFullFA, FaDefinition, FaUpdate } from '@vsirotin/ts-stop/sfsm';
+
+function updateCompactFA(source: FaDefinition, update: FaUpdate): FaDefinition
+function updateFullFA   (source: FaDefinition, update: FaUpdate): FaDefinition
+```
+
+`FaUpdate` type:
+
+```typescript
+interface FaUpdate {
+    /** Names of child FAs to remove. Each is deleted from its parent's states
+     *  and all transitions targeting it are pruned from the parent's ts. */
+    remove?: string[];
+
+    /** FA name → new definition. Existing entries are replaced; new ones are inserted.
+     *  For compact format: Transition[]. For extended format: FaNode. */
+    add?: Record<string, FaNode | Transition[]>;
+}
+```
+
+**Rules:**
+- Only **child FAs** (nodes with a `ts` array) can be named in `remove`. Flat leaf states are not removable via this API.
+- `remove` is applied before `add`, so you can remove an old FA and add its replacement in the same update.
+- For **extended** format: `add` entries replace the entire named subtree. When both root and a child are updated together, provide the root — it already embeds the new child.
+- For **compact** format: `add` entries upsert top-level keys; include all FAs that changed (parent, new child, etc.).
+- The source definition is never mutated; a deep-cloned result is returned.
+
+**Example**
+
+```typescript
+import { updateCompactFA, FaUpdate, loadFAFromFile } from '@vsirotin/ts-stop/sfsm';
+
+const source: FaUpdate = loadFAFromFile('./turnstile-fa-compact.json');
+const update: FaUpdate = loadFAFromFile('./turnstile-to-cc-update-compact.json') as unknown as FaUpdate;
+const result = updateCompactFA(source, update);
+// result now has CCPP instead of CPP, and updated TS / PP transitions
+```
+
+---
+
 ### Multi-FA compact format
 
 For systems with nested sub-FAs, the compact format lists every FA at the top level. The root FA is auto-detected as the FA whose name is never referenced as a target state in any other FA's transitions.
@@ -641,7 +688,9 @@ sfsm.receiveSignal('TS.s');
 
 ---
 
-### CLI: `reduce-fa` — Convert an FA file from extended to compact format
+### CLI Utils
+
+#### `reduce-fa` — Convert an FA file from extended to compact format
 
 ```bash
 npm run reduce-fa -- <path/to/extended-fa.json>
@@ -654,6 +703,51 @@ Reads the extended FA JSON file, reduces it to compact format, and writes the re
 ```bash
 npm run reduce-fa -- test/sfsm/test-data/turnstile-fa.json
 # Reduced FA written to: test/sfsm/test-data/turnstile-fa-compact.json
+```
+
+> **Note:** The library must be built (`npm run build`) before running this command.
+
+---
+
+#### `update-full-fa` / `update-compact-fa` — Apply an update to an FA file
+
+```bash
+npm run update-full-fa    -- --source=<path> --update=<path> [--result=<path>]
+npm run update-compact-fa -- --source=<path> --update=<path> [--result=<path>]
+```
+
+Reads the source FA file, applies an update descriptor, and writes the result to `--result`. If `--result` is omitted the output file is named `<source-basename>-updated.json`.
+
+Use `update-full-fa` for extended-format files and `update-compact-fa` for compact-format files.
+
+**Update file format**
+
+```json
+{
+    "remove": ["CPP"],
+    "add": {
+        "CCPP": [ ["I", "CCRD.sw$", "C", "CCRD.c$"], ["C", "CCRD.a$", "E_C"], ["C", "CCRD.r$", "E_R"] ],
+        "PP":   [ ... ],
+        "TS":   [ ... ]
+    }
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `remove` | Names of child FAs to delete. Each is removed from its parent's `states` map and any transitions referencing it are pruned from the parent's `ts`. |
+| `add` | Map of FA name → new definition. For compact format: a `Transition[]`. For extended format: a full `FaNode`. Existing entries are replaced; new entries are inserted. |
+
+`remove` is applied before `add`, so you can remove an old FA and add its replacement in the same update file.
+
+**Example**
+
+```bash
+# Replace coin payment (CPP) with credit-card payment (CCPP) in compact format
+npm run update-compact-fa -- \
+    --source=test/sfsm/test-data/turnstile-fa-compact.json \
+    --update=test/sfsm/test-data/turnstile-to-cc-update-compact.json \
+    --result=test/sfsm/test-data/turnstile-fa-compact-cc.json
 ```
 
 > **Note:** The library must be built (`npm run build`) before running this command.

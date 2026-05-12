@@ -37,6 +37,16 @@ export interface FaNode {
 export type FaDefinition = Record<string, FaNode | Transition[]>;
 
 /**
+ * An update descriptor applied by updateCompactFA or updateFullFA.
+ * - remove: list of FA names to remove (children only; parent ts is cleaned automatically)
+ * - add: map of FA name → new definition; existing entries are replaced, new ones inserted
+ */
+export interface FaUpdate {
+    remove?: string[];
+    add?: Record<string, FaNode | Transition[]>;
+}
+
+/**
  * How the SFSM reacts when a data-carrying command has no data available in the signal.
  */
 export type MissingDataPolicy = 'ignore' | 'log_warning' | 'error';

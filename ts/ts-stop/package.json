@@ -24,7 +24,9 @@
     "clean": "rm -rf lib coverage",
     "publish:local": "./scripts/publish-local.sh",
     "pack": "npm run build && npm pack",
-    "reduce-fa": "node scripts/reduce-fa.js"
+    "reduce-fa": "node scripts/reduce-fa.js",
+    "update-full-fa": "node scripts/update-fa.js --format=full",
+    "update-compact-fa": "node scripts/update-fa.js --format=compact"
   },
   "keywords": [
     "typescript",

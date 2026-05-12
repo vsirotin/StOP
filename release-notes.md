@@ -1,4 +1,7 @@
 # Project frontend. Release notes 
+## Version: 1.7.0 build 52
+feat: updateCompactFA / updateFullFA library functions and update-compact-fa / update-full-fa CLI scripts. FaUpdate type. 20 new unit tests; 297 tests passing.
+
 ## Version: 1.6.0 build 51
 feat: ExternalWorldHub — standard wiring component for connecting external-world devices to the SFSM. New ISignalSender interface. registerSignalSender/registerCommandReceiver fluent API with explicit name lists for precise runtime error reporting. CommandRouter (test-only) removed. All simulators refactored to implement ISignalSender. 16 new unit tests; 266 tests passing.
 
