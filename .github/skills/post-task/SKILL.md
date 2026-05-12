@@ -3,7 +3,7 @@ name: post-task
 description: Post-task checklist that runs after every agent task that makes essential changes to code, documentation, scripts, or configuration. Covers version bumping, release-notes update, and commit-text proposal. Applied automatically — the agent does not need to be asked.
 metadata:
   author: vsirotin
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Post-Task Checklist
@@ -13,6 +13,12 @@ This skill is applied after every task that makes essential changes to code, doc
 ---
 
 ## Rules
+
+### 0. Verify the build
+
+If the changed sub-project has a build step (e.g. `npm run build`, `tsc`, `cargo build`), run it in the terminal and confirm it exits with code 0.
+- If the build fails, fix the errors first and re-run tests before continuing to Rule 1.
+- Do not bump the version, update release notes, or write a commit text for a build that does not compile.
 
 ### 1. Update version
 

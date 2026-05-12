@@ -1,1 +1,1 @@
-feat: Project: ts/ts-stop. Version: 1.5.1. loadFAFromFile helper, reduce-fa CLI, and Utilities docs.
+feat: Project: ts/ts-stop. Version: 1.5.2. loadFAFromURL helper and tests added.

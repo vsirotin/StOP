@@ -563,6 +563,31 @@ sfsm.receiveSignal('TS.s');
 
 ---
 
+### `loadFAFromURL` — Load an FA definition from a URL (browser & Node.js)
+
+**Signature**
+
+```typescript
+import { loadFAFromURL, FaDefinition } from '@vsirotin/ts-stop/sfsm';
+
+function loadFAFromURL(url: string): Promise<FaDefinition>
+```
+
+Fetches and parses a JSON FA definition from the given URL using the standard `fetch` API. Works in both browser and Node.js (≥ 18) environments. Works with both extended and compact formats. Returns a `Promise<FaDefinition>` ready to pass to `sfsm.loadFA()`.
+
+Throws if the request fails, the server returns a non-2xx status, or the response body is not valid JSON.
+
+```typescript
+import { Sfsm, loadFAFromURL, FaDefinition } from '@vsirotin/ts-stop/sfsm';
+
+const sfsm = new Sfsm({ byMissingTransition: 'error' });
+sfsm.setCommandReceiver(myRouter);
+sfsm.loadFA(await loadFAFromURL('https://example.com/turnstile-fa.json'));
+sfsm.receiveSignal('TS.s');
+```
+
+---
+
 ### CLI: `reduce-fa` — Convert an FA file from extended to compact format
 
 ```bash

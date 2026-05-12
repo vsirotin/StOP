@@ -1,4 +1,7 @@
 # Project frontend. Release notes 
+## Version: 1.5.2 build 50
+feat: loadFAFromURL helper (browser & Node.js, fetch-based) with 8 mocked unit tests. 261 tests passing.
+
 ## Version: 1.5.1 build 49
 feat: loadFAFromFile helper, reduce-fa CLI script, and Utilities section in tutorial doc. 253 tests passing.
 

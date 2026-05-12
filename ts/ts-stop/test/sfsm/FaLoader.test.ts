@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { loadFAFromFile } from '../../src/sfsm';
+import { loadFAFromFile, loadFAFromURL } from '../../src/sfsm';
 import { Sfsm } from '../../src/sfsm';
 import { TurnstileService } from './simulators/TurnstileService';
 import { TurnstileDevice } from './simulators/TurnstileDevice';
@@ -125,5 +125,117 @@ describe('loadFAFromFile – Sfsm integration with compact FA', () => {
 
         sfsm.receiveSignal('CR.cc$', { value: 1 });
         expect(sfsm.getHeadState()).toBe('U');
+    });
+});
+
+// ---------------------------------------------------------------------------
+// loadFAFromURL – unit tests (mocked fetch)
+// ---------------------------------------------------------------------------
+
+const COMPACT_FA_FIXTURE = {
+    TS: [
+        ['I', 'TS.s', 'L'],
+        ['L', 'CR.cc$', 'PP'],
+        ['PP', 'CA.n', 'U', 'TS.ut'],
+    ],
+    PP: [
+        ['I', 'CR.cc$', 'CPP'],
+        ['CPP', 'CA.n', 'E_P'],
+    ],
+    CPP: [
+        ['I', 'CR.cc$', 'CW', 'CC.cw$'],
+        ['CW', 'CC.p$', 'CF', 'CC.cf$'],
+    ],
+};
+
+const EXTENDED_FA_FIXTURE = {
+    TS: {
+        ts: [
+            ['I', 'TS.s', 'L'],
+        ],
+    },
+};
+
+function makeFetchOk(body: unknown): jest.SpyInstance {
+    return jest.spyOn(global, 'fetch').mockResolvedValue({
+        ok: true,
+        status: 200,
+        statusText: 'OK',
+        json: () => Promise.resolve(body),
+    } as Response);
+}
+
+function makeFetchError(status: number, statusText: string): jest.SpyInstance {
+    return jest.spyOn(global, 'fetch').mockResolvedValue({
+        ok: false,
+        status,
+        statusText,
+        json: () => Promise.reject(new Error('not used')),
+    } as Response);
+}
+
+afterEach(() => {
+    jest.restoreAllMocks();
+});
+
+describe('loadFAFromURL – return value', () => {
+    it('should return the parsed FaDefinition for a compact FA', async () => {
+        makeFetchOk(COMPACT_FA_FIXTURE);
+        const fa = await loadFAFromURL('https://example.com/turnstile-compact.json');
+        expect(fa).toEqual(COMPACT_FA_FIXTURE);
+    });
+
+    it('should contain expected top-level keys for a compact FA', async () => {
+        makeFetchOk(COMPACT_FA_FIXTURE);
+        const fa = await loadFAFromURL('https://example.com/turnstile-compact.json');
+        expect(Object.keys(fa)).toContain('TS');
+        expect(Object.keys(fa)).toContain('PP');
+        expect(Object.keys(fa)).toContain('CPP');
+    });
+
+    it('should return the parsed FaDefinition for an extended FA', async () => {
+        makeFetchOk(EXTENDED_FA_FIXTURE);
+        const fa = await loadFAFromURL('https://example.com/turnstile-extended.json');
+        expect(Object.keys(fa)).toContain('TS');
+    });
+});
+
+describe('loadFAFromURL – HTTP error handling', () => {
+    it('should throw on HTTP 404', async () => {
+        makeFetchError(404, 'Not Found');
+        await expect(loadFAFromURL('https://example.com/missing.json'))
+            .rejects.toThrow('404');
+    });
+
+    it('should throw on HTTP 500', async () => {
+        makeFetchError(500, 'Internal Server Error');
+        await expect(loadFAFromURL('https://example.com/broken.json'))
+            .rejects.toThrow('500');
+    });
+
+    it('should include the URL in the error message', async () => {
+        const url = 'https://example.com/not-found.json';
+        makeFetchError(404, 'Not Found');
+        await expect(loadFAFromURL(url))
+            .rejects.toThrow(url);
+    });
+});
+
+describe('loadFAFromURL – network / JSON errors', () => {
+    it('should throw when fetch itself rejects (network error)', async () => {
+        jest.spyOn(global, 'fetch').mockRejectedValue(new Error('Network failure'));
+        await expect(loadFAFromURL('https://example.com/fa.json'))
+            .rejects.toThrow('Network failure');
+    });
+
+    it('should throw when response.json() rejects (invalid JSON body)', async () => {
+        jest.spyOn(global, 'fetch').mockResolvedValue({
+            ok: true,
+            status: 200,
+            statusText: 'OK',
+            json: () => Promise.reject(new SyntaxError('Unexpected token')),
+        } as Response);
+        await expect(loadFAFromURL('https://example.com/bad.json'))
+            .rejects.toThrow('Unexpected token');
     });
 });
