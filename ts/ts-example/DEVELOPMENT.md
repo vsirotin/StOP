@@ -14,63 +14,99 @@ It shows two independent demos that run automatically on startup:
 
 ## Developer workflow
 
-### Local-publishing workflow (develop library → test in browser)
+### Local-testing workflow (develop library → test in browser with local build)
 
-Use this workflow while actively developing the `ts-stop` library.
+The goal of this workflow is to verify that the locally-built library integrates
+correctly in a real browser application before publishing it to the npm registry.
 
-**Step 1 — Publish the library locally**
-
-Builds `ts-stop` and copies the output into `ts-example/node_modules/`:
-
-```bash
-cd ../ts-stop && npm run publish:local
-```
-
-**Step 2 — Install Angular dependencies** *(first time only, or after `node_modules` was deleted)*
+**Step 1 — Remove node_modules** *(clean slate)*
 
 ```bash
-cd ../ts-example && npm install
+rm -rf node_modules
 ```
 
-**Step 3 — Start the development server**
-
-```bash
-npm start
-```
-
-**Step 4 — Open the app in the browser**
-
-Navigate to <http://localhost:4200>.  
-Both demo panels appear immediately — no user interaction required.
-
-After changing the library source, repeat steps 1 and 3 (the dev server
-hot-reloads automatically once `node_modules` is updated).
-
----
-
-### Global-publishing workflow (validate against the public npm package)
-
-Use this workflow to verify the app works with the officially published version.
-
-**Step 5 — Publish the library to npm**
-
-```bash
-cd ../ts-stop && npm publish
-```
-
-**Step 6 — Delete the local node_modules**
-
-```bash
-cd ../ts-example && rm -rf node_modules
-```
-
-**Step 7 — Install from npm registry**
+**Step 2 — Install Angular dependencies from the registry**
 
 ```bash
 npm install
 ```
 
-**Step 8 — Build the production bundle**
+**Step 3 — Overwrite `@vsirotin/ts-stop` with the locally-built version**
+
+Builds `../ts-stop` and copies the output into `node_modules/@vsirotin/ts-stop/`,
+simulating what `npm install @vsirotin/ts-stop` would do with a published package:
+
+```bash
+npm run publish:local
+```
+
+**Step 4 — Run Jest smoke tests**
+
+Verifies that the application initialises without errors:
+
+```bash
+npm test
+```
+
+**Step 5 — Start the development server**
+
+```bash
+npm start
+```
+
+**Step 6 — Open the app in the browser**
+
+Navigate to <http://localhost:4200>.  
+Both demo panels appear immediately — no user interaction required.
+
+After changing the library source, repeat steps 3 and 5 (the dev server
+hot-reloads automatically once `node_modules` is updated).
+
+> **Shortcut:** Run all steps 1–4 in one command:
+> ```bash
+> npm run test:local
+> ```
+
+---
+
+### Global-publishing workflow (validate against the published npm package)
+
+The goal of this workflow is to verify the app works with the officially
+published version of `@vsirotin/ts-stop`.
+
+**Step 1 — Publish the library to npm**
+
+Make sure you are logged in to the npm registry first:
+
+```bash
+npm login
+```
+
+Then publish from the `ts-stop` directory:
+
+```bash
+cd ../ts-stop && npm publish
+```
+
+**Step 2 — Remove local node_modules**
+
+```bash
+cd ../ts-example && rm -rf node_modules
+```
+
+**Step 3 — Install from the npm registry**
+
+```bash
+npm install
+```
+
+**Step 4 — Run Jest smoke tests**
+
+```bash
+npm test
+```
+
+**Step 5 — Build the production bundle**
 
 ```bash
 npm run build
@@ -78,29 +114,56 @@ npm run build
 
 The production build is written to `dist/ts-example/`.
 
-**Step 9 — Serve the production build and run user tests**
+**Step 6 — Serve the production build and run manual tests**
 
 ```bash
 npx http-server dist/ts-example -p 4200
 ```
 
-**Step 10 — Open the production build in the browser**
+**Step 7 — Open the production build in the browser**
 
 Navigate to <http://localhost:4200> and verify both demo panels render correctly.
+
+---
+
+## Unit testing
+
+The application has a Jest-based smoke test suite that verifies the component
+starts without errors and produces the expected output.
+
+```bash
+npm test
+```
+
+Tests are located in `src/app/app.component.spec.ts`.  
+They instantiate `AppComponent` directly (no Angular TestBed needed) and assert:
+
+- The component can be created without throwing.
+- The FA demo produces the correct state sequence after startup.
+- The SFSM demo log is non-empty and contains the required fields.
+- The turnstile device is locked after the passage signal.
+
+---
 
 ## Project structure
 
 ```
 ts-example/
-  angular.json          Angular workspace configuration
-  package.json          Dependencies (Angular 17 + @vsirotin/ts-stop)
-  tsconfig.json         TypeScript base config (Angular-compatible)
-  tsconfig.app.json     TypeScript config for the application build
+  angular.json            Angular workspace configuration
+  jest.config.js          Jest configuration
+  package.json            Dependencies (Angular 17 + @vsirotin/ts-stop)
+  setup-jest.ts           jest-preset-angular initialisation
+  tsconfig.json           TypeScript base config (Angular-compatible)
+  tsconfig.app.json       TypeScript config for the application build
+  tsconfig.spec.json      TypeScript config for Jest tests
+  scripts/
+    publish-local.sh      Builds ts-stop and copies it into node_modules
+    test-with-local-lib.sh  Runs all local-testing steps (steps 1–4) in sequence
   src/
-    index.html          HTML shell
-    main.ts             Bootstrap (bootstrapApplication)
-    styles.css          Global styles
+    index.html            HTML shell
+    main.ts               Bootstrap (bootstrapApplication)
+    styles.css            Global styles
     app/
-      app.component.ts  Standalone AppComponent — all demo logic inline
+      app.component.ts    Standalone AppComponent — all demo logic inline
+      app.component.spec.ts  Jest smoke tests
 ```
-

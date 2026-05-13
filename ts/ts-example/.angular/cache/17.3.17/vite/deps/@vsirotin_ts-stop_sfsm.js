@@ -1,21 +1,4 @@
-import {
-  __async,
-  __commonJS,
-  __toESM
-} from "./chunk-TXDUYLVM.js";
-
-// browser-external:fs
-var require_fs = __commonJS({
-  "browser-external:fs"(exports, module) {
-    module.exports = Object.create(new Proxy({}, {
-      get(_, key) {
-        if (key !== "__esModule" && key !== "__proto__" && key !== "constructor" && key !== "splice") {
-          console.warn(`Module "fs" has been externalized for browser compatibility. Cannot access "fs.${key}" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.`);
-        }
-      }
-    }));
-  }
-});
+import "./chunk-WDMUDEB6.js";
 
 // node_modules/@vsirotin/ts-stop/lib/esm/sfsm/ExternalWorldHub.js
 var ExternalWorldHub = class {
@@ -470,28 +453,10 @@ function replaceInNode(node, targetName, newNode) {
 function isSubFaNode2(value) {
   return typeof value === "object" && value !== null && "ts" in value && Array.isArray(value.ts);
 }
-
-// node_modules/@vsirotin/ts-stop/lib/esm/sfsm/FaLoader.js
-var fs = __toESM(require_fs());
-function loadFAFromFile(filePath) {
-  const content = fs.readFileSync(filePath, "utf-8");
-  return JSON.parse(content);
-}
-function loadFAFromURL(url) {
-  return __async(this, null, function* () {
-    const response = yield fetch(url);
-    if (!response.ok) {
-      throw new Error(`loadFAFromURL: request failed with status ${response.status} ${response.statusText} for URL: ${url}`);
-    }
-    return response.json();
-  });
-}
 export {
   ExternalWorldHub,
   FaResolver,
   Sfsm,
-  loadFAFromFile,
-  loadFAFromURL,
   reduceFA,
   updateCompactFA,
   updateFullFA

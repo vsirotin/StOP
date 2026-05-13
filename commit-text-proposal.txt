@@ -1,1 +1,1 @@
-feat: Project: ts/ts-example. Version 1.8.0 build 53. Angular 17 browser demo with FA + SFSM turnstile.
+fix: Project: ts/ts-example. Version: 1.9.1. Jest smoke tests working: fix config, moduleNameMapper, setup API.

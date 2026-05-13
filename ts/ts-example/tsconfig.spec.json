@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist/out-tsc",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "types": ["jest", "node"],
+    "paths": {
+      "@vsirotin/ts-stop": ["node_modules/@vsirotin/ts-stop/lib/index.d.ts"],
+      "@vsirotin/ts-stop/sfsm": ["node_modules/@vsirotin/ts-stop/lib/sfsm/index.d.ts"]
+    }
+  },
+  "include": [
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts",
+    "setup-jest.ts"
+  ]
+}

@@ -3,7 +3,7 @@ name: post-task
 description: Post-task checklist that runs after every agent task that makes essential changes to code, documentation, scripts, or configuration. Covers version bumping, release-notes update, and commit-text proposal. Applied automatically — the agent does not need to be asked.
 metadata:
   author: vsirotin
-  version: "1.1"
+  version: "1.3"
 ---
 
 # Post-Task Checklist
@@ -22,19 +22,20 @@ If the changed sub-project has a build step (e.g. `npm run build`, `tsc`, `cargo
 
 ### 1. Update version
 
-Update the file `version.json`. Use semantic versioning rules:
+Follow these sub-steps in order:
 
-- **Bump `minor`** (e.g. `0.0.0 → 0.0.1`) when adding a user-visible feature or improvement.
-- **Bump `patch`** (third digit, e.g. `0.0.1 → 0.0.2`) when fixing a bug or making an invisible internal change.
-- **Bump `major`** (e.g. `0.0.x → 0.1.0`) for breaking or significant architectural changes.
-- **Increment `build`** by 1 on every change regardless of which version segment was bumped.
-- **Update `datetime`** to the current date and time in ISO 8601 format.
-
-Remember the new version.
+1. **Determine the version bump** using semantic versioning rules:
+   - Bump `patch` (e.g. `1.0.0 → 1.0.1`) for a bug fix or invisible internal change.
+   - Bump `minor` (e.g. `1.0.1 → 1.1.0`) for a user-visible feature or improvement.
+   - Bump `major` (e.g. `1.1.0 → 2.0.0`) for a breaking or significant architectural change.
+2. **Increment `build`** by 1 regardless of which version segment was bumped.
+3. **Update `version.json`** with the new version, new build number, and current datetime in ISO 8601 format.
+4. **Remember the new version** for use in Rules 2 and 3.
+5. **Sync package manifests**: if the sub-project contains a file that carries its own version field (e.g. `"version"` in `package.json`, `version` in `Cargo.toml`, `version` in `pyproject.toml`), update that field to match the new version.
 
 ### 2. Update release notes
 
-Insert the new version entry **at the beginning** (after the header, at line 3) in `release-notes.md` (if it exists). Include the remembered version number and a short explanation of the version update. Latest release appears first, oldest releases appear last. Do not reorder or overwrite previous entries. Update `datetime` to the current date and time in ISO 8601 format.
+Insert the new version entry **at the beginning** (after the header, at line 3) in `release-notes.md`. If the file does not exist, create it and add the new version entry as the first item. Include the remembered version number and a short explanation of the version update. Latest release appears first, oldest releases appear last. Do not reorder or overwrite previous entries. Update `datetime` to the current date and time in ISO 8601 format.
 
 ### 3. Write commit text proposal
 

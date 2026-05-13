@@ -1,4 +1,10 @@
 # Project ts-stop. Release notes 
+## Version: 1.9.1 build 55
+fix: ts-example — Jest tests now working: fix jest.config.js (setupFilesAfterEnv), add moduleNameMapper for @vsirotin/ts-stop subpaths, use new jest-preset-angular setup API; remove incorrect file: dep from package.json.
+
+## Version: 1.9.0 build 54
+fix: ts-stop v0.7.0 — add `browser` export condition for `./sfsm` sub-path to exclude Node-only `FaLoader` from browser bundles (fixes esbuild production build).
+
 ## Version: 1.8.0 build 53
 feat: Minimal Angular 17 browser demo in ts/ts-example. Two panels: FA turnstile (FiniteStateMachine) and SFSM turnstile (Sfsm, compact FA, banknote payment). ./sfsm sub-path export added to ts-stop package.json. DEVELOPMENT.md rewritten with 10-step developer workflow.
 
