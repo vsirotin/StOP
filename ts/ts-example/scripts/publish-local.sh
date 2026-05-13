@@ -16,5 +16,7 @@ rm -rf "$TARGET_DIR"
 mkdir -p "$TARGET_DIR"
 cp -r "$TS_STOP_DIR/lib" "$TARGET_DIR/lib"
 cp "$TS_STOP_DIR/package.json" "$TARGET_DIR/package.json"
+cp "$TS_STOP_DIR/README.md" "$TARGET_DIR/README.md"
+cp "$TS_STOP_DIR/LICENSE" "$TARGET_DIR/LICENSE"
 
 echo "✅ Local @vsirotin/ts-stop installed into ts-example/node_modules"

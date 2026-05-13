@@ -1,4 +1,7 @@
 # Project ts-stop. Release notes 
+## Version: 1.9.2 build 56
+feat: ts-stop — add README.md and LICENSE to published package; improve README wording; update publish-local scripts to copy all published files.
+
 ## Version: 1.9.1 build 55
 fix: ts-example — Jest tests now working: fix jest.config.js (setupFilesAfterEnv), add moduleNameMapper for @vsirotin/ts-stop subpaths, use new jest-preset-angular setup API; remove incorrect file: dep from package.json.
 

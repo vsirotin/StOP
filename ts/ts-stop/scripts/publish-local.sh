@@ -10,6 +10,6 @@ npm run build
 echo "📋 Installing to ts-stop node_modules..."
 rm -rf node_modules/@vsirotin/ts-stop
 mkdir -p node_modules/@vsirotin/ts-stop
-cp -r lib package.json node_modules/@vsirotin/ts-stop/
+cp -r lib package.json README.md LICENSE node_modules/@vsirotin/ts-stop/
 
 echo "✅ Local publishing completed!"
