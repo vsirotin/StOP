@@ -1,4 +1,4 @@
-# Project ts-stop. Release notes 
+# Project StOP (State Oriented Programming). Release notes 
 ## Version: 1.9.3 build 57
 doc: ts-example — add README.md with project goal, links to DEVELOPMENT.md and ts-stop.
 
