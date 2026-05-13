@@ -1,1 +1,1 @@
-feat: Project: ts/ts-stop. Version: 1.9.2. Add README.md and LICENSE to npm package; improve README wording.
+doc: Project: ts/ts-example. Version: 1.9.3. Add README.md.

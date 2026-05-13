@@ -1,4 +1,7 @@
 # Project ts-stop. Release notes 
+## Version: 1.9.3 build 57
+doc: ts-example — add README.md with project goal, links to DEVELOPMENT.md and ts-stop.
+
 ## Version: 1.9.2 build 56
 feat: ts-stop — add README.md and LICENSE to published package; improve README wording; update publish-local scripts to copy all published files.
 
