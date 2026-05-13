@@ -6,6 +6,3 @@ For an introduction to the concept, read the [StOP Tutorial](https://github.com/
 
 For usage and API documentation, see the Angular 17 demo in [ts/ts-example](https://github.com/vsirotin/StOP/blob/main/ts/ts-example).
 
-## License
-
-MIT
