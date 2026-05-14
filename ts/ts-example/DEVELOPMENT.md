@@ -22,6 +22,7 @@ correctly in a real browser application before publishing it to the npm registry
 **Step 1 — Remove node_modules** *(clean slate)*
 
 ```bash
+cd ts/ts-example
 rm -rf node_modules
 ```
 
@@ -84,9 +85,9 @@ npm login
 
 Then publish from the `ts-stop` directory:
 
-```bash
-cd ../ts-stop && npm publish
+```bashh
 ```
+cd ../ts-stop && npm publis
 
 **Step 2 — Remove local node_modules**
 
@@ -98,7 +99,9 @@ cd ../ts-example && rm -rf node_modules
 
 ```bash
 npm install
+npm i @vsirotin/ts-stop
 ```
+Check that the installed version matches the one you just published.
 
 **Step 4 — Run Jest smoke tests**
 
@@ -114,19 +117,8 @@ npm run build
 
 The production build is written to `dist/ts-example/`.
 
-**Step 6 — Serve the production build and run manual tests**
+**Step 6 — Unit testing
 
-```bash
-npx http-server dist/ts-example -p 4200
-```
-
-**Step 7 — Open the production build in the browser**
-
-Navigate to <http://localhost:4200> and verify both demo panels render correctly.
-
----
-
-## Unit testing
 
 The application has a Jest-based smoke test suite that verifies the component
 starts without errors and produces the expected output.
@@ -135,35 +127,8 @@ starts without errors and produces the expected output.
 npm test
 ```
 
-Tests are located in `src/app/app.component.spec.ts`.  
-They instantiate `AppComponent` directly (no Angular TestBed needed) and assert:
+**Step 7 — Start the development server**
 
-- The component can be created without throwing.
-- The FA demo produces the correct state sequence after startup.
-- The SFSM demo log is non-empty and contains the required fields.
-- The turnstile device is locked after the passage signal.
-
----
-
-## Project structure
-
-```
-ts-example/
-  angular.json            Angular workspace configuration
-  jest.config.js          Jest configuration
-  package.json            Dependencies (Angular 17 + @vsirotin/ts-stop)
-  setup-jest.ts           jest-preset-angular initialisation
-  tsconfig.json           TypeScript base config (Angular-compatible)
-  tsconfig.app.json       TypeScript config for the application build
-  tsconfig.spec.json      TypeScript config for Jest tests
-  scripts/
-    publish-local.sh      Builds ts-stop and copies it into node_modules
-    test-with-local-lib.sh  Runs all local-testing steps (steps 1–4) in sequence
-  src/
-    index.html            HTML shell
-    main.ts               Bootstrap (bootstrapApplication)
-    styles.css            Global styles
-    app/
-      app.component.ts    Standalone AppComponent — all demo logic inline
-      app.component.spec.ts  Jest smoke tests
+```bash
+npm start
 ```

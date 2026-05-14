@@ -1,1 +1,1 @@
-dist: Project: ts/ts-stop. Version: 1.11.0. Add dual licensing (Apache 2.0 and Commercial).
+doc: ts-stop and ts-example moved to packages/ directory. Project restructuring for monorepo setup. Root-level README.md updated with new paths and monorepo overview.  Version: 1.11.1

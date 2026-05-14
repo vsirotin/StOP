@@ -1,4 +1,6 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 1.11.1 build 60
+doc: ts-stop and ts-example moved to packages/ directory. Project restructuring for monorepo setup. Root-level README.md updated with new paths and monorepo overview. 
 ## Version: 1.11.0 build 59
 dist: ts/ts-stop — Add dual licensing model (Apache 2.0 for free use, Commercial License for organizations with 10+ employees or $10K+ annual revenue). License field updated in package.json.
 
