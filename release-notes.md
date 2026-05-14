@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 1.10.0 build 58
+feat: ts-stop — reduce-fa CLI now formats transition arrays inline for compact readability. Jest extension configured with virtual folders for ts-stop and ts-example projects. TypeScript rootDir explicitly set in tsconfig.json.
+
 ## Version: 1.9.3 build 57
 doc: ts-example — add README.md with project goal, links to DEVELOPMENT.md and ts-stop.
 

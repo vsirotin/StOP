@@ -47,5 +47,10 @@ const base = path.basename(inputFile, ext);
 const dir = path.dirname(inputFile);
 const outputFile = path.join(dir, `${base}-compact${ext}`);
 
-fs.writeFileSync(outputFile, JSON.stringify(compact, null, 4), 'utf-8');
+// Serialize with transitions inline: ["state", "signal", "newState", "cmd?"]
+const json = JSON.stringify(compact, null, 4).replace(
+    /\[\s*\n\s*"([^"]+)",\s*\n\s*"([^"]+)",\s*\n\s*"([^"]+)"(?:,\s*\n\s*"([^"]+)")?\s*\n\s*\]/g,
+    (_, a, b, c, d) => d ? `["${a}", "${b}", "${c}", "${d}"]` : `["${a}", "${b}", "${c}"]`
+);
+fs.writeFileSync(outputFile, json, 'utf-8');
 console.log(`Reduced FA written to: ${outputFile}`);

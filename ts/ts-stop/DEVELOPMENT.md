@@ -68,7 +68,13 @@ npm run build
 
 # Reduce an extended FA JSON to compact format
 npm run reduce-fa -- <path/to/extended-fa.json>
+
 ```
+
+e.g.
+```bash
+npm run reduce-fa -- test/sfsm/test-data/turnstile-fa.json
+``` 
 
 Output is written to `<basename>-compact.json` in the same directory as the input file.
 

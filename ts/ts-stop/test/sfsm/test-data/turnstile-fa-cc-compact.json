@@ -1,0 +1,36 @@
+{
+    "TS": [
+        ["I", "TS.s", "L"],
+        ["L", "BR.bc$", "PP"],
+        ["L", "CCRD.sw$", "PP"],
+        ["PP", "BA.n", "U", "TS.ut"],
+        ["PP", "CH.d", "U", "TS.ut"],
+        ["PP", "CCRD.a$", "U", "TS.ut"],
+        ["PP", "RE.d", "L", "TS.l"],
+        ["U", "TS.to", "L", "TS.l"],
+        ["U", "TS.ps", "L", "TS.l"]
+    ],
+    "PP": [
+        ["I", "BR.bc$", "BPP"],
+        ["I", "CCRD.sw$", "CCPP"],
+        ["BPP", "BC.r$", "RE"],
+        ["BPP", "BA.c$", "CH", "CH.c$"],
+        ["BPP", "BA.n", "E_N"],
+        ["CCPP", "CCRD.r$", "RE"],
+        ["CCPP", "CCRD.a$", "E_P"],
+        ["RE", "RE.d", "E_R"],
+        ["CH", "CH.d", "E_P"]
+    ],
+    "BPP": [
+        ["I", "BR.bc$", "C", "BC.c$"],
+        ["C", "BC.p$", "A", "BA.a$"],
+        ["C", "BC.r$", "E_R"],
+        ["A", "BA.c$", "E_C"],
+        ["A", "BA.n", "E_N"]
+    ],
+    "CCPP": [
+        ["I", "CCRD.sw$", "C", "CCRD.c$"],
+        ["C", "CCRD.a$", "E_C"],
+        ["C", "CCRD.r$", "E_R"]
+    ]
+}

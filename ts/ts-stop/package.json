@@ -1,6 +1,6 @@
 {
   "name": "@vsirotin/ts-stop",
-  "version": "1.9.2",
+  "version": "1.10.0",
   "description": "State Oriented Programming library for TypeScript",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
