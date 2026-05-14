@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 1.11.0 build 59
+dist: ts/ts-stop — Add dual licensing model (Apache 2.0 for free use, Commercial License for organizations with 10+ employees or $10K+ annual revenue). License field updated in package.json.
+
 ## Version: 1.10.0 build 58
 feat: ts-stop — reduce-fa CLI now formats transition arrays inline for compact readability. Jest extension configured with virtual folders for ts-stop and ts-example projects. TypeScript rootDir explicitly set in tsconfig.json.
 

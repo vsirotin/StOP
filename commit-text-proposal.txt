@@ -1,1 +1,1 @@
-feat: Project: ts/ts-stop. Version: 1.10.0. Reduce-fa inline formatting, Jest virtual folders configuration.
+dist: Project: ts/ts-stop. Version: 1.11.0. Add dual licensing (Apache 2.0 and Commercial).

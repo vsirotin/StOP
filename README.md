@@ -23,5 +23,13 @@ State Oriented Programming (StOP) is a programming paradigm that focuses on expl
 
 ## License
 
-Apache 2.0
+This project is dual-licensed:
+
+- **[Apache 2.0](./LICENSE)** - Free for open-source, academic, and small commercial use
+- **[Commercial License](./LICENSE-COMMERCIAL.md)** - For organizations with 10+ employees or projects with $10,000+ annual revenue
+
+**Quick Summary:**
+- ✅ Free for individuals and small teams (< 10 employees)
+- ✅ Free for non-commercial and low-revenue projects (< $10K/year)
+- 📧 Commercial licensing available - contact the author
 

@@ -1,6 +1,6 @@
 {
   "name": "@vsirotin/ts-stop",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "description": "State Oriented Programming library for TypeScript",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -21,7 +21,8 @@
   "files": [
     "lib",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "LICENSE-COMMERCIAL.md"
   ],
   "scripts": {
     "build": "npm run build:cjs && npm run build:esm",
@@ -42,7 +43,7 @@
     "stop"
   ],
   "author": "Viktor Sirotin",
-  "license": "MIT",
+  "license": "(Apache-2.0 OR StOP-Commercial)",
   "devDependencies": {
     "@types/jest": "^29.5.14",
     "@types/js-yaml": "^4.0.9",
