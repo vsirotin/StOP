@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 1.13.1 build 64
+test: ts-example — add FaMerger, FaReducer, FaUpdater, Sfsm.compact integration tests importing from @vsirotin/ts-stop; update publish-local.sh to copy scripts/.
+
 ## Version: 1.13.0 build 63
 feat: ts-stop — add merge-fas-from-dir script to recursively merge all FA files from a directory; reorganize merge-fas test data into input/ subdirectory; add bin field to package.json for CLI tool distribution; update DEVELOPMENT.md documentation.
 
