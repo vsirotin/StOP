@@ -1,4 +1,10 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 1.12.1 build 62
+test: ts-stop — merge-fas CLI integration tests + realistic split test data (part1/part2/part3/expectation.json). Post-task SKILL.md updated: run full tests rule added, rules renumbered 1–5.
+
+## Version: 1.12.0 build 61
+feat: ts-stop — add merge-fas CLI to reduce and merge multiple FA files into one compact output; already-compact inputs are kept as-is; duplicate FA keys log warnings and last file wins.
+
 ## Version: 1.11.1 build 60
 doc: ts-stop and ts-example moved to packages/ directory. Project restructuring for monorepo setup. Root-level README.md updated with new paths and monorepo overview. 
 ## Version: 1.11.0 build 59

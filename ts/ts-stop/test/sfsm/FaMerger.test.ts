@@ -1,0 +1,167 @@
+import * as path from 'path';
+import * as fs from 'fs';
+import * as childProcess from 'child_process';
+import * as os from 'os';
+import { FaDefinition, mergeFAs } from '../../src/sfsm';
+
+const testDataDir = path.resolve(__dirname, 'test-data/merge-fas');
+
+describe('mergeFAs', () => {
+    it('should reduce extended definitions and merge into compact output', () => {
+        const inputA: FaDefinition = {
+            TS: {
+                states: {
+                    PP: {
+                        states: {
+                            BPP: {
+                                ts: [['I', 'BR.bc$', 'E_N']]
+                            }
+                        },
+                        ts: [['I', 'BR.bc$', 'BPP']]
+                    }
+                },
+                ts: [['I', 'TS.s', 'PP']]
+            }
+        };
+
+        const inputB: FaDefinition = {
+            AUX: [['I', 'A.s', 'E_N']]
+        };
+
+        const { merged, warnings } = mergeFAs([inputA, inputB]);
+
+        expect(warnings).toEqual([]);
+        expect(merged).toEqual({
+            TS: [['I', 'TS.s', 'PP']],
+            PP: [['I', 'BR.bc$', 'BPP']],
+            BPP: [['I', 'BR.bc$', 'E_N']],
+            AUX: [['I', 'A.s', 'E_N']]
+        });
+    });
+
+    it('should keep compact input unchanged before merge', () => {
+        const compactA: FaDefinition = {
+            A: [['I', 'A.s', 'E_N']]
+        };
+        const compactB: FaDefinition = {
+            B: [['I', 'B.s', 'E_N']]
+        };
+
+        const { merged, warnings } = mergeFAs([compactA, compactB]);
+
+        expect(warnings).toEqual([]);
+        expect(merged).toEqual({
+            A: [['I', 'A.s', 'E_N']],
+            B: [['I', 'B.s', 'E_N']]
+        });
+    });
+
+    it('should overwrite duplicate FA keys from later inputs and report warnings', () => {
+        const inputA: FaDefinition = {
+            TS: [['I', 'TS.s', 'L']],
+            PP: [['I', 'PP.s', 'E_N']]
+        };
+        const inputB: FaDefinition = {
+            PP: [['I', 'PP.s2', 'E_P']],
+            TS: [['I', 'TS.s2', 'U']]
+        };
+
+        const { merged, warnings } = mergeFAs([inputA, inputB]);
+
+        expect(merged).toEqual({
+            TS: [['I', 'TS.s2', 'U']],
+            PP: [['I', 'PP.s2', 'E_P']]
+        });
+        expect(warnings).toHaveLength(2);
+        expect(warnings[0]).toContain("Duplicate FA key 'PP'");
+        expect(warnings[1]).toContain("Duplicate FA key 'TS'");
+    });
+});
+
+// ---------------------------------------------------------------------------
+// merge-fas CLI — integration tests using realistic turnstile test data
+// ---------------------------------------------------------------------------
+
+describe('merge-fas CLI', () => {
+    let tmpDir: string;
+
+    beforeEach(() => {
+        tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'merge-fas-test-'));
+    });
+
+    afterEach(() => {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+    });
+
+    function runMergeFas(args: string[]): { stdout: string; stderr: string; exitCode: number } {
+        const scriptPath = path.resolve(__dirname, '../../scripts/merge-fas.js');
+        const result = childProcess.spawnSync(
+            process.execPath,
+            [scriptPath, ...args],
+            { encoding: 'utf-8', cwd: path.resolve(__dirname, '../..') }
+        );
+        return {
+            stdout: result.stdout ?? '',
+            stderr: result.stderr ?? '',
+            exitCode: result.status ?? 1
+        };
+    }
+
+    it('test_mergeFasCli_three_compact_parts_equal_expectation', () => {
+        const resultFile = path.join(tmpDir, 'result.json');
+        const part1 = path.join(testDataDir, 'part1.json');
+        const part2 = path.join(testDataDir, 'part2.json');
+        const part3 = path.join(testDataDir, 'part3.json');
+        const expectationFile = path.join(testDataDir, 'expectation.json');
+
+        const { exitCode } = runMergeFas([`--result=${resultFile}`, `${part1},${part2}`, part3]);
+
+        expect(exitCode).toBe(0);
+        const result: FaDefinition = JSON.parse(fs.readFileSync(resultFile, 'utf-8'));
+        const expected: FaDefinition = JSON.parse(fs.readFileSync(expectationFile, 'utf-8'));
+        expect(result).toEqual(expected);
+    });
+
+    it('test_mergeFasCli_extended_source_reduces_to_same_as_parts', () => {
+        const resultFile = path.join(tmpDir, 'result.json');
+        const extendedSource = path.resolve(__dirname, 'test-data/turnstile-fa.json');
+        const expectationFile = path.join(testDataDir, 'expectation.json');
+
+        const { exitCode } = runMergeFas([`--result=${resultFile}`, extendedSource]);
+
+        expect(exitCode).toBe(0);
+        const result: FaDefinition = JSON.parse(fs.readFileSync(resultFile, 'utf-8'));
+        const expected: FaDefinition = JSON.parse(fs.readFileSync(expectationFile, 'utf-8'));
+        expect(result).toEqual(expected);
+    });
+
+    it('test_mergeFasCli_duplicate_key_warns_last_wins', () => {
+        const resultFile = path.join(tmpDir, 'result.json');
+        const part1 = path.join(testDataDir, 'part1.json');
+
+        // run twice with the same part to trigger a duplicate-key warning
+        const { exitCode, stderr, stdout } = runMergeFas([`--result=${resultFile}`, part1, part1]);
+
+        expect(exitCode).toBe(0);
+        const allOutput = stdout + stderr;
+        expect(allOutput).toMatch(/Duplicate FA key 'TS'/);
+    });
+
+    it('test_mergeFasCli_missing_result_flag_exits_nonzero', () => {
+        const part1 = path.join(testDataDir, 'part1.json');
+        const { exitCode } = runMergeFas([part1]);
+        expect(exitCode).not.toBe(0);
+    });
+
+    it('test_mergeFasCli_no_input_files_exits_nonzero', () => {
+        const resultFile = path.join(tmpDir, 'result.json');
+        const { exitCode } = runMergeFas([`--result=${resultFile}`]);
+        expect(exitCode).not.toBe(0);
+    });
+
+    it('test_mergeFasCli_missing_input_file_exits_nonzero', () => {
+        const resultFile = path.join(tmpDir, 'result.json');
+        const { exitCode } = runMergeFas([`--result=${resultFile}`, '/nonexistent/path.json']);
+        expect(exitCode).not.toBe(0);
+    });
+});

@@ -1,0 +1,21 @@
+{
+    "PP": [
+        ["I", "BR.bc$", "BPP"],
+        ["I", "CR.cc$", "CPP"],
+        ["BPP", "BC.r$", "RE"],
+        ["BPP", "BA.c$", "CH", "CH.c$"],
+        ["BPP", "BA.n", "E_N"],
+        ["CPP", "CC.r$", "RE"],
+        ["CPP", "CA.c$", "CH", "CH.c$"],
+        ["CPP", "CA.n", "E_P"],
+        ["RE", "RE.d", "E_R"],
+        ["CH", "CH.d", "E_P"]
+    ],
+    "BPP": [
+        ["I", "BR.bc$", "C", "BC.c$"],
+        ["C", "BC.p$", "A", "BA.a$"],
+        ["C", "BC.r$", "E_R"],
+        ["A", "BA.c$", "E_C"],
+        ["A", "BA.n", "E_N"]
+    ]
+}

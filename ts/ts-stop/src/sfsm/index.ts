@@ -4,5 +4,6 @@ export { FaDefinition, FaNode, FaUpdate, Transition, SfsmOptions, LogEntry, Miss
 export { FaResolver, ResolvedFa } from './FaResolver';
 export { Sfsm } from './Sfsm';
 export { reduceFA } from './FaReducer';
+export { mergeFAs, MergeFaResult } from './FaMerger';
 export { updateCompactFA, updateFullFA } from './FaUpdater';
 export { loadFAFromFile, loadFAFromURL } from './FaLoader';

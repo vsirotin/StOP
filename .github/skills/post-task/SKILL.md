@@ -14,13 +14,19 @@ This skill is applied after every task that makes essential changes to code, doc
 
 ## Rules
 
-### 0. Verify the build
+### 1. Verify the build
 
 If the changed sub-project has a build step (e.g. `npm run build`, `tsc`, `cargo build`), run it in the terminal and confirm it exits with code 0.
-- If the build fails, fix the errors first and re-run tests before continuing to Rule 1.
+- If the build fails, fix the errors first before continuing to Rule 2.
 - Do not bump the version, update release notes, or write a commit text for a build that does not compile.
 
-### 1. Update version
+### 2. Run the full test suite
+
+Run all automated tests for the changed sub-project (e.g. `npm test`, `cargo test`, `pytest`) and confirm they all pass (exit code 0).
+- If any tests fail, fix them before continuing to Rule 3.
+- Do not bump the version, update release notes, or write a commit text when tests are failing.
+
+### 3. Update version
 
 Follow these sub-steps in order:
 
@@ -33,11 +39,11 @@ Follow these sub-steps in order:
 4. **Remember the new version** for use in Rules 2 and 3.
 5. **Sync package manifests**: if the sub-project contains a file that carries its own version field (e.g. `"version"` in `package.json`, `version` in `Cargo.toml`, `version` in `pyproject.toml`), update that field to match the new version.
 
-### 2. Update release notes
+### 4. Update release notes
 
 Insert the new version entry **at the beginning** (after the header, at line 3) in `release-notes.md`. If the file does not exist, create it and add the new version entry as the first item. Include the remembered version number and a short explanation of the version update. Latest release appears first, oldest releases appear last. Do not reorder or overwrite previous entries. Update `datetime` to the current date and time in ISO 8601 format.
 
-### 3. Write commit text proposal
+### 5. Write commit text proposal
 
 Update **only** the workspace-root file: `commit-text-proposal.txt` (in the workspace root directory where this skill file is located, not in sub-project directories).
 

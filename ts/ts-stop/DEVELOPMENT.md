@@ -20,6 +20,7 @@ The library is consumed by test examples in `test/fa/` and `test/sfsm/`, and by 
   - `types.ts` — `FaDefinition`, `FaNode`, `Transition`, `SfsmOptions`, `LogEntry`
   - `FaResolver.ts` — Parses FA JSON (extended or compact) into a flat indexed structure; auto-detects root in multi-key compact definitions
   - `FaReducer.ts` — `reduceFA()`: strips metadata from extended definitions to produce compact flat format
+  - `FaMerger.ts` — `mergeFAs()`: reduces multiple definitions and merges them into one compact multi-FA map with duplicate-key warnings
   - `FaLoader.ts` — `loadFAFromFile()` (Node.js only) and `loadFAFromURL()` (browser & Node.js ≥ 18)
   - `Sfsm.ts` — Engine class: stack management, signal queue, rule processing, logging
   - `index.ts` — Re-exports all public symbols
@@ -83,6 +84,28 @@ Output is written to `<basename>-compact.json` in the same directory as the inpu
 ```bash
 npm run reduce-fa -- test/sfsm/test-data/turnstile-fa.json
 # Reduced FA written to: test/sfsm/test-data/turnstile-fa-compact.json
+```
+
+### Merge multiple FA files into one compact output
+
+```bash
+# Build first (required)
+npm run build
+
+# Reduce each input (if needed) and merge all FAs to one compact file
+npm run merge-fas -- --result=<path/to/result.json> <file1[,file2,...]> [file3 ...]
+```
+
+Rules:
+- If an input is already compact, it is used unchanged.
+- If duplicate FA keys exist across files, the last file wins and a warning is printed.
+
+**Example:**
+
+```bash
+npm run merge-fas -- --result=test/sfsm/test-data/merge-fas/result.json \
+  test/sfsm/test-data/merge-fas/part1.json,test/sfsm/test-data/merge-fas/part2.json \
+  test/sfsm/test-data/merge-fas/part3.json
 ```
 
 ### Load an FA from a file in code (Node.js)
