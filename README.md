@@ -1,3 +1,12 @@
+[![npm](https://img.shields.io/npm/v/@vsirotin/ts-stop?sort=semver&logo=npm)](https://www.npmjs.com/package/@vsirotin/ts-stop)
+[![npm type definitions](https://img.shields.io/npm/types/@vsirotin/ts-stop?logo=typescript)](https://www.npmjs.com/package/@vsirotin/ts-stop)
+[![npm](https://img.shields.io/npm/dt/@vsirotin/ts-stop?logo=npm)](http://npm-stat.com/charts.html?package=@vsirotin/ts-stop)
+[![npm](https://img.shields.io/npm/dw/@vsirotin/ts-stop?logo=npm)](http://npm-stat.com/charts.html?package=@vsirotin/ts-stop)
+
+
+![badge-nodejs](https://img.shields.io/badge/platform-jsNode-F8DB5D.svg?style=flat)
+![badge-browser](https://img.shields.io/badge/platform-jsBrowser-F8DB5D.svg?style=flat)
+
 # StOP - State Oriented Programming
 
 State Oriented Programming (StOP) is a programming paradigm that focuses on explicit state management and transformation. This repository provides implementations and examples in multiple programming languages.
