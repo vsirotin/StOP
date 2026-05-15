@@ -23,16 +23,11 @@ correctly in a real browser application before publishing it to the npm registry
 
 ```bash
 cd ts/ts-example
-rm -rf node_modules
+rm -rf node_modules/@vsirotin 
 ```
 
-**Step 2 — Install Angular dependencies from the registry**
-
-```bash
-npm install
-```
-
-**Step 3 — Overwrite `@vsirotin/ts-stop` with the locally-built version**
+**Step 2 — Install from the npm registry**
+Install  locally-built version `@vsirotin/ts-stop`
 
 Builds `../ts-stop` and copies the output into `node_modules/@vsirotin/ts-stop/`,
 simulating what `npm install @vsirotin/ts-stop` would do with a published package:
@@ -41,7 +36,7 @@ simulating what `npm install @vsirotin/ts-stop` would do with a published packag
 npm run publish:local
 ```
 
-**Step 4 — Run Jest smoke tests**
+**Step 3 — Run Jest smoke tests**
 
 Verifies that the application initialises without errors:
 
@@ -49,18 +44,18 @@ Verifies that the application initialises without errors:
 npm test
 ```
 
-**Step 5 — Start the development server**
+**Step 4 — Start the development server**
 
 ```bash
 npm start
 ```
 
-**Step 6 — Open the app in the browser**
+**Step 5 — Open the app in the browser**
 
 Navigate to <http://localhost:4200>.  
 Both demo panels appear immediately — no user interaction required.
 
-After changing the library source, repeat steps 3 and 5 (the dev server
+After changing the library source, repeat steps 3 and 4 (the dev server
 hot-reloads automatically once `node_modules` is updated).
 
 > **Shortcut:** Run all steps 1–4 in one command:
@@ -85,31 +80,25 @@ npm login
 
 Then publish from the `ts-stop` directory:
 
-```bashh
-```
+```bash
 cd ../ts-stop && npm publis
+```
 
 **Step 2 — Remove local node_modules**
 
 ```bash
-cd ../ts-example && rm -rf node_modules
+cd ../ts-example && rm -rf node_modules/@vsirotin 
 ```
 
 **Step 3 — Install from the npm registry**
 
 ```bash
-npm install
 npm i @vsirotin/ts-stop
 ```
 Check that the installed version matches the one you just published.
 
-**Step 4 — Run Jest smoke tests**
 
-```bash
-npm test
-```
-
-**Step 5 — Build the production bundle**
+**Step 4 — Build the production bundle**
 
 ```bash
 npm run build
@@ -117,7 +106,7 @@ npm run build
 
 The production build is written to `dist/ts-example/`.
 
-**Step 6 — Unit testing
+**Step 5 — Unit testing
 
 
 The application has a Jest-based smoke test suite that verifies the component
@@ -127,7 +116,7 @@ starts without errors and produces the expected output.
 npm test
 ```
 
-**Step 7 — Start the development server**
+**Step 6 — Start the development server**
 
 ```bash
 npm start
