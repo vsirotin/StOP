@@ -10,6 +10,8 @@ metadata:
 
 This skill is applied after every task that makes essential changes to code, documentation, scripts, or configuration files. The agent must execute these steps before reporting completion.
 
+**Prerequisites and execution order:** Rules must be followed in sequence (1 → 2 → 3 → 4 → 5). Each rule has a stated prerequisite — if that prerequisite fails, stop and fix it before proceeding. Do not skip ahead or batch steps.
+
 ---
 
 ## Rules
@@ -18,7 +20,7 @@ This skill is applied after every task that makes essential changes to code, doc
 
 If the changed sub-project has a build step (e.g. `npm run build`, `tsc`, `cargo build`), run it in the terminal and confirm it exits with code 0.
 - If the build fails, fix the errors first before continuing to Rule 2.
-- Do not bump the version, update release notes, or write a commit text for a build that does not compile.
+- Do not proceed to Rule 2 or beyond if the build does not compile.
 
 ### 2. Run the full test suite
 
