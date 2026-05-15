@@ -1,1 +1,1 @@
-test: Project: ts/ts-stop. Version: 1.12.1. merge-fas CLI integration tests and post-task rules update.
+feat: Project: ts/ts-stop. Version: 1.13.0. Add merge-fas-from-dir script and CLI tool distribution.

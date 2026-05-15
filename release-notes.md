@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 1.13.0 build 63
+feat: ts-stop — add merge-fas-from-dir script to recursively merge all FA files from a directory; reorganize merge-fas test data into input/ subdirectory; add bin field to package.json for CLI tool distribution; update DEVELOPMENT.md documentation.
+
 ## Version: 1.12.1 build 62
 test: ts-stop — merge-fas CLI integration tests + realistic split test data (part1/part2/part3/expectation.json). Post-task SKILL.md updated: run full tests rule added, rules renumbered 1–5.
 

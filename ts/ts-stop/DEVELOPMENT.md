@@ -96,6 +96,8 @@ npm run build
 npm run merge-fas -- --result=<path/to/result.json> <file1[,file2,...]> [file3 ...]
 ```
 
+**Note on `--` syntax:** The first `--` tells npm to pass all following arguments directly to the script. This is standard npm convention, not a duplication.
+
 Rules:
 - If an input is already compact, it is used unchanged.
 - If duplicate FA keys exist across files, the last file wins and a warning is printed.
@@ -104,9 +106,32 @@ Rules:
 
 ```bash
 npm run merge-fas -- --result=test/sfsm/test-data/merge-fas/result.json \
-  test/sfsm/test-data/merge-fas/part1.json,test/sfsm/test-data/merge-fas/part2.json \
-  test/sfsm/test-data/merge-fas/part3.json
+  test/sfsm/test-data/merge-fas/input/part1.json,test/sfsm/test-data/merge-fas/input/part2.json \
+  test/sfsm/test-data/merge-fas/input/part3.json
 ```
+
+### Merge all FA files from a directory (recursive)
+
+```bash
+# Build first (required)
+npm run build
+
+# Recursively find and merge all .json FA files from a directory
+npm run merge-fas-from-dir -- --input-dir=<path/to/dir> --result=<path/to/result.json>
+```
+
+This script recursively scans the input directory for all `.json` files, sorts them alphabetically, and merges them into a single compact output file.
+
+**Example:**
+
+```bash
+npm run merge-fas-from-dir -- --input-dir=test/sfsm/test-data/merge-fas/input --result=test/sfsm/test-data/merge-fas/merged-result.json
+```
+
+Rules:
+- All `.json` files in the input directory and subdirectories are discovered and sorted alphabetically.
+- If an input is already compact, it is used unchanged.
+- If duplicate FA keys exist across files, the last file (by alphabetical order) wins and a warning is printed.
 
 ### Load an FA from a file in code (Node.js)
 
