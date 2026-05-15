@@ -1,1 +1,1 @@
-test: Project: ts/ts-example. Version: 1.1.0. Add sfsm integration tests for imported @vsirotin/ts-stop package.
+bin: Project: ts/ts-stop. Version: 1.13.2. Fix published package files field and local publish script.

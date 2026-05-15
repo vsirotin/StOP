@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 1.13.2 build 65
+bin: ts-stop — fix published package to list scripts explicitly in files field (exclude publish-local.sh); remove unused ts-stop/scripts/publish-local.sh; rewrite ts-example/scripts/publish-local.sh to use npm pack+tar instead of raw cp.
+
 ## Version: 1.13.1 build 64
 test: ts-example — add FaMerger, FaReducer, FaUpdater, Sfsm.compact integration tests importing from @vsirotin/ts-stop; update publish-local.sh to copy scripts/.
 

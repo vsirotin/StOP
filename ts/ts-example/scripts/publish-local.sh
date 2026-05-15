@@ -1,7 +1,7 @@
 #!/bin/bash
-# Simulate installation of @vsirotin/ts-stop from the npm registry by copying
-# the locally-built library into this project's node_modules.
-# Run this AFTER `npm install` so that the local build overwrites the registry version.
+# Simulate installation of @vsirotin/ts-stop from the npm registry.
+# Uses `npm pack` so that the tarball respects the `files` field in package.json,
+# exactly as a real `npm install` from the registry would.
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -11,13 +11,14 @@ TARGET_DIR="$SCRIPT_DIR/../node_modules/@vsirotin/ts-stop"
 echo "🔨 Building @vsirotin/ts-stop..."
 (cd "$TS_STOP_DIR" && npm run build)
 
+echo "📦 Packing @vsirotin/ts-stop..."
+TARBALL=$(cd "$TS_STOP_DIR" && npm pack --quiet 2>/dev/null | tail -1)
+TARBALL_PATH="$TS_STOP_DIR/$TARBALL"
+
 echo "📋 Installing local build into node_modules..."
 rm -rf "$TARGET_DIR"
 mkdir -p "$TARGET_DIR"
-cp -r "$TS_STOP_DIR/lib" "$TARGET_DIR/lib"
-cp -r "$TS_STOP_DIR/scripts" "$TARGET_DIR/scripts"
-cp "$TS_STOP_DIR/package.json" "$TARGET_DIR/package.json"
-cp "$TS_STOP_DIR/README.md" "$TARGET_DIR/README.md"
-cp "$TS_STOP_DIR/LICENSE" "$TARGET_DIR/LICENSE"
+tar -xzf "$TARBALL_PATH" -C "$TARGET_DIR" --strip-components=1
+rm "$TARBALL_PATH"
 
 echo "✅ Local @vsirotin/ts-stop installed into ts-example/node_modules"

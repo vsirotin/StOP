@@ -39,25 +39,22 @@ This builds both CommonJS and ES modules to the `lib/` directory.
 
 ## Unit testing
 
-```bash
-# Install and publish library locally (required for tests to resolve imports)
-npm run publish:local
+
+
 
 # Run tests
+```bash
 npm test
+```
 
 # Run tests in watch mode
 npm run test:watch
 
 # Run tests with coverage report
+```bash
 npm run test:coverage
 ```
 
-> **Note:** `npm run publish:local` builds the library and installs it into
-> `ts-stop/node_modules/@vsirotin/ts-stop/` so that the Jest test suite can
-> resolve the `@vsirotin/ts-stop` import.  It no longer copies files to
-> `ts-example/` — that is now handled by `ts-example`'s own `publish:local`
-> script.
 
 ## SFSM utilities
 

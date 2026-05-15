@@ -1,6 +1,6 @@
 {
   "name": "@vsirotin/ts-stop",
-  "version": "1.13.0",
+  "version": "1.13.2",
   "description": "State Oriented Programming library for TypeScript",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -20,7 +20,10 @@
   },
   "files": [
     "lib",
-    "scripts",
+    "scripts/reduce-fa.js",
+    "scripts/merge-fas.js",
+    "scripts/merge-fas-from-dir.js",
+    "scripts/update-fa.js",
     "README.md",
     "LICENSE",
     "LICENSE-COMMERCIAL.md"
@@ -39,7 +42,6 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "clean": "rm -rf lib coverage",
-    "publish:local": "./scripts/publish-local.sh",
     "pack": "npm run build && npm pack",
     "reduce-fa": "node scripts/reduce-fa.js",
     "merge-fas": "node scripts/merge-fas.js",

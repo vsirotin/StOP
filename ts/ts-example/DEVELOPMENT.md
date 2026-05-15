@@ -81,7 +81,7 @@ npm login
 Then publish from the `ts-stop` directory:
 
 ```bash
-cd ../ts-stop && npm publis
+cd ../ts-stop && npm publish
 ```
 
 **Step 2 — Remove local node_modules**
