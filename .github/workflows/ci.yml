@@ -31,10 +31,6 @@ jobs:
         working-directory: ./ts/ts-stop
         run: npm run build
       
-      - name: Publish library locally (for tests)
-        working-directory: ./ts/ts-stop
-        run: npm run publish:local
-      
       - name: Run tests
         working-directory: ./ts/ts-stop
         run: npm test
