@@ -2,19 +2,13 @@
 
 ## Project description
 
-This is the core TypeScript implementation of the StOP (State-Oriented Programming) library. It provides a robust framework for building finite state machines with support for:
-- Traditional string-based or enum-based state machines
-- Matrix-based state transitions for intuitive visualization
-- State actions (entry/exit hooks)
-- Output signals (auto-triggering transitions)
-- Default states for handling invalid signals
+This is the core TypeScript implementation of the StOP (State-Oriented Programming) library. It provides a robust framework for building finite state machines, centered on:
 - **Stacked Finite State Machine (SFSM)** — a stack-based engine for hierarchical, multi-component FA processing
 
-The library is consumed by test examples in `test/fa/` and `test/sfsm/`, and by the `ts-example` sub-project.
+The library is consumed by test examples in `test/sfsm/`, and by the `ts-example` sub-project.
 
 ## Project structure
 
-- `src/fa/` — Core finite state machine implementation classes (FA layer)
 - `src/sfsm/` — Stacked Finite State Machine engine (SFSM layer)
   - `interfaces.ts` — `ICommandReceiver`, `ISignalReceiver`
   - `types.ts` — `FaDefinition`, `FaNode`, `Transition`, `SfsmOptions`, `LogEntry`
@@ -24,14 +18,15 @@ The library is consumed by test examples in `test/fa/` and `test/sfsm/`, and by 
   - `FaLoader.ts` — `loadFAFromFile()` (Node.js only) and `loadFAFromURL()` (browser & Node.js ≥ 18)
   - `Sfsm.ts` — Engine class: stack management, signal queue, rule processing, logging
   - `index.ts` — Re-exports all public symbols
-- `test/fa/` — Unit and integration tests for the FA layer, including Turnstile examples
 - `test/sfsm/` — Unit and integration tests for the SFSM engine
   - `simulators/` — Smart device simulators (TurnstileDevice, CoinAcceptor, Changer, etc.)
   - `test-data/` — FA definition JSON files used by tests
+  - `tutorial/` — Small, self-contained illustrative tests referenced from `docs/Tutorial/Tutorial.md`
 
 ## How to build
 
 ```bash
+cd ts/ts-stop
 npm run build
 ```
 
@@ -39,11 +34,9 @@ This builds both CommonJS and ES modules to the `lib/` directory.
 
 ## Unit testing
 
-
-
-
 # Run tests
 ```bash
+cd ts/ts-stop
 npm test
 ```
 
@@ -52,6 +45,7 @@ npm run test:watch
 
 # Run tests with coverage report
 ```bash
+cd ts/ts-stop
 npm run test:coverage
 ```
 
@@ -129,25 +123,3 @@ Rules:
 - All `.json` files in the input directory and subdirectories are discovered and sorted alphabetically.
 - If an input is already compact, it is used unchanged.
 - If duplicate FA keys exist across files, the last file (by alphabetical order) wins and a warning is printed.
-
-### Load an FA from a file in code (Node.js)
-
-```typescript
-import { Sfsm, loadFAFromFile } from '@vsirotin/ts-stop/sfsm';
-
-const sfsm = new Sfsm({ byMissingTransition: 'error' });
-sfsm.setCommandReceiver(myRouter);
-sfsm.loadFA(loadFAFromFile('./my-fa.json'));
-```
-
-### Load an FA from a URL (browser & Node.js)
-
-```typescript
-import { Sfsm, loadFAFromURL } from '@vsirotin/ts-stop/sfsm';
-
-const sfsm = new Sfsm({ byMissingTransition: 'error' });
-sfsm.setCommandReceiver(myRouter);
-sfsm.loadFA(await loadFAFromURL('https://example.com/my-fa.json'));
-```
-
-Both extended and compact formats are accepted by `loadFA()` without any change to the calling code.

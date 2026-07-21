@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 2.0.1 build 67
+doc: ts-stop — new Tutorial.md intro chapter "What is a Finite Automaton?" (adapted from obsolete Z_05 doc, re-authored against the current Sfsm engine since the old MatrixBasedStateMachine FA layer is removed); illustrative unit test added in test/sfsm/tutorial/; fixed stale src/fa references in DEVELOPMENT.md and dead tutorial link in ts-stop/README.md.
+
 ## Version: 2.0.0 build 66
 Version 2.0.0 started
 

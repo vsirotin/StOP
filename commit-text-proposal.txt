@@ -1,1 +1,1 @@
-Ver: Version 2.0 started
+doc: Project: ts/ts-stop. Version 2.0.1. Add Tutorial.md FA intro chapter + illustrative test.
