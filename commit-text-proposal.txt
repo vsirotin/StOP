@@ -1,1 +1,2 @@
-feat: Project: ts/ts-stop. Version 2.2.0. Add Joker (wildcard signal/state) concept to Sfsm + Tutorial.md chapter.
+doc: Project: ts/ts-stop. Version: 2.2.1. Add Tutorial.md chapters 4-7 (SFSM, processing rules, Controllers/ControllerHub, Utilities).
+
