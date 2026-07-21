@@ -1,6 +1,6 @@
 # StOP Tutorial
 
-## What is a Finite Automaton?
+## 1. What is a Finite Automaton?
 
 Mountains of scientific and educational books and articles have been written about finite automata, which manage in an amazing way to not only confuse the reader, but also to frighten practitioners away from using them.
 
@@ -29,7 +29,7 @@ Like this:
 
 This automaton has two states: **locked** and **unlocked**, and two signals: **coin received** (coin) and **person passed through** (push).
 
-## Defining the turnstile with the StOP library
+## 2. Defining the turnstile with the StOP library
 
 The TypeScript StOP library (https://github.com/vsirotin/StOP) processes finite automata with the `Sfsm` engine (available from the `@vsirotin/ts-stop` package, sub-path `sfsm`). An FA is described as a plain list of transitions, each one a triple (or, when a command must be sent, a quadruple — covered in a later chapter):
 
@@ -75,6 +75,42 @@ sfsm.getHeadState();          // 'locked'
 ```
 
 A runnable version of this exact example is available as a unit test: [01-what-is-a-finite-automaton.test.ts](../../ts/ts-stop/test/sfsm/tutorial/01-what-is-a-finite-automaton.test.ts).
+
+### 2.1 A type-safe alternative
+
+The plain-string form above is convenient, but nothing stops a typo like `"lokced"` from silently compiling — the `Transition` type accepts any string in each slot. If you would rather have the TypeScript compiler catch such typos, declare your states and signals as string-literal union types first, and write the transition list against them with a small generic helper:
+
+```typescript
+import { Sfsm, FaDefinition, Transition } from '@vsirotin/ts-stop/sfsm';
+
+type TurnstileState = 'I' | 'locked' | 'unlocked';
+type TurnstileSignal = 'start' | 'coin' | 'push';
+
+// A transition restricted to a specific pair of state/signal literal types.
+type TypedTransition<S extends string, G extends string> = [S, G, S];
+
+// Accepts only transitions built from S/G, returns the plain runtime Transition[]
+// that Sfsm actually consumes — no change to the library's runtime format.
+function typedTransitions<S extends string, G extends string>(
+    transitions: Array<TypedTransition<S, G>>
+): Transition[] {
+    return transitions;
+}
+
+const turnstileTransitions = typedTransitions<TurnstileState, TurnstileSignal>([
+    ['I',        'start', 'locked'],
+    ['locked',   'coin',  'unlocked'],
+    ['unlocked', 'push',  'locked'],
+    // ['locked', 'coin', 'lokced'],   // ✗ compile error: 'lokced' is not TurnstileState
+]);
+
+const turnstileFa: FaDefinition = { Turnstile: turnstileTransitions };
+
+const sfsm = new Sfsm();
+sfsm.loadFA(turnstileFa);
+```
+
+This costs nothing at runtime — `typedTransitions()` just returns its argument — but any misspelled state or signal name is now a compile-time error instead of a silent bug. A runnable version of this example is available as a unit test: [02-type-safe-fa-definition.test.ts](../../ts/ts-stop/test/sfsm/tutorial/02-type-safe-fa-definition.test.ts).
 
 "But wait," an experienced programmer will say, looking at this example, "these are just text strings, not objects. An object should be able to do something and have its own attributes!"
 

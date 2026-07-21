@@ -1,1 +1,1 @@
-feat: Project: ts/ts-stop. Version 2.1.0. Replace ExternalWorldHub with ControllerHub + SignalSender/CommandReceiver.
+doc: Project: ts/ts-stop. Version 2.1.1. Number Tutorial.md chapters and add a type-safe FA definition example + test.

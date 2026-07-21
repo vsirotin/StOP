@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 2.1.1 build 69
+doc: docs/Tutorial/Tutorial.md — numbered chapters (1., 2., 2.1) and added a "type-safe alternative" subsection showing how to define FA transitions against string-literal union types with a small generic helper, catching state/signal typos at compile time. New illustrative test: 02-type-safe-fa-definition.test.ts. 168 tests passing.
+
 ## Version: 2.1.0 build 68
 feat: ts-stop — replaced ExternalWorldHub with ControllerHub + new SignalSender/CommandReceiver abstract base classes (Controllers). Components now self-declare their signal/command names via getSignalNames()/getCommandNames() instead of repeating them at the registration call site. All SFSM test simulators refactored to extend SignalSender. 164 tests passing (ControllerHub.test.ts replaces ExternalWorldHub.test.ts).
 
