@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 2.2.2 build 72
+dist: new agent SKILL.md files in .github/skills/: sfsm-json-to-uml-diagram (SFSM FA JSON, compact or extended, → draw.io UML state diagram, defining the canonical sfsmRole/sfsmFa/sfsmKey style-token notation), sfsm-uml-diagram-to-json (reverse: draw.io diagram → compact-format JSON, with heuristic fallback for hand-drawn diagrams), and sfsm-compare-json-uml-diagram (diff a compact-format JSON FA definition against a draw.io diagram without modifying either file).
+
 ## Version: 2.2.1 build 71
 doc: ts-stop — Tutorial.md gained chapters 4-7: "What is a Stacked Finite State Machine (SFSM)?", "How stacked states are processed" (processing rules rewritten against Sfsm.ts, correcting the stale wording from the old Z_06 doc), "Signal Senders, Command Receivers, Controllers, and the Controller Hub", and "Utilities" (reduceFA, multi-FA compact format, loadFAFromFile/loadFAFromURL, CLI tools, updateCompactFA/updateFullFA with a new example promoting a plain state into a sub-FA). New illustrative tests 04-stacked-finite-state-machine.test.ts, 06-controllers-and-controller-hub.test.ts, 07-update-fa-add-detail.test.ts. 197 tests passing.
 

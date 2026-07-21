@@ -1,2 +1,3 @@
-doc: Project: ts/ts-stop. Version: 2.2.1. Add Tutorial.md chapters 4-7 (SFSM, processing rules, Controllers/ControllerHub, Utilities).
+dist: Project: .github/skills. Version: 2.2.2. Add sfsm-json-to-uml-diagram, sfsm-uml-diagram-to-json, sfsm-compare-json-uml-diagram skills.
+
 
