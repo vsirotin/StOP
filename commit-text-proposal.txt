@@ -1,1 +1,1 @@
-bin: Project: ts/ts-stop. Version: 1.13.2. Fix published package files field and local publish script.
+Ver: Version 2.0 started
