@@ -1,4 +1,4 @@
-import { ICommandReceiver, ISignalReceiver, ISignalSender } from '../../../src/sfsm';
+import { ICommandReceiver, SignalSender } from '../../../src/sfsm';
 
 /**
  * Simulator for the Turnstile physical device.
@@ -7,14 +7,17 @@ import { ICommandReceiver, ISignalReceiver, ISignalSender } from '../../../src/s
  *
  * In tests, call triggerPassage() or triggerTimeout() to simulate physical events.
  */
-export class TurnstileDevice implements ICommandReceiver, ISignalSender {
+export class TurnstileDevice extends SignalSender implements ICommandReceiver {
 
-    private sfsm: ISignalReceiver | null = null;
     private _locked = true;
     private commandsReceived: string[] = [];
 
-    connectSignalTarget(target: ISignalReceiver): void {
-        this.sfsm = target;
+    getSignalNames(): readonly string[] {
+        return ['TS.to', 'TS.ps'];
+    }
+
+    getCommandNames(): readonly string[] {
+        return ['TS.ut', 'TS.l'];
     }
 
     receiveCommand(command: string, _data?: unknown): void {
@@ -27,11 +30,11 @@ export class TurnstileDevice implements ICommandReceiver, ISignalSender {
     }
 
     triggerPassage(): void {
-        this.sfsm!.receiveSignal('TS.ps');
+        this.sendSignal('TS.ps');
     }
 
     triggerTimeout(): void {
-        this.sfsm!.receiveSignal('TS.to');
+        this.sendSignal('TS.to');
     }
 
     isLocked(): boolean {

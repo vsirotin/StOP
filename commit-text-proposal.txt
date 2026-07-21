@@ -1,1 +1,1 @@
-doc: Project: ts/ts-stop. Version 2.0.1. Add Tutorial.md FA intro chapter + illustrative test.
+feat: Project: ts/ts-stop. Version 2.1.0. Replace ExternalWorldHub with ControllerHub + SignalSender/CommandReceiver.

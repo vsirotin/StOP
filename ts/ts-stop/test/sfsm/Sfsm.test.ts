@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import { Sfsm, FaDefinition, ExternalWorldHub, ICommandReceiver } from '../../src/sfsm';
+import { Sfsm, FaDefinition, ControllerHub, CommandReceiver } from '../../src/sfsm';
 import { TurnstileService } from './simulators/TurnstileService';
 import { TurnstileDevice } from './simulators/TurnstileDevice';
 import { CoinChecker } from './simulators/CoinChecker';
@@ -16,6 +16,13 @@ import { BanknoteAcceptor } from './simulators/BanknoteAcceptor';
 function loadTurnstileFa(): FaDefinition {
     const p = path.resolve(__dirname, 'test-data/turnstile-fa.json');
     return JSON.parse(fs.readFileSync(p, 'utf-8')) as FaDefinition;
+}
+
+/** Test-only CommandReceiver that swallows every command it is registered for. */
+class AbsorbingCommandReceiver extends CommandReceiver {
+    constructor(private readonly commands: string[]) { super(); }
+    getCommandNames(): readonly string[] { return this.commands; }
+    receiveCommand(): void { /* absorb */ }
 }
 
 interface Harness {
@@ -41,20 +48,20 @@ function buildHarness(fare = 1): Harness {
 
     const service = new TurnstileService();
 
-    new ExternalWorldHub()
-        .registerSignalSender(['TS.s'], service)
-        .registerSignalSender(['TS.to', 'TS.ps'], device)
-        .registerCommandReceiver(['TS.ut', 'TS.l'], device)
-        .registerSignalSender(['CC.p$', 'CC.r$'], coinChecker)
-        .registerCommandReceiver(['CC.cw$', 'CC.cf$'], coinChecker)
-        .registerSignalSender(['CA.c$', 'CA.n'], coinAcceptor)
-        .registerCommandReceiver(['CA.a$'], coinAcceptor)
-        .registerSignalSender(['CH.d'], changer)
-        .registerCommandReceiver(['CH.c$'], changer)
-        .registerSignalSender(['BC.p$', 'BC.r$'], banknoteChecker)
-        .registerCommandReceiver(['BC.c$'], banknoteChecker)
-        .registerSignalSender(['BA.c$', 'BA.n'], banknoteAcceptor)
-        .registerCommandReceiver(['BA.a$'], banknoteAcceptor)
+    new ControllerHub()
+        .registerSignalSender(service)
+        .registerSignalSender(device)
+        .registerCommandReceiver(device)
+        .registerSignalSender(coinChecker)
+        .registerCommandReceiver(coinChecker)
+        .registerSignalSender(coinAcceptor)
+        .registerCommandReceiver(coinAcceptor)
+        .registerSignalSender(changer)
+        .registerCommandReceiver(changer)
+        .registerSignalSender(banknoteChecker)
+        .registerCommandReceiver(banknoteChecker)
+        .registerSignalSender(banknoteAcceptor)
+        .registerCommandReceiver(banknoteAcceptor)
         .connectTo(sfsm);
 
     sfsm.loadFA(loadTurnstileFa());
@@ -316,15 +323,11 @@ describe('SFSM – Stack inspection', () => {
     it('stack grows to ["TS","PP"] when entering payment sub-FA', () => {
         // Wire a blocking hub — absorbs all commands so the cascade stalls mid-way
         const device2 = new TurnstileDevice();
-        const absorb: ICommandReceiver = { receiveCommand: () => { /* absorb */ } };
-        new ExternalWorldHub()
-            .registerSignalSender(['TS.to', 'TS.ps'], device2)
-            .registerCommandReceiver(['TS.ut', 'TS.l'], device2)
-            .registerCommandReceiver(['CC.cw$', 'CC.cf$'], absorb)
-            .registerCommandReceiver(['CA.a$'], absorb)
-            .registerCommandReceiver(['CH.c$'], absorb)
-            .registerCommandReceiver(['BC.c$'], absorb)
-            .registerCommandReceiver(['BA.a$'], absorb)
+        const absorb = new AbsorbingCommandReceiver(['CC.cw$', 'CC.cf$', 'CA.a$', 'CH.c$', 'BC.c$', 'BA.a$']);
+        new ControllerHub()
+            .registerSignalSender(device2)
+            .registerCommandReceiver(device2)
+            .registerCommandReceiver(absorb)
             .connectTo(h.sfsm);
 
         h.sfsm.receiveSignal('CR.cc$', { value: 1 });

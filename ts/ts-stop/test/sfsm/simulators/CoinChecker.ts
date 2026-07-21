@@ -1,4 +1,4 @@
-import { ICommandReceiver, ISignalReceiver, ISignalSender } from '../../../src/sfsm';
+import { ICommandReceiver, SignalSender } from '../../../src/sfsm';
 
 /**
  * Simulator for the Coin Checker device.
@@ -7,13 +7,16 @@ import { ICommandReceiver, ISignalReceiver, ISignalSender } from '../../../src/s
  *
  * In tests that require a rejected coin, construct with rejectOnNext=true.
  */
-export class CoinChecker implements ICommandReceiver, ISignalSender {
+export class CoinChecker extends SignalSender implements ICommandReceiver {
 
-    private sfsm: ISignalReceiver | null = null;
     private _rejectOnNext = false;
 
-    connectSignalTarget(target: ISignalReceiver): void {
-        this.sfsm = target;
+    getSignalNames(): readonly string[] {
+        return ['CC.p$', 'CC.r$'];
+    }
+
+    getCommandNames(): readonly string[] {
+        return ['CC.cw$', 'CC.cf$'];
     }
 
     setRejectOnNext(reject: boolean): void {
@@ -24,9 +27,9 @@ export class CoinChecker implements ICommandReceiver, ISignalSender {
         if (command === 'CC.cw$' || command === 'CC.cf$') {
             if (this._rejectOnNext) {
                 this._rejectOnNext = false;
-                this.sfsm!.receiveSignal('CC.r$', data);
+                this.sendSignal('CC.r$', data);
             } else {
-                this.sfsm!.receiveSignal('CC.p$', data);
+                this.sendSignal('CC.p$', data);
             }
         }
     }

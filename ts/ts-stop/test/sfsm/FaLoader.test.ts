@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { loadFAFromFile, loadFAFromURL } from '../../src/sfsm';
-import { Sfsm, ExternalWorldHub } from '../../src/sfsm';
+import { Sfsm, ControllerHub } from '../../src/sfsm';
 import { TurnstileService } from './simulators/TurnstileService';
 import { TurnstileDevice } from './simulators/TurnstileDevice';
 import { CoinChecker } from './simulators/CoinChecker';
@@ -63,20 +63,20 @@ describe('loadFAFromFile – Sfsm integration with extended FA', () => {
 
         const service = new TurnstileService();
 
-        new ExternalWorldHub()
-            .registerSignalSender(['TS.s'], service)
-            .registerSignalSender(['TS.to', 'TS.ps'], device)
-            .registerCommandReceiver(['TS.ut', 'TS.l'], device)
-            .registerSignalSender(['CC.p$', 'CC.r$'], coinChecker)
-            .registerCommandReceiver(['CC.cw$', 'CC.cf$'], coinChecker)
-            .registerSignalSender(['CA.c$', 'CA.n'], coinAcceptor)
-            .registerCommandReceiver(['CA.a$'], coinAcceptor)
-            .registerSignalSender(['CH.d'], changer)
-            .registerCommandReceiver(['CH.c$'], changer)
-            .registerSignalSender(['BC.p$', 'BC.r$'], banknoteChecker)
-            .registerCommandReceiver(['BC.c$'], banknoteChecker)
-            .registerSignalSender(['BA.c$', 'BA.n'], banknoteAcceptor)
-            .registerCommandReceiver(['BA.a$'], banknoteAcceptor)
+        new ControllerHub()
+            .registerSignalSender(service)
+            .registerSignalSender(device)
+            .registerCommandReceiver(device)
+            .registerSignalSender(coinChecker)
+            .registerCommandReceiver(coinChecker)
+            .registerSignalSender(coinAcceptor)
+            .registerCommandReceiver(coinAcceptor)
+            .registerSignalSender(changer)
+            .registerCommandReceiver(changer)
+            .registerSignalSender(banknoteChecker)
+            .registerCommandReceiver(banknoteChecker)
+            .registerSignalSender(banknoteAcceptor)
+            .registerCommandReceiver(banknoteAcceptor)
             .connectTo(sfsm);
 
         sfsm.loadFA(loadFAFromFile(extendedPath));
@@ -104,20 +104,20 @@ describe('loadFAFromFile – Sfsm integration with compact FA', () => {
 
         const service = new TurnstileService();
 
-        new ExternalWorldHub()
-            .registerSignalSender(['TS.s'], service)
-            .registerSignalSender(['TS.to', 'TS.ps'], device)
-            .registerCommandReceiver(['TS.ut', 'TS.l'], device)
-            .registerSignalSender(['CC.p$', 'CC.r$'], coinChecker)
-            .registerCommandReceiver(['CC.cw$', 'CC.cf$'], coinChecker)
-            .registerSignalSender(['CA.c$', 'CA.n'], coinAcceptor)
-            .registerCommandReceiver(['CA.a$'], coinAcceptor)
-            .registerSignalSender(['CH.d'], changer)
-            .registerCommandReceiver(['CH.c$'], changer)
-            .registerSignalSender(['BC.p$', 'BC.r$'], banknoteChecker)
-            .registerCommandReceiver(['BC.c$'], banknoteChecker)
-            .registerSignalSender(['BA.c$', 'BA.n'], banknoteAcceptor)
-            .registerCommandReceiver(['BA.a$'], banknoteAcceptor)
+        new ControllerHub()
+            .registerSignalSender(service)
+            .registerSignalSender(device)
+            .registerCommandReceiver(device)
+            .registerSignalSender(coinChecker)
+            .registerCommandReceiver(coinChecker)
+            .registerSignalSender(coinAcceptor)
+            .registerCommandReceiver(coinAcceptor)
+            .registerSignalSender(changer)
+            .registerCommandReceiver(changer)
+            .registerSignalSender(banknoteChecker)
+            .registerCommandReceiver(banknoteChecker)
+            .registerSignalSender(banknoteAcceptor)
+            .registerCommandReceiver(banknoteAcceptor)
             .connectTo(sfsm);
 
         sfsm.loadFA(loadFAFromFile(compactPath));

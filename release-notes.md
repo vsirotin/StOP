@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 2.1.0 build 68
+feat: ts-stop — replaced ExternalWorldHub with ControllerHub + new SignalSender/CommandReceiver abstract base classes (Controllers). Components now self-declare their signal/command names via getSignalNames()/getCommandNames() instead of repeating them at the registration call site. All SFSM test simulators refactored to extend SignalSender. 164 tests passing (ControllerHub.test.ts replaces ExternalWorldHub.test.ts).
+
 ## Version: 2.0.1 build 67
 doc: ts-stop — new Tutorial.md intro chapter "What is a Finite Automaton?" (adapted from obsolete Z_05 doc, re-authored against the current Sfsm engine since the old MatrixBasedStateMachine FA layer is removed); illustrative unit test added in test/sfsm/tutorial/; fixed stale src/fa references in DEVELOPMENT.md and dead tutorial link in ts-stop/README.md.
 

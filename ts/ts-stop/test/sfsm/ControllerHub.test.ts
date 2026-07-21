@@ -1,27 +1,38 @@
-import { ExternalWorldHub, ICommandReceiver, ISignalReceiver, ISignalSender, Sfsm } from '../../src/sfsm';
+import { ControllerHub, ICommandReceiver, ISignalReceiver, Sfsm, SignalSender, CommandReceiver } from '../../src/sfsm';
 
 // ---------------------------------------------------------------------------
 // Test doubles
 // ---------------------------------------------------------------------------
 
-class StubReceiver implements ICommandReceiver {
+class StubReceiver extends CommandReceiver {
     received: Array<{ command: string; data: unknown }> = [];
+    constructor(private readonly commands: string[]) { super(); }
+    getCommandNames(): readonly string[] { return this.commands; }
     receiveCommand(command: string, data?: unknown): void {
         this.received.push({ command, data });
     }
 }
 
-class StubSender implements ISignalSender {
+class StubSender extends SignalSender {
     target: ISignalReceiver | null = null;
-    connectSignalTarget(t: ISignalReceiver): void {
+    constructor(private readonly signals: string[]) { super(); }
+    getSignalNames(): readonly string[] { return this.signals; }
+    override connectSignalTarget(t: ISignalReceiver): void {
         this.target = t;
+        super.connectSignalTarget(t);
     }
 }
 
-class StubSenderAndReceiver implements ICommandReceiver, ISignalSender {
+class StubSenderAndReceiver extends SignalSender implements ICommandReceiver {
     target: ISignalReceiver | null = null;
     received: string[] = [];
-    connectSignalTarget(t: ISignalReceiver): void { this.target = t; }
+    constructor(private readonly signals: string[], private readonly commands: string[]) { super(); }
+    getSignalNames(): readonly string[] { return this.signals; }
+    getCommandNames(): readonly string[] { return this.commands; }
+    override connectSignalTarget(t: ISignalReceiver): void {
+        this.target = t;
+        super.connectSignalTarget(t);
+    }
     receiveCommand(command: string): void { this.received.push(command); }
 }
 
@@ -29,12 +40,12 @@ class StubSenderAndReceiver implements ICommandReceiver, ISignalSender {
 // Tests
 // ---------------------------------------------------------------------------
 
-describe('ExternalWorldHub – registerCommandReceiver / receiveCommand', () => {
+describe('ControllerHub – registerCommandReceiver / receiveCommand', () => {
 
     it('test_receiveCommand_routesToRegisteredReceiver', () => {
-        const hub = new ExternalWorldHub();
-        const recv = new StubReceiver();
-        hub.registerCommandReceiver(['X.a', 'X.b'], recv);
+        const hub = new ControllerHub();
+        const recv = new StubReceiver(['X.a', 'X.b']);
+        hub.registerCommandReceiver(recv);
 
         hub.receiveCommand('X.a', 42);
         hub.receiveCommand('X.b');
@@ -46,8 +57,8 @@ describe('ExternalWorldHub – registerCommandReceiver / receiveCommand', () => 
     });
 
     it('test_receiveCommand_throwsWithDescriptiveMessageForUnknownCommand', () => {
-        const hub = new ExternalWorldHub();
-        hub.registerCommandReceiver(['X.a'], new StubReceiver());
+        const hub = new ControllerHub();
+        hub.registerCommandReceiver(new StubReceiver(['X.a']));
 
         expect(() => hub.receiveCommand('Y.z')).toThrow(
             /no receiver registered for command "Y\.z"/
@@ -55,42 +66,42 @@ describe('ExternalWorldHub – registerCommandReceiver / receiveCommand', () => 
     });
 
     it('test_receiveCommand_errorMessageListsRegisteredCommands', () => {
-        const hub = new ExternalWorldHub();
-        hub.registerCommandReceiver(['A.x'], new StubReceiver());
-        hub.registerCommandReceiver(['B.y'], new StubReceiver());
+        const hub = new ControllerHub();
+        hub.registerCommandReceiver(new StubReceiver(['A.x']));
+        hub.registerCommandReceiver(new StubReceiver(['B.y']));
 
         expect(() => hub.receiveCommand('Z.unknown')).toThrow(/A\.x.*B\.y|B\.y.*A\.x/);
     });
 
     it('test_registerCommandReceiver_throwsOnDuplicateCommandName', () => {
-        const hub = new ExternalWorldHub();
-        hub.registerCommandReceiver(['X.a'], new StubReceiver());
+        const hub = new ControllerHub();
+        hub.registerCommandReceiver(new StubReceiver(['X.a']));
 
-        expect(() => hub.registerCommandReceiver(['X.a'], new StubReceiver())).toThrow(
+        expect(() => hub.registerCommandReceiver(new StubReceiver(['X.a']))).toThrow(
             /command "X\.a" is already registered/
         );
     });
 
     it('test_registerCommandReceiver_throwsOnDuplicateInSameCall', () => {
-        const hub = new ExternalWorldHub();
-        hub.registerCommandReceiver(['X.a'], new StubReceiver());
+        const hub = new ControllerHub();
+        hub.registerCommandReceiver(new StubReceiver(['X.a']));
 
         expect(() =>
-            hub.registerCommandReceiver(['X.b', 'X.a'], new StubReceiver())
+            hub.registerCommandReceiver(new StubReceiver(['X.b', 'X.a']))
         ).toThrow(/command "X\.a" is already registered/);
     });
 });
 
-describe('ExternalWorldHub – registerSignalSender / connectTo', () => {
+describe('ControllerHub – registerSignalSender / connectTo', () => {
 
     it('test_connectTo_callsConnectSignalTargetOnAllSenders', () => {
         const sfsm = new Sfsm();
-        const s1 = new StubSender();
-        const s2 = new StubSender();
+        const s1 = new StubSender(['A.x']);
+        const s2 = new StubSender(['B.y']);
 
-        new ExternalWorldHub()
-            .registerSignalSender(['A.x'], s1)
-            .registerSignalSender(['B.y'], s2)
+        new ControllerHub()
+            .registerSignalSender(s1)
+            .registerSignalSender(s2)
             .connectTo(sfsm);
 
         expect(s1.target).toBe(sfsm);
@@ -99,8 +110,8 @@ describe('ExternalWorldHub – registerSignalSender / connectTo', () => {
 
     it('test_connectTo_setsHubAsCommandReceiverOnSfsm', () => {
         const sfsm = new Sfsm();
-        const hub = new ExternalWorldHub()
-            .registerCommandReceiver(['X.a'], new StubReceiver())
+        new ControllerHub()
+            .registerCommandReceiver(new StubReceiver(['X.a']))
             .connectTo(sfsm);
 
         // Verify by loading a minimal FA and firing a command-triggering signal
@@ -112,82 +123,81 @@ describe('ExternalWorldHub – registerSignalSender / connectTo', () => {
 
     it('test_connectTo_isFluentAndReturnsSameHub', () => {
         const sfsm = new Sfsm();
-        const hub = new ExternalWorldHub();
+        const hub = new ControllerHub();
         const result = hub.connectTo(sfsm);
         expect(result).toBe(hub);
     });
 });
 
-describe('ExternalWorldHub – diagnostic accessors', () => {
+describe('ControllerHub – diagnostic accessors', () => {
 
     it('test_getRegisteredCommands_returnsAllCommandNames', () => {
-        const hub = new ExternalWorldHub();
-        hub.registerCommandReceiver(['A.x', 'A.y'], new StubReceiver());
-        hub.registerCommandReceiver(['B.z'], new StubReceiver());
+        const hub = new ControllerHub();
+        hub.registerCommandReceiver(new StubReceiver(['A.x', 'A.y']));
+        hub.registerCommandReceiver(new StubReceiver(['B.z']));
 
         expect(hub.getRegisteredCommands().sort()).toEqual(['A.x', 'A.y', 'B.z']);
     });
 
     it('test_getRegisteredSignals_returnsAllSignalNames', () => {
-        const hub = new ExternalWorldHub();
-        hub.registerSignalSender(['X.a', 'X.b'], new StubSender());
-        hub.registerSignalSender(['Y.c'], new StubSender());
+        const hub = new ControllerHub();
+        hub.registerSignalSender(new StubSender(['X.a', 'X.b']));
+        hub.registerSignalSender(new StubSender(['Y.c']));
 
         expect(hub.getRegisteredSignals().sort()).toEqual(['X.a', 'X.b', 'Y.c']);
     });
 
     it('test_getRegisteredCommands_returnsEmptyWhenNoneRegistered', () => {
-        expect(new ExternalWorldHub().getRegisteredCommands()).toEqual([]);
+        expect(new ControllerHub().getRegisteredCommands()).toEqual([]);
     });
 
     it('test_getRegisteredSignals_returnsEmptyWhenNoneRegistered', () => {
-        expect(new ExternalWorldHub().getRegisteredSignals()).toEqual([]);
+        expect(new ControllerHub().getRegisteredSignals()).toEqual([]);
     });
 });
 
-describe('ExternalWorldHub – fluent chain', () => {
+describe('ControllerHub – fluent chain', () => {
 
     it('test_fluentChain_registerAndConnect_worksEndToEnd', () => {
         const sfsm = new Sfsm();
-        const device = new StubSenderAndReceiver();
+        const device = new StubSenderAndReceiver(['D.on', 'D.off'], ['D.cmd']);
 
-        new ExternalWorldHub()
-            .registerSignalSender(['D.on', 'D.off'], device)
-            .registerCommandReceiver(['D.cmd'], device)
+        new ControllerHub()
+            .registerSignalSender(device)
+            .registerCommandReceiver(device)
             .connectTo(sfsm);
 
         // Signal target was wired
         expect(device.target).toBe(sfsm);
 
         // Command routing works
-        const hub = new ExternalWorldHub()
-            .registerCommandReceiver(['D.cmd'], device);
+        const hub = new ControllerHub().registerCommandReceiver(device);
         hub.receiveCommand('D.cmd');
         expect(device.received).toEqual(['D.cmd']);
     });
 
     it('test_registerCommandReceiver_isFluentAndReturnsSameHub', () => {
-        const hub = new ExternalWorldHub();
-        const result = hub.registerCommandReceiver(['A.x'], new StubReceiver());
+        const hub = new ControllerHub();
+        const result = hub.registerCommandReceiver(new StubReceiver(['A.x']));
         expect(result).toBe(hub);
     });
 
     it('test_registerSignalSender_isFluentAndReturnsSameHub', () => {
-        const hub = new ExternalWorldHub();
-        const result = hub.registerSignalSender(['A.x'], new StubSender());
+        const hub = new ControllerHub();
+        const result = hub.registerSignalSender(new StubSender(['A.x']));
         expect(result).toBe(hub);
     });
 });
 
-describe('ExternalWorldHub – device implementing both interfaces', () => {
+describe('ControllerHub – device implementing both roles', () => {
 
     it('test_dualRoleDevice_wireBothSidesCorrectly', () => {
         const sfsm = new Sfsm();
-        const device = new StubSenderAndReceiver();
+        const device = new StubSenderAndReceiver(['D.sig'], ['D.cmd']);
 
-        const hub = new ExternalWorldHub()
-            .registerSignalSender(['D.sig'], device)
-            .registerCommandReceiver(['D.cmd'], device);
+        const hub = new ControllerHub()
+            .registerSignalSender(device)
+            .registerCommandReceiver(device);
 
         hub.connectTo(sfsm);
 

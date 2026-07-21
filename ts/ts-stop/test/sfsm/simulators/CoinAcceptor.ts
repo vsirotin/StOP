@@ -1,4 +1,4 @@
-import { ICommandReceiver, ISignalReceiver, ISignalSender } from '../../../src/sfsm';
+import { ICommandReceiver, SignalSender } from '../../../src/sfsm';
 
 /**
  * Simulator for the Coin Acceptor device.
@@ -9,14 +9,16 @@ import { ICommandReceiver, ISignalReceiver, ISignalSender } from '../../../src/s
  *
  * @param fare The price of passage. Defaults to 1.
  */
-export class CoinAcceptor implements ICommandReceiver, ISignalSender {
+export class CoinAcceptor extends SignalSender implements ICommandReceiver {
 
-    private sfsm: ISignalReceiver | null = null;
+    constructor(private fare: number = 1) { super(); }
 
-    constructor(private fare: number = 1) {}
+    getSignalNames(): readonly string[] {
+        return ['CA.c$', 'CA.n'];
+    }
 
-    connectSignalTarget(target: ISignalReceiver): void {
-        this.sfsm = target;
+    getCommandNames(): readonly string[] {
+        return ['CA.a$'];
     }
 
     receiveCommand(command: string, data?: unknown): void {
@@ -24,9 +26,9 @@ export class CoinAcceptor implements ICommandReceiver, ISignalSender {
             const coin = data as { value: number };
             const change = coin.value - this.fare;
             if (change > 0) {
-                this.sfsm!.receiveSignal('CA.c$', { value: change });
+                this.sendSignal('CA.c$', { value: change });
             } else {
-                this.sfsm!.receiveSignal('CA.n');
+                this.sendSignal('CA.n');
             }
         }
     }

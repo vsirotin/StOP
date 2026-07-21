@@ -10,7 +10,10 @@ The library is consumed by test examples in `test/sfsm/`, and by the `ts-example
 ## Project structure
 
 - `src/sfsm/` — Stacked Finite State Machine engine (SFSM layer)
-  - `interfaces.ts` — `ICommandReceiver`, `ISignalReceiver`
+  - `interfaces.ts` — `ICommandReceiver`, `ISignalReceiver`, `ISignalSender`
+  - `SignalSender.ts` — Abstract base class for components that emit signals into the SFSM (`getSignalNames()`, `sendSignal()`)
+  - `CommandReceiver.ts` — Abstract base class for components that receive commands from the SFSM (`getCommandNames()`, `receiveCommand()`)
+  - `ControllerHub.ts` — Wires `SignalSender`/`CommandReceiver` controllers to an `Sfsm` instance; routes commands by name and connects signal senders as the signal target
   - `types.ts` — `FaDefinition`, `FaNode`, `Transition`, `SfsmOptions`, `LogEntry`
   - `FaResolver.ts` — Parses FA JSON (extended or compact) into a flat indexed structure; auto-detects root in multi-key compact definitions
   - `FaReducer.ts` — `reduceFA()`: strips metadata from extended definitions to produce compact flat format
