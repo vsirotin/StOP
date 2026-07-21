@@ -115,3 +115,102 @@ This costs nothing at runtime — `typedTransitions()` just returns its argument
 "But wait," an experienced programmer will say, looking at this example, "these are just text strings, not objects. An object should be able to do something and have its own attributes!"
 
 That is exactly right, and it is exactly what the SFSM engine is built for: a real turnstile does not just sit there with a state name, it sends commands to real devices (a lock, a coin checker, a change dispenser...) and reacts to signals coming from them. The next chapters build up to that full picture step by step.
+
+## 3. Jokers: wildcard signals and states
+
+Writing out every single `<s0, g, s1>` transition by hand works well for a tidy, well-behaved automaton like our turnstile. Real devices, however, are messier: they can receive signals nobody planned for, and they can be told to do the same thing no matter what they happen to be doing at the time. Enumerating every combination by hand would make the transition list explode and, worse, would be all too easy to forget a case.
+
+For this, the `Sfsm` engine supports **jokers** — a reserved value (`"*"` by default) that can stand in for "any signal" or "any state" in a transition:
+
+- A **joker-signal** transition `[s0, "*", s1]` matches *any* signal while the automaton is in state `s0` — but only as a fallback: if a transition for the exact, literal signal already exists for `s0`, that one wins.
+- A **joker-state** transition `["*", g, s1]` matches signal `g` from *any* current state — again only as a fallback, behind any transition that names the exact, literal state.
+
+Because jokers are only a fallback, you can freely mix them with ordinary transitions without worrying about ordering: an exact match always takes priority, so the recommendation is simply to place joker transitions last in the list, purely for readability.
+
+Jokers are configured through `SfsmOptions` when constructing the engine:
+
+```typescript
+const sfsm = new Sfsm({
+  jokerSignal: '*', // default — the value that means "any signal"
+  jokerState:  '*'  // default — the value that means "any state"
+});
+```
+
+You will rarely need to change these from the default `"*"`; the option exists mainly so you can pick a different symbol if `"*"` ever needs to be a real state or signal name in your own FA.
+
+### 3.1 Joker signal: reacting to the unexpected (e.g. a power failure)
+
+Imagine our turnstile's electronics can, at any moment, receive all sorts of diagnostic signals from its sensors — most of which are irrelevant, except that *any* signal that isn't part of its normal vocabulary (`coin`, `push`) should be treated as a sign that something is wrong (power dropping out, a sensor glitching, a cable disconnected...) and the safest reaction is to shut the turnstile down into a safe `off` state.
+
+Instead of trying to list every possible malfunction signal, one joker-signal transition per operational state covers all of them at once:
+
+```json
+{
+  "Turnstile": [
+    ["I",        "start", "locked"],
+    ["locked",   "coin",  "unlocked"],
+    ["unlocked", "push",  "locked"],
+    ["locked",   "*",     "off"],
+    ["unlocked", "*",     "off"]
+  ]
+}
+```
+
+```typescript
+import { Sfsm, FaDefinition } from '@vsirotin/ts-stop/sfsm';
+
+const sfsm = new Sfsm();
+sfsm.loadFA(turnstileWithJokerSignalFa as FaDefinition);
+
+sfsm.receiveSignal('start');
+sfsm.getHeadState();             // 'locked'
+
+sfsm.receiveSignal('coin');
+sfsm.getHeadState();             // 'unlocked'  (exact transition still wins)
+
+sfsm.receiveSignal('powerFailure');
+sfsm.getHeadState();             // 'off'       (joker-signal fallback)
+```
+
+The turnstile keeps behaving exactly as before for `coin` and `push`; only signals it has no explicit rule for fall through to `*` and trigger the safety shutdown.
+
+A runnable version of this example is available as a unit test: [03-joker-signal.test.ts](../../ts/ts-stop/test/sfsm/tutorial/03-joker-signal.test.ts).
+
+### 3.2 Joker state: a universal signal for technical personnel
+
+Now imagine the opposite situation: a maintenance technician needs to send a `service` signal that must always work, no matter what the turnstile happens to be doing — locked, unlocked, mid-transaction, or even already `off`. The technician should not need to know (or care) about the turnstile's current state; they just need "put this thing into maintenance mode, now."
+
+A single joker-state transition expresses exactly that, regardless of how many operational states the FA has:
+
+```json
+{
+  "Turnstile": [
+    ["I",        "start",   "locked"],
+    ["locked",   "coin",    "unlocked"],
+    ["unlocked", "push",    "locked"],
+    ["*",        "service", "maintenance"]
+  ]
+}
+```
+
+```typescript
+import { Sfsm, FaDefinition } from '@vsirotin/ts-stop/sfsm';
+
+const sfsm = new Sfsm();
+sfsm.loadFA(turnstileWithJokerStateFa as FaDefinition);
+
+sfsm.receiveSignal('start');
+sfsm.receiveSignal('service');
+sfsm.getHeadState();             // 'maintenance' — reached straight from 'locked'
+
+// ...and it works the same from any other state:
+sfsm.loadFA(turnstileWithJokerStateFa as FaDefinition);
+sfsm.receiveSignal('start');
+sfsm.receiveSignal('coin');      // now 'unlocked'
+sfsm.receiveSignal('service');
+sfsm.getHeadState();             // 'maintenance' — reached just as easily from 'unlocked'
+```
+
+One transition now covers "enter maintenance mode" from every current and future state — including states added to the FA later, with no changes needed to the `service` rule itself.
+
+A runnable version of this example is available as a unit test: [03-joker-state.test.ts](../../ts/ts-stop/test/sfsm/tutorial/03-joker-state.test.ts).

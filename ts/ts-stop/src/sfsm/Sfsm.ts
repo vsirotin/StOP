@@ -20,6 +20,13 @@ interface StackFrame {
  * processing a signal (e.g. from within a command receiver callback), the
  * incoming signal is queued and processed after the current step completes.
  * This prevents stack corruption and ensures deterministic ordering.
+ *
+ * Jokers: a transition may use a reserved "joker" string (default '*',
+ * configurable via SfsmOptions.jokerSignal / jokerState) in its signal or
+ * from-state slot to act as a fallback. A joker-signal transition matches
+ * any signal for its from-state; a joker-state transition matches any
+ * from-state for its signal. Exact, literal transitions always take
+ * priority over joker matches. See docs/Tutorial/Tutorial.md for examples.
  */
 export class Sfsm implements ISignalReceiver {
 
@@ -34,7 +41,9 @@ export class Sfsm implements ISignalReceiver {
     constructor(options: SfsmOptions = {}) {
         this.options = {
             byMissingData: options.byMissingData ?? 'error',
-            byMissingTransition: options.byMissingTransition ?? 'error'
+            byMissingTransition: options.byMissingTransition ?? 'error',
+            jokerSignal: options.jokerSignal ?? '*',
+            jokerState: options.jokerState ?? '*'
         };
     }
 
@@ -110,14 +119,44 @@ export class Sfsm implements ISignalReceiver {
     /**
      * Rule 2: find a matching transition, searching from head down the stack.
      * Returns { frameIndex, transition } or null if not found anywhere.
+     *
+     * Within each frame, matches are tried in priority order so that exact,
+     * literal transitions always win over joker (wildcard) ones:
+     *   1. exact from-state + exact signal
+     *   2. exact from-state + joker signal
+     *   3. joker from-state + exact signal
+     *   4. joker from-state + joker signal
      */
     private findTransition(signal: string): { frameIndex: number; toState: string; command?: string } | null {
+        const jokerSignal = this.options.jokerSignal;
+        const jokerState = this.options.jokerState;
+
         for (let i = this.stack.length - 1; i >= 0; i--) {
             const frame = this.stack[i];
             const fa = this.resolver!.get(frame.faName);
-            const match = fa.transitions.find(
+
+            let match = fa.transitions.find(
                 t => t[0] === frame.currentState && t[1] === signal
             );
+
+            if (!match && jokerSignal !== undefined) {
+                match = fa.transitions.find(
+                    t => t[0] === frame.currentState && t[1] === jokerSignal
+                );
+            }
+
+            if (!match && jokerState !== undefined) {
+                match = fa.transitions.find(
+                    t => t[0] === jokerState && t[1] === signal
+                );
+            }
+
+            if (!match && jokerState !== undefined && jokerSignal !== undefined) {
+                match = fa.transitions.find(
+                    t => t[0] === jokerState && t[1] === jokerSignal
+                );
+            }
+
             if (match) {
                 return { frameIndex: i, toState: match[2], command: match[3] };
             }

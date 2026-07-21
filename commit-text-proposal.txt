@@ -1,1 +1,1 @@
-doc: Project: ts/ts-stop. Version 2.1.1. Number Tutorial.md chapters and add a type-safe FA definition example + test.
+feat: Project: ts/ts-stop. Version 2.2.0. Add Joker (wildcard signal/state) concept to Sfsm + Tutorial.md chapter.

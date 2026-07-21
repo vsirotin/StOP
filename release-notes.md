@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 2.2.0 build 70
+feat: ts-stop — add Joker concept to the SFSM engine. New SfsmOptions.jokerSignal / jokerState (default '*'): a joker-signal transition [state, '*', toState] matches any signal for that state, and a joker-state transition ['*', signal, toState] matches that signal from any state — both only as a fallback behind exact, literal transitions. New Sfsm.joker.test.ts (10 tests). Tutorial.md gained chapter 3 "Jokers: wildcard signals and states" with power-failure (joker-signal) and maintenance-mode (joker-state) examples plus illustrative tests 03-joker-signal.test.ts / 03-joker-state.test.ts. 184 tests passing.
+
 ## Version: 2.1.1 build 69
 doc: docs/Tutorial/Tutorial.md — numbered chapters (1., 2., 2.1) and added a "type-safe alternative" subsection showing how to define FA transitions against string-literal union types with a small generic helper, catching state/signal typos at compile time. New illustrative test: 02-type-safe-fa-definition.test.ts. 168 tests passing.
 
