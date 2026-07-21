@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 2.0.0 build 66
+Version 2.0.0 started
+
 ## Version: 1.13.2 build 65
 bin: ts-stop — fix published package to list scripts explicitly in files field (exclude publish-local.sh); remove unused ts-stop/scripts/publish-local.sh; rewrite ts-example/scripts/publish-local.sh to use npm pack+tar instead of raw cp.
 
