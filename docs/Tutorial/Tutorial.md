@@ -41,6 +41,8 @@ which is a direct, literal translation of the `<s0, g, s1>` triples introduced a
 
 One detail of the `Sfsm` engine is important to know from the very first example: every FA always starts in a reserved entry state named `"I"`. This is not part of the pure theory above — it is a small, deliberate engine convention that becomes very useful once FAs are combined into hierarchies (a topic of a later chapter). For now, it simply means our turnstile needs one extra transition out of `"I"` into its real initial state, triggered by an explicit "start" signal.
 
+> For large stacked SFSMs, a namespaced entry-state name like `"TS.I"` is also recognised, alongside the bare `"I"` used here — see §8.1 "Name conventions".
+
 Here is the complete turnstile FA, written as compact JSON:
 
 ```json
@@ -225,6 +227,8 @@ Two small naming conventions make this hierarchy work uniformly for every FA, at
 - every FA has exactly one **entry state**, always named `"I"` (as already seen in chapters 1–3);
 - every FA has one or more **exit states**, each named starting with `"E_"` — reaching one means "this FA is done, hand control back to whoever activated it."
 
+> Both markers also have a namespaced form (`"TS.I"`, `"TS.E_ok"`) recommended for large stacked SFSMs — see §8.1 "Name conventions".
+
 Here is a small, self-contained FA that only makes sense as a *child* of something bigger: it models checking a banknote offered as payment, without yet worrying about who offers it or what happens afterwards. It has one entry state, one "business" state per step, and three possible outcomes:
 
 ```json
@@ -259,7 +263,7 @@ Once an FA can contain other FAs, "processing a signal" needs a precise algorith
    - **5.1** — if the current FA is the only one left on the stack (the root), it simply resets its own active state back to `"I"`;
    - **5.2** — otherwise, the current FA is popped off the stack, and the very same signal `s` is forwarded to the FA that is now the head, restarting this whole process (step 2) one level up.
 
-> The previous version of this document (`Z_06-StOP-SFSM-Definition.md`) described step 2.2.2 differently ("if the current FA is at the head of the stack..."), which does not match the engine: the missing-transition policy only ever triggers after the *entire* stack, from head to root, has been searched without success — not merely because the search started at the head.
+> Note: the missing-transition policy only ever triggers after the *entire* stack, from head to root, has been searched without success — not merely because the search started at the head.
 
 These rules are already exercised in depth by the library's own test suite — no new tutorial-only test was needed:
 - bubbling up to an ancestor FA (rule 2.2.1 / `"2.2.2.1"`) and staying in the head FA (rule 2.1 / `"2.1"`) are both verified in the *"SFSM – Stack inspection"* and *"SFSM – Log correctness"* suites of [Sfsm.test.ts](../../ts/ts-stop/test/sfsm/Sfsm.test.ts);
@@ -429,3 +433,32 @@ npm run update-full-fa    -- --source=<path> --update=<path> [--result=<path>]
 ```
 
 `--result` defaults to `<source-basename>-updated.json` when omitted. Both CLI scripts are thin wrappers around `reduceFA()` and `updateCompactFA()` / `updateFullFA()`, whose behaviour is covered by [FaReducer.test.ts](../../ts/ts-stop/test/sfsm/FaReducer.test.ts) and [FaUpdater.test.ts](../../ts/ts-stop/test/sfsm/FaUpdater.test.ts).
+
+## 8. Best practices
+
+### 8.1 Name conventions
+
+Every example so far has named the entry state simply `"I"` and exit states `"E_something"` — perfectly fine for a small, self-contained FA. Once a stacked SFSM grows to dozens of FAs, plain abbreviations like `"L"`, `"U"`, `"I"`, `"E_R"` start colliding in your head across FAs, and it becomes hard to tell, just by looking at a state name, *which* FA it belongs to.
+
+For larger SFSMs, it is recommended to **namespace state names with their own FA's name**, using a dot: `<FaName>.I` for the entry state, and `<FaName>.<state>` for ordinary states — e.g. `TS.I`, `TS.L`, `TS.U` instead of bare `I`, `L`, `U`. Exit states keep their familiar `E_` marker but move it after the FA-name dot: `<FaName>.E_<name>` — e.g. `TS.E_ok` instead of bare `E_ok`.
+
+```json
+{
+  "TS": [
+    ["TS.I", "TS.s",   "TS.L"],
+    ["TS.L", "TS.coin", "TS.U"],
+    ["TS.U", "TS.push", "TS.L"]
+  ]
+}
+```
+
+The `Sfsm` engine recognises **both** forms everywhere, automatically:
+- an entry state is whatever from-state a FA's own transitions use that is exactly `"I"` **or** ends with `".I"`;
+- an exit state is any target state that starts with `"E_"` **or** contains `".E_"`.
+
+This means:
+- every FA fixture used earlier in this tutorial (bare `"I"` / `"E_..."`) keeps working exactly as written — no migration is required;
+- you can freely mix both styles across FAs in the same SFSM (e.g. namespace only the FAs that are large enough to benefit from it);
+- nothing else changes — this is purely a naming convention for readability, not a new engine feature: no new `SfsmOptions`, no change to how transitions, pushes, pops, or jokers are matched.
+
+A runnable version of this example, built entirely with namespaced names, is available as a unit test: [08-namespaced-state-names.test.ts](../../ts/ts-stop/test/sfsm/tutorial/08-namespaced-state-names.test.ts).

@@ -9,6 +9,14 @@ export interface ResolvedFa {
     /** Keys of states that are themselves sub-FAs (have their own ts list). */
     subFaNames: Set<string>;
     node: FaNode;
+    /**
+     * The literal entry-state name actually used by this FA's own transitions:
+     * either the bare `"I"` (default convention), or a namespaced `"<FaName>.I"`
+     * (recommended for large stacked SFSMs — see Tutorial.md §8.1). Auto-detected
+     * by scanning this FA's transitions for a from-state equal to `"I"` or ending
+     * in `".I"`; falls back to `"I"` if none is found.
+     */
+    entryState: string;
 }
 
 /**
@@ -91,7 +99,8 @@ export class FaResolver {
                     name: rootName,
                     transitions: rootValue as Transition[],
                     subFaNames: new Set(),
-                    node
+                    node,
+                    entryState: this.resolveEntryState(rootValue as Transition[])
                 });
             } else {
                 // Extended format
@@ -112,7 +121,13 @@ export class FaResolver {
                     .filter(target => definedFaNames.has(target))
             );
             const node: FaNode = { ts: transitions };
-            this.index.set(name, { name, transitions, subFaNames, node });
+            this.index.set(name, {
+                name,
+                transitions,
+                subFaNames,
+                node,
+                entryState: this.resolveEntryState(transitions)
+            });
         }
     }
 
@@ -132,7 +147,8 @@ export class FaResolver {
             name,
             transitions: node.ts,
             subFaNames,
-            node
+            node,
+            entryState: this.resolveEntryState(node.ts)
         });
     }
 
@@ -144,5 +160,19 @@ export class FaResolver {
             'ts' in value &&
             Array.isArray((value as FaNode).ts)
         );
+    }
+
+    /**
+     * Auto-detects the literal entry-state name used by a FA's own transitions:
+     * the bare `"I"`, or a namespaced `"<FaName>.I"` (e.g. `"TS.I"`). Falls back
+     * to `"I"` if the FA has no transition whose from-state matches either form.
+     */
+    private resolveEntryState(transitions: Transition[]): string {
+        for (const t of transitions) {
+            if (t[0] === 'I' || t[0].endsWith('.I')) {
+                return t[0];
+            }
+        }
+        return 'I';
     }
 }

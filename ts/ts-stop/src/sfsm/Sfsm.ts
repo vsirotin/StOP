@@ -27,6 +27,13 @@ interface StackFrame {
  * any signal for its from-state; a joker-state transition matches any
  * from-state for its signal. Exact, literal transitions always take
  * priority over joker matches. See docs/Tutorial/Tutorial.md for examples.
+ *
+ * Entry/exit naming convention: every FA's entry state is either the bare
+ * "I", or a namespaced "<FaName>.I" (e.g. "TS.I") — auto-detected per FA from
+ * its own transitions. Every exit state either starts with "E_", or contains
+ * ".E_" (e.g. "TS.E_ok"). Both forms are recognised everywhere and may be
+ * freely mixed across FAs; see Tutorial.md §8.1 for when to use the
+ * namespaced form.
  */
 export class Sfsm implements ISignalReceiver {
 
@@ -61,7 +68,7 @@ export class Sfsm implements ISignalReceiver {
     loadFA(definition: FaDefinition): void {
         this.resolver = new FaResolver(definition);
         const rootName = this.resolver.getRootName();
-        this.stack = [{ faName: rootName, currentState: 'I' }];
+        this.stack = [{ faName: rootName, currentState: this.resolver.get(rootName).entryState }];
         this.log = [];
         this.processing = false;
         this.signalQueue = [];
@@ -229,16 +236,16 @@ export class Sfsm implements ISignalReceiver {
         // Rule 3: new state is itself a sub-FA — push it
         const headFa = this.resolver!.get(this.stack[frameIndex].faName);
         if (headFa.subFaNames.has(toState)) {
-            this.stack.push({ faName: toState, currentState: 'I' });
+            this.stack.push({ faName: toState, currentState: this.resolver!.get(toState).entryState });
             this.applySignal(signal, data);  // forward signal to sub-FA
             return;
         }
 
         // Rule 4: new state is an exit state
-        if (toState.startsWith('E_')) {
+        if (this.isExitState(toState)) {
             if (this.stack.length === 1) {
                 // Rule 4.1 — root FA resets to I
-                this.stack[0].currentState = 'I';
+                this.stack[0].currentState = this.resolver!.get(this.stack[0].faName).entryState;
             } else {
                 // Rule 4.2 — pop current FA, forward signal to new head
                 this.stack.pop();
@@ -248,6 +255,14 @@ export class Sfsm implements ISignalReceiver {
     }
 
     // ── Meta resolution helpers ──────────────────────────────────────────────
+
+    /**
+     * A state is an exit/final state if it starts with "E_" (default
+     * convention) or contains ".E_" (namespaced convention, e.g. "TS.E_ok").
+     */
+    private isExitState(state: string): boolean {
+        return state.startsWith('E_') || state.includes('.E_');
+    }
 
     private resolveStateMeta(frameIndex: number, state: string) {
         const fa = this.resolver!.get(this.stack[frameIndex].faName);

@@ -1,4 +1,10 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 2.3.1 build 74
+doc: Tutorial.md — removed both remaining references to the obsolete Z_06-StOP-SFSM-Definition.md (§5's processing-rules note and §8.1's "complex turnstile example" link), rewording each sentence to stand on its own.
+
+## Version: 2.3.0 build 73
+feat: ts-stop — Sfsm now auto-detects namespaced entry/exit state names per FA, alongside the classic bare forms: entry state is "I" or ends with ".I" (e.g. "TS.I"); exit state starts with "E_" or contains ".E_" (e.g. "TS.E_ok"). New `ResolvedFa.entryState` in FaResolver; `Sfsm` uses it instead of a hardcoded 'I' when pushing stack frames, and its exit check now also matches the namespaced form. Purely additive — all 197 previous tests pass unchanged. Tutorial.md gained §8 "Best practices" / §8.1 "Name conventions" plus illustrative test 08-namespaced-state-names.test.ts. 202 tests passing.
+
 ## Version: 2.2.2 build 72
 dist: new agent SKILL.md files in .github/skills/: sfsm-json-to-uml-diagram (SFSM FA JSON, compact or extended, → draw.io UML state diagram, defining the canonical sfsmRole/sfsmFa/sfsmKey style-token notation), sfsm-uml-diagram-to-json (reverse: draw.io diagram → compact-format JSON, with heuristic fallback for hand-drawn diagrams), and sfsm-compare-json-uml-diagram (diff a compact-format JSON FA definition against a draw.io diagram without modifying either file).
 
