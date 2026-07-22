@@ -1,3 +1,0 @@
-dist: Project: .github/skills. Version: 2.2.2. Add sfsm-json-to-uml-diagram, sfsm-uml-diagram-to-json, sfsm-compare-json-uml-diagram skills.
-
-
