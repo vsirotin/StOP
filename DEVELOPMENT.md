@@ -1,13 +1,12 @@
 # TypeScript StOP Library Development
 
-## Project description
+## 1. Project description
 
-This is the core TypeScript implementation of the StOP (State-Oriented Programming) library. It provides a robust framework for building finite state machines, centered on:
+This is the core TypeScript implementation of the StOP (State-Oriented Programming) SDK. It provides a robust framework for building finite state machines, centered on:
 - **Stacked Finite State Machine (SFSM)** — a stack-based engine for hierarchical, multi-component FA processing
 
-The library is consumed by test examples in `test/sfsm/`, and by the `ts-example` sub-project.
 
-## How to build
+## 2. How to build
 
 ```bash
 cd ts/ts-stop
@@ -16,7 +15,7 @@ npm run build
 
 This builds both CommonJS and ES modules to the `lib/` directory.
 
-## Unit testing
+## 3. Unit testing
 
 # Run tests
 ```bash
@@ -33,77 +32,109 @@ cd ts/ts-stop
 npm run test:coverage
 ```
 
+## 4. SFSM tools
 
-## SFSM utilities
+See [04-tools.md](../../tutorial/04-tools.md) 
 
-### Convert an extended FA file to compact format
+## 5. Testing new version locally before NPM deployment
+
+Before deploying to NPM, verify that the package can be installed and used correctly by testing it locally with the `ts-example` consumer project. This simulates exactly how the package will behave when downloaded from the npm registry.
+
+### Step 1: Create a local npm package
 
 ```bash
-# Build first (required)
-npm run build
-
-# Reduce an extended FA JSON to compact format
-npm run reduce-fa -- <path/to/extended-fa.json>
-
+cd /path/to/StOP
+bash scripts/publish-local.sh
 ```
 
-e.g.
-```bash
-npm run reduce-fa -- test/sfsm/test-data/turnstile-fa.json
-``` 
+This script:
+- Builds the `@vsirotin/ts-stop` library (`npm run build`)
+- Creates a tarball using `npm pack` (respects the `"files"` array in `package.json` exactly as npm will)
+- Installs the tarball into `ts-example/node_modules/@vsirotin/ts-stop`
 
-Output is written to `<basename>-compact.json` in the same directory as the input file.
-
-**Example:**
+### Step 2: Run consumer tests with the local package
 
 ```bash
-npm run reduce-fa -- test/sfsm/test-data/turnstile-fa.json
-# Reduced FA written to: test/sfsm/test-data/turnstile-fa-compact.json
+cd /path/to/StOP
+bash scripts/test-with-local-lib.sh
 ```
 
-### Merge multiple FA files into one compact output
+This script:
+1. Removes `ts-example/node_modules` for a clean slate
+2. Installs dependencies from the npm registry (fresh baseline)
+3. Overwrites `@vsirotin/ts-stop` with the local build (via `publish-local.sh`)
+4. Runs Jest smoke tests
+5. Builds the production bundle
+
+✅ **If all steps pass, the package is ready for NPM deployment.**
+
+### Step 3: Verify deployment files visually
+
+After running `publish-local.sh`, inspect what files are actually being deployed:
 
 ```bash
-# Build first (required)
-npm run build
+# List package contents in detail (tarball is created during publish-local.sh)
+cd ts/ts-stop
+tar -tzf vsirotin-ts-stop-*.tgz | sort
 
-# Reduce each input (if needed) and merge all FAs to one compact file
-npm run merge-fas -- --result=<path/to/result.json> <file1[,file2,...]> [file3 ...]
+# View specific categories:
+# — CLI scripts
+tar -tzf vsirotin-ts-stop-*.tgz | grep "^package/scripts/"
+
+# — Compiled library (Node.js CommonJS and ES modules)
+tar -tzf vsirotin-ts-stop-*.tgz | grep "^package/lib/[a-z]" | head -20
+
+# — Check total file count
+tar -tzf vsirotin-ts-stop-*.tgz | wc -l
 ```
 
-**Note on `--` syntax:** The first `--` tells npm to pass all following arguments directly to the script. This is standard npm convention, not a duplication.
+**What should be included:**
+- ✓ `package/lib/` (compiled CommonJS and ES modules)
+- ✓ `package/scripts/*.js` (CLI tools: reduce-fa, merge-fas, json-to-drawio, drawio-to-json, compare-compact-jsons, etc.)
+- ✓ `package/package.json`
 
-Rules:
-- If an input is already compact, it is used unchanged.
-- If duplicate FA keys exist across files, the last file wins and a warning is printed.
+**What should NOT be included:**
+- ✗ `package/src/` (source TypeScript, only compiled lib/)
+- ✗ `package/test/` (tests, only compiled tests for reference)
+- ✗ `package/node_modules/`
+- ✗ `package/ai/skills/` (development documentation only)
+- ✗ `package/tutorial/` (development documentation only)
+- ✗ `package/.vscode/` (excluded by .npmignore)
 
-**Example:**
+### Step 4: Handle licensing and documentation files
+
+The root-level files (README.md, LICENSE, LICENSE-COMMERCIAL.md, LICENSE-PUBLIC.md, release-notes.md) are located in the monorepo root, not in `ts/ts-stop/`. 
+
+**Standard npm behavior:**
+- `README.md` and `LICENSE` at the package root are **automatically included** by npm (no need to list in `"files"`)
+- Other documentation files need explicit handling during deployment
+
+**For your custom deployment process:**
+1. Ensure README.md and LICENSE are at the root of the `@vsirotin/ts-stop` package directory
+2. Copy or include the following files in the published package:
+   - `LICENSE-COMMERCIAL.md` (dual licensing for commercial use)
+   - `LICENSE-PUBLIC.md` (public license option)
+   - `release-notes.md` (changelog)
+
+You can verify these are included by checking the tarball after deploying to npm:
+```bash
+npm view @vsirotin/ts-stop  # View published package info
+```
+
+### Step 5: Check tarball integration
+
+Manually verify the installed package works:
 
 ```bash
-npm run merge-fas -- --result=test/sfsm/test-data/merge-fas/result.json \
-  test/sfsm/test-data/merge-fas/input/part1.json,test/sfsm/test-data/merge-fas/input/part2.json \
-  test/sfsm/test-data/merge-fas/input/part3.json
+# After running test-with-local-lib.sh, check what's in node_modules
+ls -la ts-example/node_modules/@vsirotin/ts-stop/
+
+# Run one of the CLI tools to verify scripts are accessible
+cd ts-example
+npx reduce-fa --help
+npx json-to-drawio --help
 ```
 
-### Merge all FA files from a directory (recursive)
+If all these steps pass, **the package is production-ready for NPM deployment.** 
 
-```bash
-# Build first (required)
-npm run build
 
-# Recursively find and merge all .json FA files from a directory
-npm run merge-fas-from-dir -- --input-dir=<path/to/dir> --result=<path/to/result.json>
-```
-
-This script recursively scans the input directory for all `.json` files, sorts them alphabetically, and merges them into a single compact output file.
-
-**Example:**
-
-```bash
-npm run merge-fas-from-dir -- --input-dir=test/sfsm/test-data/merge-fas/input --result=test/sfsm/test-data/merge-fas/merged-result.json
-```
-
-Rules:
-- All `.json` files in the input directory and subdirectories are discovered and sorted alphabetically.
-- If an input is already compact, it is used unchanged.
-- If duplicate FA keys exist across files, the last file (by alphabetical order) wins and a warning is printed.

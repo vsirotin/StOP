@@ -26,10 +26,7 @@
     "scripts/update-fa.js",
     "scripts/json-to-drawio.js",
     "scripts/drawio-to-json.js",
-    "scripts/compare-compact-jsons.js",
-    "README.md",
-    "LICENSE",
-    "LICENSE-COMMERCIAL.md"
+    "scripts/compare-compact-jsons.js"
   ],
   "bin": {
     "reduce-fa": "./scripts/reduce-fa.js",
