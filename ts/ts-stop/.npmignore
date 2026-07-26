@@ -49,7 +49,6 @@ package-lock.json
 # README.md is included via package.json "files"
 # tutorial/ and ai/skills/ are explicitly included in "files" array
 docs/
-*.md
 
 # Temporary files
 *.tmp

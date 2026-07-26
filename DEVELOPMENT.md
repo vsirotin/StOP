@@ -51,7 +51,7 @@ This script:
 - Creates a tarball using `npm pack` (respects the `"files"` array in `package.json` exactly as npm will)
 - Installs the tarball into `TMP/node_modules/@vsirotin/ts-stop`
 
-### Step 2: Run consumer tests with the local package
+### Step 2: Prepare test package for ts-stop-local-test
 
 ```bash
 bash scripts/test-with-local-lib.sh
@@ -60,23 +60,43 @@ bash scripts/test-with-local-lib.sh
 *(Run from the workspace root directory)*
 
 This script:
-1. Removes `TMP/node_modules` for a clean slate
-2. Installs dependencies from the npm registry (fresh baseline)
-3. Overwrites `@vsirotin/ts-stop` with the local build (via `publish-local.sh`)
-4. Runs Jest smoke tests
-5. Builds the production bundle
+1. Verifies the local package exists in `TMP/node_modules/@vsirotin/ts-stop` (created by Step 1)
+2. Copies the package to `ts/ts-stop-local-test/node_modules/@vsirotin/ts-stop`
+3. Prints instructions for running integration tests
 
-✅ **If all steps pass, the package is ready for NPM deployment.**
+✅ **After this step, the package is ready for integration testing via ts-stop-local-test.**
 
-### Step 3: Verify deployment files visually
+### Step 3: Run integration tests
 
-After running `publish-local.sh`, inspect the installed package in `node_modules` to see exactly what was deployed:
+```bash
+cd ts/ts-stop-local-test
 
- Open cd TMP/node_modules/@vsirotin/ts-stop
+# Run import and deployment validation tests
+npm test
+```
 
-1. Check the installed version TMP/node_modules/@vsirotin/ts-stop/package.json
+This runs the `test-imports.js` script which validates:
+- ✅ Main export: `import { Sfsm } from '@vsirotin/ts-stop'`
+- ✅ Submodule export: `import { FaDefinition } from '@vsirotin/ts-stop/sfsm'`
+- ✅ All 7 CLI tools present
+- ✅ Tutorial directory deployed
+- ✅ AI skills directory deployed
 
-2. Check the installed files and directories:
+**If all checks pass, the package is ready for NPM deployment.**
+
+### Step 4: Verify package structure visually (Optional)
+
+After running Steps 1-2, inspect the deployed package:
+
+```bash
+cd ts/ts-stop-local-test/node_modules/@vsirotin/ts-stop
+
+# Check the version
+cat package.json | grep '"version"'
+
+# View directory structure
+ls -la
+```
 
 Expected structure:
 
@@ -113,45 +133,88 @@ tutorial/                     (4 chapters + images)
 ├── 04-tools.md
 └── images/
 
+README.md
+LICENSE-COMMERCIAL.md
+LICENSE-PUBLIC.md
+release-notes.md
 package.json
 ```
 
 
 
-### FYI: Handle licensing and documentation files
+### FYI: Included documentation and licensing files
 
-The root-level files (README.md, LICENSE, LICENSE-COMMERCIAL.md, LICENSE-PUBLIC.md, release-notes.md) are located in the monorepo root, not in `ts/ts-stop/`. 
+The following files from the monorepo root are included in the npm package:
+- `README.md` — automatically included by npm
+- `LICENSE-COMMERCIAL.md` — dual licensing for commercial use
+- `LICENSE-PUBLIC.md` — public license option
+- `release-notes.md` — changelog
 
-**Standard npm behavior:**
-- `README.md` and `LICENSE` at the package root are **automatically included** by npm (no need to list in `"files"`)
-- Other documentation files need explicit handling during deployment
+These are configured in `ts/ts-stop/package.json` under the `"files"` array and are part of every published version.
 
-**For your custom deployment process:**
-1. Ensure README.md and LICENSE are at the root of the `@vsirotin/ts-stop` package directory
-2. Copy or include the following files in the published package:
-   - `LICENSE-COMMERCIAL.md` (dual licensing for commercial use)
-   - `LICENSE-PUBLIC.md` (public license option)
-   - `release-notes.md` (changelog)
-
-You can verify these are included by checking the tarball after deploying to npm:
+**Verification:**
 ```bash
-npm view @vsirotin/ts-stop  # View published package info
-```
+npm view @vsirotin/ts-stop dist.tarball
+tar -tzf <tarball-url> | grep -E '(LICENSE|release-notes)'
+```### Step 5: Deployment to NPM registry
 
-### Step 6: Check tarball integration
-
-Manually verify the installed package works:
+Before publishing, ensure the licensing and release notes files are in the package directory:
 
 ```bash
-# After running test-with-local-lib.sh, check what's in node_modules
-ls -la TMP/node_modules/@vsirotin/ts-stop/
+cd ts/ts-stop
 
-# Run one of the CLI tools to verify scripts are accessible
-cd ts-example
-npx reduce-fa --help
-npx json-to-drawio --help
+# Copy licensing and release notes from monorepo root
+cp ../LICENSE-COMMERCIAL.md .
+cp ../LICENSE-PUBLIC.md .
+cp ../release-notes.md .
+
+# Publish to npm
+npm publish --access public
+
+# Clean up (keep these files in monorepo root only, not in ts-stop)
+rm LICENSE-COMMERCIAL.md LICENSE-PUBLIC.md release-notes.md
 ```
 
-If all these steps pass, **the package is production-ready for NPM deployment.** 
+This publishes the package to the npm registry. The `package.json` "files" array controls what gets deployed:
+- `lib/` — compiled library (CommonJS + ES modules)
+- `scripts/` — CLI tools (7 scripts)
+- `ai/skills/` — AI skills for various tasks
+- `tutorial/` — markdown documentation
+- `LICENSE-COMMERCIAL.md`, `LICENSE-PUBLIC.md` — dual licensing
+- `release-notes.md` — changelog
+
+**Note:** The `publish-local.sh` script handles this copying automatically for local testing. For real NPM publication, you must do it manually. 
+
+## 6. Local integration testing with ts-stop-local-test
+
+The `ts/ts-stop-local-test/` project is a minimal consumer that validates the `@vsirotin/ts-stop` package after deployment:
+
+### Purpose
+- Verify package imports work correctly (main export + submodule exports)
+- Check all CLI tools are included
+- Validate tutorial and AI skills directories are deployed
+- Catch bundler/integration issues before publishing
+
+### How to use
+
+```bash
+cd ts/ts-stop-local-test
+
+# Install dependencies (links local ts-stop via "file:" protocol)
+npm install
+
+# Run import tests
+npm test
+```
+
+The test verifies:
+- ✅ Main export: `import { Sfsm } from '@vsirotin/ts-stop'`
+- ✅ Submodule export: `import { FaDefinition } from '@vsirotin/ts-stop/sfsm'`
+- ✅ All 7 CLI tools present
+- ✅ Tutorial directory deployed
+- ✅ AI skills directory deployed
+
+If `npm test` passes, the package is ready for your application integration.
+
 
 

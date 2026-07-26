@@ -11,7 +11,7 @@
 
 State Oriented Programming (StOP) is a programming paradigm that focuses on explicit state management and transformation. 
 
-This SDK provides a TypeScript/JavaScript library for implementing StOP concepts with [tutorial](ts/ts-stop/tutorial), [tools](ts/ts-stop/scripts), [skills for AI-agents](ts/ts-stop/ai/skills) and [examples](ts/ts-stop/test).
+This SDK provides a TypeScript/JavaScript library for implementing StOP concepts with [tutorial](ts/ts-stop/tutorial), [tools](ts/ts-stop/scripts), [skills for AI-agents](ts/ts-stop/skills) and [examples](ts/ts-stop/test).
 
 Version 2.x of the SDK is a complete rewrite of the original 1.x version, with strong orientation for modern AI-agent development.
 
@@ -19,14 +19,6 @@ Therefore, the delivered units contain as well a set of skills for AI-agents. Th
 
 This approach, library and tools are proven by the author in his commercial projects.
 
-## Project structure
-
-- **`ts/ts-stop/`** — Main StOP library with TypeScript source, compiled output, CLI tools, tutorial, and AI skills
-- **`ts/ts-stop-local-test/`** — Minimal integration test project for validating the published package before deployment
-
-## Development
-
-See [DEVELOPMENT.md](./DEVELOPMENT.md) for build, test, and deployment instructions, including the `ts-stop-local-test` validation workflow.
 
 ## License
 

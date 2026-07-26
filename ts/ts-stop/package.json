@@ -1,6 +1,6 @@
 {
   "name": "@vsirotin/ts-stop",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "description": "State Oriented Programming library for TypeScript",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -13,7 +13,6 @@
     },
     "./sfsm": {
       "types": "./lib/sfsm/index.d.ts",
-      "browser": "./lib/esm/sfsm/index.browser.js",
       "import": "./lib/esm/sfsm/index.js",
       "require": "./lib/sfsm/index.js"
     }
@@ -22,7 +21,10 @@
     "lib",
     "scripts",
     "ai/skills",
-    "tutorial"
+    "tutorial",
+    "LICENSE-COMMERCIAL.md",
+    "LICENSE-PUBLIC.md",
+    "release-notes.md"
   ],
   "bin": {
     "reduce-fa": "./scripts/reduce-fa.js",

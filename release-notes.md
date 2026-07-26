@@ -1,5 +1,8 @@
 # Project StOP (State Oriented Programming). Release notes 
 
+## Version: 2.4.2 build 77
+dist: ts-stop — Fix: Licensing files (LICENSE-COMMERCIAL.md, LICENSE-PUBLIC.md) and release-notes.md now properly included in npm package. Updated package.json "files" array and publish-local.sh to copy licensing files from monorepo root before packing. Updated DEVELOPMENT.md deployment workflow documentation.
+
 ## Version: 2.4.1 build 76
 docs: ts-stop — Minor: Updated DEVELOPMENT.md deployment testing documentation and .npmignore to exclude compiled test directories (lib/test/, lib/esm/test/). Tests are now built but not deployed to npm. Updated local testing workflow to use TMP/node_modules instead of ts-example.
 
