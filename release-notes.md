@@ -1,4 +1,8 @@
 # Project StOP (State Oriented Programming). Release notes 
+
+## Version: 2.4.1 build 76
+docs: ts-stop — Minor: Updated DEVELOPMENT.md deployment testing documentation and .npmignore to exclude compiled test directories (lib/test/, lib/esm/test/). Tests are now built but not deployed to npm. Updated local testing workflow to use TMP/node_modules instead of ts-example.
+
 ## Version: 2.4.0 build 75
 feat: ts-stop — Add SFSM diagram generation and validation tools. New scripts: json-to-drawio.js converts compact SFSM JSON to hierarchical draw.io UML diagrams with ELK.js layout; drawio-to-json.js extracts compact SFSM JSON from diagrams (lossless round-trip); compare-compact-jsons.js performs intelligent comparison of SFSM JSON files with detailed diff reporting. Diagrams feature hierarchical container-based structure with vertical stacking, light grey sub-FA containers (100×60 px), and full SFSM metadata preservation. All 202 tests passing.
 

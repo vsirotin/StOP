@@ -11,13 +11,22 @@ src/
 tsconfig*.json
 jest.config.js
 
-# Tests
+# Tests (source and compiled)
 test/
+lib/test
+lib/esm/test
+lib/cjs/test
+lib/*/test/
 __tests__/
 *.test.ts
 *.spec.ts
 *.test.js
 *.spec.js
+**/*.test.js
+**/*.test.d.ts
+**/*.test.d.ts.map
+**/*.spec.js
+**/*.spec.d.ts
 
 # Development scripts and tools
 scripts/json-to-drawio-old.js
@@ -36,15 +45,11 @@ package-lock.json
 .git/
 .gitignore
 
-# Documentation (optional - include if you want to reduce package size)
+# Documentation
 # README.md is included via package.json "files"
-# Remove these lines if you want to publish docs
-tutorial/
+# tutorial/ and ai/skills/ are explicitly included in "files" array
 docs/
 *.md
-
-# AI skills (development only)
-ai/
 
 # Temporary files
 *.tmp

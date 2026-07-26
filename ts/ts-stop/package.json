@@ -1,6 +1,6 @@
 {
   "name": "@vsirotin/ts-stop",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "State Oriented Programming library for TypeScript",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -20,13 +20,9 @@
   },
   "files": [
     "lib",
-    "scripts/reduce-fa.js",
-    "scripts/merge-fas.js",
-    "scripts/merge-fas-from-dir.js",
-    "scripts/update-fa.js",
-    "scripts/json-to-drawio.js",
-    "scripts/drawio-to-json.js",
-    "scripts/compare-compact-jsons.js"
+    "scripts",
+    "ai/skills",
+    "tutorial"
   ],
   "bin": {
     "reduce-fa": "./scripts/reduce-fa.js",

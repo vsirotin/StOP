@@ -6,7 +6,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TS_STOP_DIR="$SCRIPT_DIR/../ts/ts-stop"
-TARGET_DIR="$SCRIPT_DIR/../ts-example/node_modules/@vsirotin/ts-stop"
+TARGET_DIR="TMP/node_modules/@vsirotin/ts-stop"
 
 echo "🔨 Building @vsirotin/ts-stop..."
 (cd "$TS_STOP_DIR" && npm run build)
@@ -21,4 +21,8 @@ mkdir -p "$TARGET_DIR"
 tar -xzf "$TARBALL_PATH" -C "$TARGET_DIR" --strip-components=1
 rm "$TARBALL_PATH"
 
-echo "✅ Local @vsirotin/ts-stop installed into ts-example/node_modules"
+# Remove compiled tests from deployment (not needed in distributed package)
+rm -rf "$TARGET_DIR/lib/test"
+rm -rf "$TARGET_DIR/lib/esm/test"
+
+echo "✅ Local @vsirotin/ts-stop installed into TMP/node_modules"
