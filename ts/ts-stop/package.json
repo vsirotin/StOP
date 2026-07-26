@@ -24,6 +24,9 @@
     "scripts/merge-fas.js",
     "scripts/merge-fas-from-dir.js",
     "scripts/update-fa.js",
+    "scripts/json-to-drawio.js",
+    "scripts/drawio-to-json.js",
+    "scripts/compare-compact-jsons.js",
     "README.md",
     "LICENSE",
     "LICENSE-COMMERCIAL.md"

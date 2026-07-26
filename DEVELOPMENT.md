@@ -7,25 +7,6 @@ This is the core TypeScript implementation of the StOP (State-Oriented Programmi
 
 The library is consumed by test examples in `test/sfsm/`, and by the `ts-example` sub-project.
 
-## Project structure
-
-- `src/sfsm/` — Stacked Finite State Machine engine (SFSM layer)
-  - `interfaces.ts` — `ICommandReceiver`, `ISignalReceiver`, `ISignalSender`
-  - `SignalSender.ts` — Abstract base class for components that emit signals into the SFSM (`getSignalNames()`, `sendSignal()`)
-  - `CommandReceiver.ts` — Abstract base class for components that receive commands from the SFSM (`getCommandNames()`, `receiveCommand()`)
-  - `ControllerHub.ts` — Wires `SignalSender`/`CommandReceiver` controllers to an `Sfsm` instance; routes commands by name and connects signal senders as the signal target
-  - `types.ts` — `FaDefinition`, `FaNode`, `Transition`, `SfsmOptions`, `LogEntry`
-  - `FaResolver.ts` — Parses FA JSON (extended or compact) into a flat indexed structure; auto-detects root in multi-key compact definitions
-  - `FaReducer.ts` — `reduceFA()`: strips metadata from extended definitions to produce compact flat format
-  - `FaMerger.ts` — `mergeFAs()`: reduces multiple definitions and merges them into one compact multi-FA map with duplicate-key warnings
-  - `FaLoader.ts` — `loadFAFromFile()` (Node.js only) and `loadFAFromURL()` (browser & Node.js ≥ 18)
-  - `Sfsm.ts` — Engine class: stack management, signal queue, rule processing, logging
-  - `index.ts` — Re-exports all public symbols
-- `test/sfsm/` — Unit and integration tests for the SFSM engine
-  - `simulators/` — Smart device simulators (TurnstileDevice, CoinAcceptor, Changer, etc.)
-  - `test-data/` — FA definition JSON files used by tests
-  - `tutorial/` — Small, self-contained illustrative tests referenced from `docs/Tutorial/Tutorial.md`
-
 ## How to build
 
 ```bash
