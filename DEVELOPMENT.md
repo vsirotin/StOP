@@ -43,9 +43,10 @@ Before deploying to NPM, verify that the package can be installed and used corre
 ### Step 1: Create a local npm package
 
 ```bash
-cd /path/to/StOP
 bash scripts/publish-local.sh
 ```
+
+*(Run from the workspace root directory)*
 
 This script:
 - Builds the `@vsirotin/ts-stop` library (`npm run build`)
@@ -55,9 +56,10 @@ This script:
 ### Step 2: Run consumer tests with the local package
 
 ```bash
-cd /path/to/StOP
 bash scripts/test-with-local-lib.sh
 ```
+
+*(Run from the workspace root directory)*
 
 This script:
 1. Removes `ts-example/node_modules` for a clean slate
