@@ -7,28 +7,26 @@
 ![badge-nodejs](https://img.shields.io/badge/platform-jsNode-F8DB5D.svg?style=flat)
 ![badge-browser](https://img.shields.io/badge/platform-jsBrowser-F8DB5D.svg?style=flat)
 
-# StOP - State Oriented Programming
+# StOP SDK - State Oriented Programming Software Development Kit
 
-State Oriented Programming (StOP) is a programming paradigm that focuses on explicit state management and transformation. This repository provides implementations and examples in multiple programming languages.
+State Oriented Programming (StOP) is a programming paradigm that focuses on explicit state management and transformation. 
 
-<div align="center">
-  <img src="docs/images/StateRole.png" alt="StOP" width="30%"/>
-</div>
+This SDK provides a TypeScript/JavaScript library for implementing StOP concepts with [tutorial](ts/ts-stop/tutorial), [tools](ts/ts-stop/scripts), [skills for AI-agents](ts/ts-stop/ai/skills) and [examples](ts/ts-stop/test).
 
-## Sub-projects
+Version 2.x of the SDK is a complete rewrite of the original 1.x version, with strong orientation for modern AI-agent development.
 
-| Project | Description |
-|---------|-------------|
-| [ts-stop](./ts/ts-stop/DEVELOPMENT.md) | TypeScript/JavaScript library for State-Oriented Programming |
-| [ts-example](./ts/ts-example/DEVELOPMENT.md) | JavaScript example demonstrating local usage of ts-stop library |
+Therefore, the delivered units contain as well a set of skills for AI-agents. These skills and tutorials are now delivered together with code, to allow agents to read needed information without explicitly visiting the GitHub Project on the Internet.
 
-## Documentation
+This approach, library and tools are proven by the author in his commercial projects.
 
-- **Getting Started**: [StOP Tutorial](./docs/Tutorial/01-StOP-Tutorial.md)
-- **Background**: [StOP Motivation](./docs/Tutorial/02-StOP-Motivation.md)
-- **Why Now**: [StOP Why Now](./docs/Tutorial/03-StOP-Why-Now.md)
-- **Formal Approach**: [StOP Apologia FA](./docs/Tutorial/04-StOP-Apologia-FA.md)
-- **Simplest FA**: [StOP The Simplest FA](./docs/Tutorial/05-StOP-The-Simplest-FA.md)
+## Project structure
+
+- **`ts/ts-stop/`** — Main StOP library with TypeScript source, compiled output, CLI tools, tutorial, and AI skills
+- **`ts/ts-stop-local-test/`** — Minimal integration test project for validating the published package before deployment
+
+## Development
+
+See [DEVELOPMENT.md](./DEVELOPMENT.md) for build, test, and deployment instructions, including the `ts-stop-local-test` validation workflow.
 
 ## License
 
@@ -40,5 +38,5 @@ This project is dual-licensed:
 **Quick Summary:**
 - ✅ Free for individuals and small teams (< 10 employees)
 - ✅ Free for non-commercial and low-revenue projects (< $10K/year)
-- 📧 Commercial licensing available - contact the author
+- 📧 Commercial licensing available - contact the author (don't worry, the commercial terms are reasonable :-)
 

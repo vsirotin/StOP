@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
-import { Sfsm, FaDefinition, LogEntry, ExternalWorldHub } from '../../src/sfsm';
+import { Sfsm, FaDefinition, LogEntry, ControllerHub } from '../../src/sfsm';
 import { TurnstileService } from './simulators/TurnstileService';
 import { TurnstileDevice } from './simulators/TurnstileDevice';
 import { CoinChecker } from './simulators/CoinChecker';
@@ -28,16 +28,16 @@ beforeAll(() => {
 
     const service = new TurnstileService();
 
-    new ExternalWorldHub()
-        .registerSignalSender(['TS.s'], service)
-        .registerSignalSender(['TS.to', 'TS.ps'], device)
-        .registerCommandReceiver(['TS.ut', 'TS.l'], device)
-        .registerSignalSender(['CC.p$', 'CC.r$'], coinChecker)
-        .registerCommandReceiver(['CC.cw$', 'CC.cf$'], coinChecker)
-        .registerSignalSender(['CA.c$', 'CA.n'], coinAcceptor)
-        .registerCommandReceiver(['CA.a$'], coinAcceptor)
-        .registerSignalSender(['CH.d'], changer)
-        .registerCommandReceiver(['CH.c$'], changer)
+    new ControllerHub()
+        .registerSignalSender(service)
+        .registerSignalSender(device)
+        .registerCommandReceiver(device)
+        .registerSignalSender(coinChecker)
+        .registerCommandReceiver(coinChecker)
+        .registerSignalSender(coinAcceptor)
+        .registerCommandReceiver(coinAcceptor)
+        .registerSignalSender(changer)
+        .registerCommandReceiver(changer)
         .connectTo(sfsm);
 
     sfsm.loadFA(fa);

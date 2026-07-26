@@ -62,6 +62,27 @@ export type MissingTransitionPolicy = 'ignore' | 'log_warning' | 'error';
 export interface SfsmOptions {
     byMissingData?: MissingDataPolicy;
     byMissingTransition?: MissingTransitionPolicy;
+    /**
+     * Joker signal: a transition whose signal slot equals this value matches
+     * any signal received while its FA is in that transition's from-state —
+     * but only if no transition with the exact, literal signal exists for
+     * that state. Useful as a catch-all fallback (e.g. "any unrecognised
+     * signal while running ⇒ go to a safe/off state").
+     * Default: '*'. Has no effect unless a transition actually uses this
+     * value as its signal, so it is safe to leave at the default.
+     */
+    jokerSignal?: string;
+    /**
+     * Joker state: a transition whose from-state slot equals this value
+     * matches any current state of its FA for that transition's exact
+     * signal — but only if no transition with the exact, literal from-state
+     * exists for that signal. Useful for a signal that must be handled the
+     * same way no matter what state the device is currently in (e.g. a
+     * "service" signal that always jumps to a maintenance state).
+     * Default: '*'. Has no effect unless a transition actually uses this
+     * value as its from-state, so it is safe to leave at the default.
+     */
+    jokerState?: string;
 }
 
 /**

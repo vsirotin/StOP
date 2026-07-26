@@ -1,4 +1,41 @@
 # Project StOP (State Oriented Programming). Release notes 
+
+## Version: 2.4.2 build 77
+dist: ts-stop — Fix: Licensing files (LICENSE-COMMERCIAL.md, LICENSE-PUBLIC.md) and release-notes.md now properly included in npm package. Updated package.json "files" array and publish-local.sh to copy licensing files from monorepo root before packing. Updated DEVELOPMENT.md deployment workflow documentation.
+
+## Version: 2.4.1 build 76
+docs: ts-stop — Minor: Updated DEVELOPMENT.md deployment testing documentation and .npmignore to exclude compiled test directories (lib/test/, lib/esm/test/). Tests are now built but not deployed to npm. Updated local testing workflow to use TMP/node_modules instead of ts-example.
+
+## Version: 2.4.0 build 75
+feat: ts-stop — Add SFSM diagram generation and validation tools. New scripts: json-to-drawio.js converts compact SFSM JSON to hierarchical draw.io UML diagrams with ELK.js layout; drawio-to-json.js extracts compact SFSM JSON from diagrams (lossless round-trip); compare-compact-jsons.js performs intelligent comparison of SFSM JSON files with detailed diff reporting. Diagrams feature hierarchical container-based structure with vertical stacking, light grey sub-FA containers (100×60 px), and full SFSM metadata preservation. All 202 tests passing.
+
+## Version: 2.3.1 build 74
+doc: Tutorial.md — removed both remaining references to the obsolete Z_06-StOP-SFSM-Definition.md (§5's processing-rules note and §8.1's "complex turnstile example" link), rewording each sentence to stand on its own.
+
+## Version: 2.3.0 build 73
+feat: ts-stop — Sfsm now auto-detects namespaced entry/exit state names per FA, alongside the classic bare forms: entry state is "I" or ends with ".I" (e.g. "TS.I"); exit state starts with "E_" or contains ".E_" (e.g. "TS.E_ok"). New `ResolvedFa.entryState` in FaResolver; `Sfsm` uses it instead of a hardcoded 'I' when pushing stack frames, and its exit check now also matches the namespaced form. Purely additive — all 197 previous tests pass unchanged. Tutorial.md gained §8 "Best practices" / §8.1 "Name conventions" plus illustrative test 08-namespaced-state-names.test.ts. 202 tests passing.
+
+## Version: 2.2.2 build 72
+dist: new agent SKILL.md files in .github/skills/: sfsm-json-to-uml-diagram (SFSM FA JSON, compact or extended, → draw.io UML state diagram, defining the canonical sfsmRole/sfsmFa/sfsmKey style-token notation), sfsm-uml-diagram-to-json (reverse: draw.io diagram → compact-format JSON, with heuristic fallback for hand-drawn diagrams), and sfsm-compare-json-uml-diagram (diff a compact-format JSON FA definition against a draw.io diagram without modifying either file).
+
+## Version: 2.2.1 build 71
+doc: ts-stop — Tutorial.md gained chapters 4-7: "What is a Stacked Finite State Machine (SFSM)?", "How stacked states are processed" (processing rules rewritten against Sfsm.ts, correcting the stale wording from the old Z_06 doc), "Signal Senders, Command Receivers, Controllers, and the Controller Hub", and "Utilities" (reduceFA, multi-FA compact format, loadFAFromFile/loadFAFromURL, CLI tools, updateCompactFA/updateFullFA with a new example promoting a plain state into a sub-FA). New illustrative tests 04-stacked-finite-state-machine.test.ts, 06-controllers-and-controller-hub.test.ts, 07-update-fa-add-detail.test.ts. 197 tests passing.
+
+## Version: 2.2.0 build 70
+feat: ts-stop — add Joker concept to the SFSM engine. New SfsmOptions.jokerSignal / jokerState (default '*'): a joker-signal transition [state, '*', toState] matches any signal for that state, and a joker-state transition ['*', signal, toState] matches that signal from any state — both only as a fallback behind exact, literal transitions. New Sfsm.joker.test.ts (10 tests). Tutorial.md gained chapter 3 "Jokers: wildcard signals and states" with power-failure (joker-signal) and maintenance-mode (joker-state) examples plus illustrative tests 03-joker-signal.test.ts / 03-joker-state.test.ts. 184 tests passing.
+
+## Version: 2.1.1 build 69
+doc: docs/Tutorial/Tutorial.md — numbered chapters (1., 2., 2.1) and added a "type-safe alternative" subsection showing how to define FA transitions against string-literal union types with a small generic helper, catching state/signal typos at compile time. New illustrative test: 02-type-safe-fa-definition.test.ts. 168 tests passing.
+
+## Version: 2.1.0 build 68
+feat: ts-stop — replaced ExternalWorldHub with ControllerHub + new SignalSender/CommandReceiver abstract base classes (Controllers). Components now self-declare their signal/command names via getSignalNames()/getCommandNames() instead of repeating them at the registration call site. All SFSM test simulators refactored to extend SignalSender. 164 tests passing (ControllerHub.test.ts replaces ExternalWorldHub.test.ts).
+
+## Version: 2.0.1 build 67
+doc: ts-stop — new Tutorial.md intro chapter "What is a Finite Automaton?" (adapted from obsolete Z_05 doc, re-authored against the current Sfsm engine since the old MatrixBasedStateMachine FA layer is removed); illustrative unit test added in test/sfsm/tutorial/; fixed stale src/fa references in DEVELOPMENT.md and dead tutorial link in ts-stop/README.md.
+
+## Version: 2.0.0 build 66
+Version 2.0.0 started
+
 ## Version: 1.13.2 build 65
 bin: ts-stop — fix published package to list scripts explicitly in files field (exclude publish-local.sh); remove unused ts-stop/scripts/publish-local.sh; rewrite ts-example/scripts/publish-local.sh to use npm pack+tar instead of raw cp.
 

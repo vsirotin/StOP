@@ -100,3 +100,8 @@ kotlin/kotlin-stop/bin/
 ISSUES/
 ts/ts-stop/lib/
 TMP/
+docs/Tutorial/Z_turnstile-fa.json
+.gitignore
+docs/Tutorial/Z_06-StOP-SFSM-Definition.md
+docs/Tutorial/Z_05-StOP-The-Simplest-FA.md
+commit-text-proposal.txt

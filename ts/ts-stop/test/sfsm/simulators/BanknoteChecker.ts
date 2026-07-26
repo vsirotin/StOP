@@ -1,4 +1,4 @@
-import { ICommandReceiver, ISignalReceiver, ISignalSender } from '../../../src/sfsm';
+import { ICommandReceiver, SignalSender } from '../../../src/sfsm';
 
 /**
  * Simulator for the Banknote Checker device.
@@ -7,13 +7,16 @@ import { ICommandReceiver, ISignalReceiver, ISignalSender } from '../../../src/s
  *
  * Call setRejectOnNext(true) to make it reject the next banknote instead.
  */
-export class BanknoteChecker implements ICommandReceiver, ISignalSender {
+export class BanknoteChecker extends SignalSender implements ICommandReceiver {
 
-    private sfsm: ISignalReceiver | null = null;
     private _rejectOnNext = false;
 
-    connectSignalTarget(target: ISignalReceiver): void {
-        this.sfsm = target;
+    getSignalNames(): readonly string[] {
+        return ['BC.p$', 'BC.r$'];
+    }
+
+    getCommandNames(): readonly string[] {
+        return ['BC.c$'];
     }
 
     setRejectOnNext(reject: boolean): void {
@@ -24,9 +27,9 @@ export class BanknoteChecker implements ICommandReceiver, ISignalSender {
         if (command === 'BC.c$') {
             if (this._rejectOnNext) {
                 this._rejectOnNext = false;
-                this.sfsm!.receiveSignal('BC.r$', data);
+                this.sendSignal('BC.r$', data);
             } else {
-                this.sfsm!.receiveSignal('BC.p$', data);
+                this.sendSignal('BC.p$', data);
             }
         }
     }
