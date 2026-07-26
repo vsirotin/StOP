@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 2.4.0 build 75
+feat: ts-stop — Add SFSM diagram generation and validation tools. New scripts: json-to-drawio.js converts compact SFSM JSON to hierarchical draw.io UML diagrams with ELK.js layout; drawio-to-json.js extracts compact SFSM JSON from diagrams (lossless round-trip); compare-compact-jsons.js performs intelligent comparison of SFSM JSON files with detailed diff reporting. Diagrams feature hierarchical container-based structure with vertical stacking, light grey sub-FA containers (100×60 px), and full SFSM metadata preservation. All 202 tests passing.
+
 ## Version: 2.3.1 build 74
 doc: Tutorial.md — removed both remaining references to the obsolete Z_06-StOP-SFSM-Definition.md (§5's processing-rules note and §8.1's "complex turnstile example" link), rewording each sentence to stand on its own.
 

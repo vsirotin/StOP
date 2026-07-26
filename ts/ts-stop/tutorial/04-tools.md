@@ -1,12 +1,14 @@
 # StOP Tutorial. Part 4: Tools
 
-## 7. Utilities
+## 7. Tools
 
-Beyond the core `Sfsm` engine, the library ships a handful of utilities for working with FA definitions themselves.
+Beyond the core `Sfsm` engine, the StOP SDK ships a handful of functions with corresponding CLI-scripts for working with FA definitions themselves.
+
+StOP SDK ships with a few AI-skills, that can be useful by working with SFSMs. These skills are described in the paragraph 7.6 of this document.
 
 ### 7.1 Extended vs. compact format, and `reduceFA`
 
-Every example so far has used the **compact** (runtime) format: a plain list of `[from, signal, to]` / `[from, signal, to, command]` tuples. For larger FAs, an **extended** (declaration) format is available where every state, signal, and command can carry a human-readable `name`/`description`, and a `sender`/`receiver` — much more pleasant to read and maintain by hand, and to auto-generate documentation from.
+Every example so far has used the **compact** (runtime) format: a plain list of `[from, signal, to]` tuples or `[from, signal, to, command]` tuples. For larger FAs, an **extended** (declaration) format is available where every state, signal, and command can carry a human-readable `name`/`description`, and a `sender`/`receiver` — much more pleasant to read and maintain by hand, and to auto-generate documentation from.
 
 The `reduceFA()` function converts an extended definition into the flat compact form that `Sfsm.loadFA()` actually consumes internally:
 
@@ -101,4 +103,8 @@ npm run update-compact-fa -- --source=<path> --update=<path> [--result=<path>]
 npm run update-full-fa    -- --source=<path> --update=<path> [--result=<path>]
 ```
 
-`--result` defaults to `<source-basename>-updated.json` when omitted. Both CLI scripts are thin wrappers around `reduceFA()` and `updateCompactFA()` / `updateFullFA()`, whose behaviour is covered by [FaReducer.test.ts](../../ts/ts-stop/test/sfsm/FaReducer.test.ts) and [FaUpdater.test.ts](../../ts/ts-stop/test/sfsm/FaUpdater.test.ts).
+By default, `--result` defaults to `<source-basename>-updated.json` when omitted. Both CLI scripts are thin wrappers around `reduceFA()` and `updateCompactFA()` / `updateFullFA()`, whose behaviour is covered by [FaReducer.test.ts](../../ts-stop/test/sfsm/FaReducer.test.ts) and [FaUpdater.test.ts](../../ts-stop/test/sfsm/FaUpdater.test.ts).
+
+### 7.6 AI skills
+
+AI-skills are placed in the [ai-skills directory](../../ts/ts-stop/ai/skills).

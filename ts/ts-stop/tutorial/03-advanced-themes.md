@@ -78,13 +78,13 @@ gate.isLocked();      // true  — the SFSM sent 'GATE.lock' in response to 'pus
 
 Notice that `TurnstileGate` never touches the `Sfsm` instance directly: it only knows how to emit its own signals and react to its own commands. All the wiring — "which Controller sends which signal," "which Controller handles which command" — lives in one place, the `ControllerHub`, which also gives you `getRegisteredSignals()` / `getRegisteredCommands()` for diagnostics (e.g. to validate that every signal and command mentioned in an FA definition actually has a Controller behind it).
 
-A runnable version of this example is available as a unit test: [06-controllers-and-controller-hub.test.ts](../../ts/ts-stop/test/sfsm/tutorial/06-controllers-and-controller-hub.test.ts).
+A runnable version of this example is available as a unit test: [06-controllers-and-controller-hub.test.ts](../../ts-stop/test/sfsm/tutorial/06-controllers-and-controller-hub.test.ts).
 
 ### 7. Name conventions
 
 Every example so far has named the entry state simply `"I"` and exit states `"E_something"` — perfectly fine for a small, self-contained FA. Once a stacked SFSM grows to dozens of FAs, plain abbreviations like `"L"`, `"U"`, `"I"`, `"E_R"` start colliding in your head across FAs, and it becomes hard to tell, just by looking at a state name, *which* FA it belongs to.
 
-For larger SFSMs, it is recommended to **namespace state names with their own FA's name**, using a dot: `<FaName>.I` for the entry state, and `<FaName>.<state>` for ordinary states — e.g. `TS.I`, `TS.L`, `TS.U` instead of bare `I`, `L`, `U`. Exit states keep their familiar `E_` marker but move it after the FA-name dot: `<FaName>.E_<name>` — e.g. `TS.E_ok` instead of bare `E_ok`.
+For larger SFSMs, it is recommended to namespace state names with their own FA's name, using a dot: `<FaName>.I` for the entry state, and `<FaName>.<state>` for ordinary states — e.g. `TS.I`, `TS.L`, `TS.U` instead of bare `I`, `L`, `U`. Exit states keep their familiar `E_` marker but move it after the FA-name dot: `<FaName>.E_<name>` — e.g. `TS.E_ok` instead of bare `E_ok`.
 
 ```json
 {
@@ -105,4 +105,6 @@ This means:
 - you can freely mix both styles across FAs in the same SFSM (e.g. namespace only the FAs that are large enough to benefit from it);
 - nothing else changes — this is purely a naming convention for readability, not a new engine feature: no new `SfsmOptions`, no change to how transitions, pushes, pops, or jokers are matched.
 
-A runnable version of this example, built entirely with namespaced names, is available as a unit test: [08-namespaced-state-names.test.ts](../../ts/ts-stop/test/sfsm/tutorial/08-namespaced-state-names.test.ts).
+A runnable version of this example, built entirely with namespaced names, is available as a unit test: [08-namespaced-state-names.test.ts](../../ts-stop/test/sfsm/tutorial/08-namespaced-state-names.test.ts).
+
+In future this part of tutorial will be expanded with more advanced topics, including description of best practices for building large SFSMs, and a few more examples of real-world applications.
