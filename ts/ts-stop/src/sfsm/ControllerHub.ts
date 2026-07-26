@@ -2,6 +2,10 @@ import { ICommandReceiver } from './interfaces';
 import { Sfsm } from './Sfsm';
 import { SignalSender } from './SignalSender';
 import { CommandReceiver } from './CommandReceiver';
+import { BaseController } from './base-controller';
+
+// Re-export CommandReceiver for convenience
+export { CommandReceiver };
 
 /**
  * Wiring hub between the SFSM and a collection of Controllers — components that
@@ -29,6 +33,30 @@ export class ControllerHub implements ICommandReceiver {
 
     private commandRoutes = new Map<string, CommandReceiver>();
     private signalSenders: SignalSender[] = [];
+
+
+    constructor(sfsm: Sfsm = new Sfsm(), controllers: readonly BaseController[] = []) {
+        for (const controller of controllers) {
+        // Workflow N1 + N2: wire the SFSM as the signal target for this controller's sender.
+        controller.getSignalSender()?.connectSignalTarget(sfsm);
+
+        // Build command routing table from this controller's CommandReceiver.
+        const cr = controller.getCommandReceiver();
+        if (cr) {
+            for (const cmd of cr.getCommandNames()) {
+                if (this.commandRoutes.has(cmd)) {
+                    throw new Error(`ControllerHub: command "${cmd}" is already registered`);
+                }
+                this.commandRoutes.set(cmd, cr);
+                }
+            }
+        }
+
+        // Register this hub as the single ICommandReceiver of the SFSM.
+        // All SFSM commands will flow through receiveCommand() and be dispatched
+        // to the appropriate CommandReceiver via commandRoutes.
+        sfsm.setCommandReceiver(this);
+    }
 
     /**
      * Register a signal sender. Its signal names (getSignalNames()) are used for

@@ -1,5 +1,6 @@
 export { ICommandReceiver, ISignalReceiver, ISignalSender } from './interfaces';
 export { ControllerHub } from './ControllerHub';
+export { BaseController } from './base-controller';
 export { SignalSender } from './SignalSender';
 export { CommandReceiver } from './CommandReceiver';
 export { FaDefinition, FaNode, FaUpdate, Transition, SfsmOptions, LogEntry, MissingDataPolicy, MissingTransitionPolicy } from './types';
