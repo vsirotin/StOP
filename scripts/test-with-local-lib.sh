@@ -13,7 +13,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="$SCRIPT_DIR/.."
+PROJECT_DIR="$SCRIPT_DIR/../ts-example"
 
 cd "$PROJECT_DIR"
 
