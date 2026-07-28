@@ -1,4 +1,4 @@
-import { Sfsm, FaDefinition } from '../../../src/sfsm';
+import { Sfsm, FaDefinition } from "../../../src/sfsm";
 
 // ---------------------------------------------------------------------------
 // The standalone banknote-payment FA from docs/Tutorial/Tutorial.md,
@@ -9,11 +9,11 @@ import { Sfsm, FaDefinition } from '../../../src/sfsm';
 
 const banknotePaymentFa: FaDefinition = {
     BPP: [
-        ['I', 'BR.bc', 'checking', 'BC.check'],
-        ['checking', 'BC.pass', 'accepting', 'BA.accept'],
-        ['checking', 'BC.reject', 'E_rejected'],
-        ['accepting', 'BA.changeNeeded', 'E_changeNeeded'],
-        ['accepting', 'BA.noChangeNeeded', 'E_noChangeNeeded']
+        ["I", "BR.bc", "checking", "BC.check"],
+        ["checking", "BC.pass", "accepting", "BA.accept"],
+        ["checking", "BC.reject", "E_rejected"],
+        ["accepting", "BA.changeNeeded", "E_changeNeeded"],
+        ["accepting", "BA.noChangeNeeded", "E_noChangeNeeded"]
     ]
 };
 
@@ -23,38 +23,38 @@ function buildSfsm(): Sfsm {
     return sfsm;
 }
 
-describe('Tutorial – What is a Stacked Finite State Machine (banknote payment)', () => {
-    it('should start in the reserved state "I"', () => {
+describe("Tutorial – What is a Stacked Finite State Machine (banknote payment)", () => {
+    it("should start in the reserved state 'I'", () => {
         const sfsm = buildSfsm();
-        expect(sfsm.getHeadState()).toBe('I');
+        expect(sfsm.getHeadState()).toBe("I");
     });
 
-    it('should move to "checking" when a banknote candidate arrives', () => {
+    it("should move to 'checking' when a banknote candidate arrives", () => {
         const sfsm = buildSfsm();
-        sfsm.receiveSignal('BR.bc');
-        expect(sfsm.getHeadState()).toBe('checking');
+        sfsm.receiveSignal("BR.bc");
+        expect(sfsm.getHeadState()).toBe("checking");
     });
 
-    it('should reach the "accepting" state after the checker passes the banknote', () => {
+    it("should reach the 'accepting' state after the checker passes the banknote", () => {
         const sfsm = buildSfsm();
-        sfsm.receiveSignal('BR.bc');
-        sfsm.receiveSignal('BC.pass');
-        expect(sfsm.getHeadState()).toBe('accepting');
+        sfsm.receiveSignal("BR.bc");
+        sfsm.receiveSignal("BC.pass");
+        expect(sfsm.getHeadState()).toBe("accepting");
     });
 
-    it('should reset to "I" after an exit state is reached (rejected banknote)', () => {
+    it("should reset to 'I' after an exit state is reached (rejected banknote)", () => {
         const sfsm = buildSfsm();
-        sfsm.receiveSignal('BR.bc');
-        sfsm.receiveSignal('BC.reject');
+        sfsm.receiveSignal("BR.bc");
+        sfsm.receiveSignal("BC.reject");
         // BPP is the (only) root FA here, so reaching an exit state resets it to I
-        expect(sfsm.getHeadState()).toBe('I');
+        expect(sfsm.getHeadState()).toBe("I");
     });
 
-    it('should reset to "I" after an exit state is reached (accepted, change needed)', () => {
+    it("should reset to 'I' after an exit state is reached (accepted, change needed)", () => {
         const sfsm = buildSfsm();
-        sfsm.receiveSignal('BR.bc');
-        sfsm.receiveSignal('BC.pass');
-        sfsm.receiveSignal('BA.changeNeeded');
-        expect(sfsm.getHeadState()).toBe('I');
+        sfsm.receiveSignal("BR.bc");
+        sfsm.receiveSignal("BC.pass");
+        sfsm.receiveSignal("BA.changeNeeded");
+        expect(sfsm.getHeadState()).toBe("I");
     });
 });

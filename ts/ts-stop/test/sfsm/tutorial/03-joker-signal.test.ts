@@ -1,4 +1,4 @@
-import { Sfsm, FaDefinition } from '../../../src/sfsm';
+import { Sfsm, FaDefinition } from "../../../src/sfsm";
 
 // ---------------------------------------------------------------------------
 // The joker-signal turnstile FA from docs/Tutorial/Tutorial.md,
@@ -8,11 +8,11 @@ import { Sfsm, FaDefinition } from '../../../src/sfsm';
 
 const turnstileWithJokerSignalFa: FaDefinition = {
     Turnstile: [
-        ['I', 'start', 'locked'],
-        ['locked', 'coin', 'unlocked'],
-        ['unlocked', 'push', 'locked'],
-        ['locked', '*', 'off'],
-        ['unlocked', '*', 'off']
+        ["I", "start", "locked"],
+        ["locked", "coin", "unlocked"],
+        ["unlocked", "push", "locked"],
+        ["locked", "*", "off"],
+        ["unlocked", "*", "off"]
     ]
 };
 
@@ -22,31 +22,31 @@ function buildSfsm(): Sfsm {
     return sfsm;
 }
 
-describe('Tutorial – Joker signal (turnstile power failure)', () => {
-    it('should behave exactly as the plain turnstile for known signals', () => {
+describe("Tutorial – Joker signal (turnstile power failure)", () => {
+    it("should behave exactly as the plain turnstile for known signals", () => {
         const sfsm = buildSfsm();
-        sfsm.receiveSignal('start');
-        expect(sfsm.getHeadState()).toBe('locked');
+        sfsm.receiveSignal("start");
+        expect(sfsm.getHeadState()).toBe("locked");
 
-        sfsm.receiveSignal('coin');
-        expect(sfsm.getHeadState()).toBe('unlocked');
+        sfsm.receiveSignal("coin");
+        expect(sfsm.getHeadState()).toBe("unlocked");
 
-        sfsm.receiveSignal('push');
-        expect(sfsm.getHeadState()).toBe('locked');
+        sfsm.receiveSignal("push");
+        expect(sfsm.getHeadState()).toBe("locked");
     });
 
-    it('should fall back to "off" when an unexpected signal arrives while locked', () => {
+    it("should fall back to 'off' when an unexpected signal arrives while locked", () => {
         const sfsm = buildSfsm();
-        sfsm.receiveSignal('start');
-        sfsm.receiveSignal('powerFailure');
-        expect(sfsm.getHeadState()).toBe('off');
+        sfsm.receiveSignal("start");
+        sfsm.receiveSignal("powerFailure");
+        expect(sfsm.getHeadState()).toBe("off");
     });
 
-    it('should fall back to "off" when an unexpected signal arrives while unlocked', () => {
+    it("should fall back to 'off' when an unexpected signal arrives while unlocked", () => {
         const sfsm = buildSfsm();
-        sfsm.receiveSignal('start');
-        sfsm.receiveSignal('coin');
-        sfsm.receiveSignal('sensorGlitch');
-        expect(sfsm.getHeadState()).toBe('off');
+        sfsm.receiveSignal("start");
+        sfsm.receiveSignal("coin");
+        sfsm.receiveSignal("sensorGlitch");
+        expect(sfsm.getHeadState()).toBe("off");
     });
 });

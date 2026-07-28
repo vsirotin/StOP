@@ -1,17 +1,17 @@
 {
-    "PP": [
-        ["I", "BR.bc$", "BPP"],
-        ["I", "CR.cc$", "CPP"],
-        ["BPP", "BC.r$", "RE"],
-        ["BPP", "BA.c$", "CH", "CH.c$"],
-        ["BPP", "BA.n", "E_N"],
-        ["CPP", "CC.r$", "RE"],
-        ["CPP", "CA.c$", "CH", "CH.c$"],
-        ["CPP", "CA.n", "E_P"],
-        ["RE", "RE.d", "E_R"],
-        ["CH", "CH.d", "E_P"]
+    "PU": [
+        ["I", "BR.bc$", "BPU"],
+        ["I", "CR.cc$", "CPU"],
+        ["BPU", "BC.r$", "ReB"],
+        ["BPU", "BA.c$", "CCM", "CH.c$"],
+        ["BPU", "BA.n", "E_N"],
+        ["CPU", "CC.r$", "ReB"],
+        ["CPU", "CA.c$", "CCM", "CH.c$"],
+        ["CPU", "CA.n", "E_P"],
+        ["ReB", "RE.d", "E_R"],
+        ["CCM", "CH.d", "E_P"]
     ],
-    "BPP": [
+    "BPU": [
         ["I", "BR.bc$", "C", "BC.c$"],
         ["C", "BC.p$", "A", "BA.a$"],
         ["C", "BC.r$", "E_R"],

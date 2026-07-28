@@ -1,11 +1,11 @@
 {
-    "remove": ["CPP"],
+    "remove": ["CPU"],
     "add": {
         "TS": {
             "states": {
-                "PP": {
+                "PU": {
                     "states": {
-                        "BPP": {
+                        "BPU": {
                             "states": {
                                 "C": {
                                     "name": "Check of banknote",
@@ -101,11 +101,11 @@
                             ]
                         }
                     },
-                    "RE": {
+                    "ReB": {
                         "name": "Rejection of artifact",
                         "description": "Rejection of false artifacts (banknote or card) and return them to the user"
                     },
-                    "CH": {
+                    "CCM": {
                         "name": "Making change",
                         "description": "Making change by changer and send it to change box"
                     },
@@ -129,15 +129,15 @@
                         }
                     },
                     "ts": [
-                        ["I",    "BR.bc$",   "BPP"         ],
+                        ["I",    "BR.bc$",   "BPU"         ],
                         ["I",    "CCRD.sw$", "CCPP"        ],
-                        ["BPP",  "BC.r$",    "RE"          ],
-                        ["BPP",  "BA.c$",    "CH", "CH.c$" ],
-                        ["BPP",  "BA.n",     "E_N"         ],
-                        ["CCPP", "CCRD.r$",  "RE"          ],
+                        ["BPU",  "BC.r$",    "ReB"          ],
+                        ["BPU",  "BA.c$",    "CCM", "CH.c$" ],
+                        ["BPU",  "BA.n",     "E_N"         ],
+                        ["CCPP", "CCRD.r$",  "ReB"          ],
                         ["CCPP", "CCRD.a$",  "E_P"         ],
-                        ["RE",   "RE.d",     "E_R"         ],
-                        ["CH",   "CH.d",     "E_P"         ]
+                        ["ReB",   "RE.d",     "E_R"         ],
+                        ["CCM",   "CH.d",     "E_P"         ]
                     ]
                 },
                 "L": {
@@ -180,12 +180,12 @@
             },
             "ts": [
                 ["I",  "TS.s",     "L"           ],
-                ["L",  "BR.bc$",   "PP"          ],
-                ["L",  "CCRD.sw$", "PP"          ],
-                ["PP", "BA.n",     "U",  "TS.ut" ],
-                ["PP", "CH.d",     "U",  "TS.ut" ],
-                ["PP", "CCRD.a$",  "U",  "TS.ut" ],
-                ["PP", "RE.d",     "L",  "TS.l"  ],
+                ["L",  "BR.bc$",   "PU"          ],
+                ["L",  "CCRD.sw$", "PU"          ],
+                ["PU", "BA.n",     "U",  "TS.ut" ],
+                ["PU", "CH.d",     "U",  "TS.ut" ],
+                ["PU", "CCRD.a$",  "U",  "TS.ut" ],
+                ["PU", "RE.d",     "L",  "TS.l"  ],
                 ["U",  "TS.to",    "L",  "TS.l"  ],
                 ["U",  "TS.ps",    "L",  "TS.l"  ]
             ]

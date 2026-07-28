@@ -14,7 +14,7 @@ Here is a small, self-contained FA that only makes sense as a *child* of somethi
 
 ```json
 {
-  "BPP": [
+  "BPU": [
     ["I",        "BR.bc",           "checking",  "BC.check"],
     ["checking", "BC.pass",         "accepting", "BA.accept"],
     ["checking", "BC.reject",       "E_rejected"],

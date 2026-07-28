@@ -1,9 +1,13 @@
 {
     "TS": {
+        "name": "Turnstile device",
+        "description": "Turnstile device is a device that allows or denies passage of people into metro or paid restroom. It can be unlocked by payment with coin or banknote.",
         "states": {
-            "PP": {
+            "PU": {
+                "name": "Payment unit",
+                "description": "Payment unit is a sub-FA of turnstile device that handles payment with coin or banknote. It can be in one of two sub-FAs: BPU (Banknote Payment Process) or CPU (Coin Payment Process).",
                 "states": {
-                    "BPP": {
+                    "BPU": {
                         "states": {
                             "C": {
                                 "name": "Check of banknote",
@@ -61,7 +65,7 @@
                             ["A","BA.n","E_N"]
                         ]
                     },
-                    "CPP": {
+                    "CPU": {
                         "states": {
                             "CW": {
                                 "name": "Check of weight of coin",
@@ -131,13 +135,13 @@
                         ]
                     }
                 },
-                "RE": {
-                    "name": "Rejection of artifact",
+                "ReB": {
+                    "name": "Reject bin",
                     "description": "Rejection of false artifacts (coin or banknote) and send them to reject box"
                 },
-                "CH": {
-                    "name": "Making change",
-                    "description": "Making change by changer and send it to change box"
+                "CCM": {
+                    "name": "Currency change machine ",
+                    "description": "Currency change machine is a sub-FA of turnstile device that handles making change for accepted banknotes or coins."
                 },
                 "commands": {
                     "CH.c$": {
@@ -159,16 +163,16 @@
                     }
                 },
                 "ts": [
-                    ["I","BR.bc$","BPP"],
-                    ["I","CR.cc$","CPP"],
-                    ["BPP","BC.r$","RE"],
-                    ["BPP","BA.c$","CH","CH.c$"],
-                    ["BPP","BA.n","E_N"],
-                    ["CPP","CC.r$","RE"],
-                    ["CPP","CA.c$","CH","CH.c$"],
-                    ["CPP","CA.n","E_P"],
-                    ["RE","RE.d","E_R"],
-                    ["CH","CH.d","E_P"]
+                    ["I","BR.bc$","BPU"],
+                    ["I","CR.cc$","CPU"],
+                    ["BPU","BC.r$","ReB"],
+                    ["BPU","BA.c$","CCM","CH.c$"],
+                    ["BPU","BA.n","E_N"],
+                    ["CPU","CC.r$","ReB"],
+                    ["CPU","CA.c$","CCM","CH.c$"],
+                    ["CPU","CA.n","E_P"],
+                    ["ReB","RE.d","E_R"],
+                    ["CCM","CH.d","E_P"]
                 ]
             },
             "L": {
@@ -211,12 +215,12 @@
         },
         "ts": [
             ["I","TS.s","L"],
-            ["L","BR.bc$","PP"],
-            ["L","CR.cc$","PP"],
-            ["PP","BA.n","U","TS.ut"],
-            ["PP","CA.n","U","TS.ut"],
-            ["PP","CH.d","U","TS.ut"],
-            ["PP","RE.d","L","TS.l"],
+            ["L","BR.bc$","PU"],
+            ["L","CR.cc$","PU"],
+            ["PU","BA.n","U","TS.ut"],
+            ["PU","CA.n","U","TS.ut"],
+            ["PU","CH.d","U","TS.ut"],
+            ["PU","RE.d","L","TS.l"],
             ["U","TS.to","L","TS.l"],
             ["U","TS.ps","L","TS.l"]
         ]
