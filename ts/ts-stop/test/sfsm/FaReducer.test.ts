@@ -53,15 +53,15 @@ describe("reduceFA – output shape", () => {
     it("TS transitions should match original ts array", () => {
         const tsTransitions = reduced["TS"] as Transition[];
         expect(tsTransitions).toEqual([
-            ["I", "TS.s", "L"],
+            ["I", "TS.start", "L"],
             ["L", "BR.bc$", "PU"],
             ["L", "CR.cc$", "PU"],
-            ["PU", "BA.n", "U", "TS.ut"],
-            ["PU", "CA.n", "U", "TS.ut"],
-            ["PU", "CH.d", "U", "TS.ut"],
-            ["PU", "RE.d", "L", "TS.l"],
-            ["U", "TS.to", "L", "TS.l"],
-            ["U", "TS.ps", "L", "TS.l"]
+            ["PU", "BA.n", "U", "TS.unlock"],
+            ["PU", "CA.n", "U", "TS.unlock"],
+            ["PU", "CH.d", "U", "TS.unlock"],
+            ["PU", "RE.d", "L", "TS.lock"],
+            ["U", "TS.timeout", "L", "TS.lock"],
+            ["U", "TS.pass", "L", "TS.lock"]
         ]);
     });
 

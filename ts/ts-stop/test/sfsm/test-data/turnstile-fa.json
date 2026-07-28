@@ -2,6 +2,47 @@
     "TS": {
         "name": "Turnstile device",
         "description": "Turnstile device is a device that allows or denies passage of people into metro or paid restroom. It can be unlocked by payment with coin or banknote.",
+        "signals": {
+            "TS.start": {
+                "name": "System start",
+                "description": "SFSM initialization signal that transitions the turnstile into its initial Locked state.",
+                "sender": "SFSM"
+            },
+            "TS.timeout": {
+                "name": "Turnstile timeout",
+                "description": "Turnstile is in unlocked state too long and should be locked",
+                "sender": "Turnstile"
+            },
+            "TS.pass": {
+                "name": "Passage",
+                "description": "Someone pass through turnstile and it should be locked",
+                "sender": "Turnstile"
+            }
+        },
+        "commands": {
+            "TS.lock": {
+                "name": "Lock turnstile",
+                "description": "Command to turnstile to lock itself",
+                "receiver": "Turnstile"
+            },
+            "TS.unlock": {
+                "name": "Unlock turnstile",
+                "description": "Command to turnstile to unlock itself ans start a timeout for waiting of passage",
+                "receiver": "Turnstile"
+            }
+        },
+        "ts": [
+            ["I","TS.start","L"],
+            ["L","BR.bc$","PU"],
+            ["L","CR.cc$","PU"],
+            ["PU","BA.n","U","TS.unlock"],
+            ["PU","CA.n","U","TS.unlock"],
+            ["PU","CH.d","U","TS.unlock"],
+            ["PU","RE.d","L","TS.lock"],
+            ["U","TS.timeout","L","TS.lock"],
+            ["U","TS.pass","L","TS.lock"]
+        ],
+
         "states": {
             "PU": {
                 "name": "Payment unit",
@@ -183,46 +224,7 @@
                 "name": "Unlocked",
                 "description": "Turnstile is unlocked and let someone into the metro or a paid restroom"
             }
-        },
-        "signals": {
-            "TS.s": {
-                "name": "System start",
-                "description": "SFSM initialization signal that transitions the turnstile into its initial Locked state.",
-                "sender": "SFSM"
-            },
-            "TS.to": {
-                "name": "Turnstile timeout",
-                "description": "Turnstile is in unlocked state too long and should be locked",
-                "sender": "Turnstile"
-            },
-            "TS.ps": {
-                "name": "Passage",
-                "description": "Someone pass through turnstile and it should be locked",
-                "sender": "Turnstile"
-            }
-        },
-        "commands": {
-            "TS.l": {
-                "name": "Lock turnstile",
-                "description": "Command to turnstile to lock itself",
-                "receiver": "Turnstile"
-            },
-            "TS.ut": {
-                "name": "Unlock turnstile",
-                "description": "Command to turnstile to unlock itself ans start a timeout for waiting of passage",
-                "receiver": "Turnstile"
-            }
-        },
-        "ts": [
-            ["I","TS.s","L"],
-            ["L","BR.bc$","PU"],
-            ["L","CR.cc$","PU"],
-            ["PU","BA.n","U","TS.ut"],
-            ["PU","CA.n","U","TS.ut"],
-            ["PU","CH.d","U","TS.ut"],
-            ["PU","RE.d","L","TS.l"],
-            ["U","TS.to","L","TS.l"],
-            ["U","TS.ps","L","TS.l"]
-        ]
+        }
+        
     }
 }

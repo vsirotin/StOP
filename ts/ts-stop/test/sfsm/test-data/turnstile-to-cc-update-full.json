@@ -150,44 +150,44 @@
                 }
             },
             "signals": {
-                "TS.s": {
+                "TS.start": {
                     "name": "System start",
                     "description": "SFSM initialization signal that transitions the turnstile into its initial Locked state.",
                     "sender": "SFSM"
                 },
-                "TS.to": {
+                "TS.timeout": {
                     "name": "Turnstile timeout",
                     "description": "Turnstile is in unlocked state too long and should be locked",
                     "sender": "Turnstile"
                 },
-                "TS.ps": {
+                "TS.pass": {
                     "name": "Passage",
                     "description": "Someone pass through turnstile and it should be locked",
                     "sender": "Turnstile"
                 }
             },
             "commands": {
-                "TS.l": {
+                "TS.lock": {
                     "name": "Lock turnstile",
                     "description": "Command to turnstile to lock itself",
                     "receiver": "Turnstile"
                 },
-                "TS.ut": {
+                "TS.unlock": {
                     "name": "Unlock turnstile",
                     "description": "Command to turnstile to unlock itself and start a timeout for waiting of passage",
                     "receiver": "Turnstile"
                 }
             },
             "ts": [
-                ["I",  "TS.s",     "L"           ],
+                ["I",  "TS.start",     "L"           ],
                 ["L",  "BR.bc$",   "PU"          ],
                 ["L",  "CCRD.sw$", "PU"          ],
-                ["PU", "BA.n",     "U",  "TS.ut" ],
-                ["PU", "CH.d",     "U",  "TS.ut" ],
-                ["PU", "CCRD.a$",  "U",  "TS.ut" ],
-                ["PU", "RE.d",     "L",  "TS.l"  ],
-                ["U",  "TS.to",    "L",  "TS.l"  ],
-                ["U",  "TS.ps",    "L",  "TS.l"  ]
+                ["PU", "BA.n",     "U",  "TS.unlock" ],
+                ["PU", "CH.d",     "U",  "TS.unlock" ],
+                ["PU", "CCRD.a$",  "U",  "TS.unlock" ],
+                ["PU", "RE.d",     "L",  "TS.lock"  ],
+                ["U",  "TS.timeout",    "L",  "TS.lock"  ],
+                ["U",  "TS.pass",    "L",  "TS.lock"  ]
             ]
         }
     }

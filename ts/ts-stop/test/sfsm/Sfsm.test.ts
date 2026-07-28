@@ -79,7 +79,7 @@ describe("SFSM – Initialisation", () => {
         expect(sfsm.getHeadState()).toBe("I");
     });
 
-    it("should transition to Locked (L) after TS.s", () => {
+    it("should transition to Locked (L) after TS.start", () => {
         const { sfsm, service } = buildHarness();
         service.start();
         expect(sfsm.getHeadState()).toBe("L");
@@ -99,9 +99,9 @@ describe("SFSM – Turnstile: coin (value=1, no change)", () => {
         expect(h.sfsm.getHeadState()).toBe("U");
     });
 
-    it("should issue TS.ut command when coin is valid", () => {
+    it("should issue TS.unlock command when coin is valid", () => {
         h.sfsm.receiveSignal("CR.cc$", { value: 1 });
-        expect(h.device.getCommandsReceived()).toContain("TS.ut");
+        expect(h.device.getCommandsReceived()).toContain("TS.unlock");
     });
 
     it("should lock turnstile after person passes", () => {
@@ -110,10 +110,10 @@ describe("SFSM – Turnstile: coin (value=1, no change)", () => {
         expect(h.sfsm.getHeadState()).toBe("L");
     });
 
-    it("should issue TS.l command after passage", () => {
+    it("should issue TS.lock command after passage", () => {
         h.sfsm.receiveSignal("CR.cc$", { value: 1 });
         h.device.triggerPassage();
-        expect(h.device.getCommandsReceived()).toContain("TS.l");
+        expect(h.device.getCommandsReceived()).toContain("TS.lock");
     });
 
     it("should lock turnstile on timeout", () => {
@@ -142,9 +142,9 @@ describe("SFSM – Turnstile: coin (value=2, change=1)", () => {
         expect(h.changer.getLastChangeAmount()).toBe(1);
     });
 
-    it("should issue TS.ut after change is dispensed", () => {
+    it("should issue TS.unlock after change is dispensed", () => {
         h.sfsm.receiveSignal("CR.cc$", { value: 2 });
-        expect(h.device.getCommandsReceived()).toContain("TS.ut");
+        expect(h.device.getCommandsReceived()).toContain("TS.unlock");
     });
 
     it("should lock turnstile after person passes following coin-with-change", () => {
@@ -176,10 +176,10 @@ describe("SFSM – Turnstile: rejected coin", () => {
         expect(h.sfsm.getHeadState()).toBe("L");
     });
 
-    it("should issue TS.l command after RE.d completes rejection", () => {
+    it("should issue TS.lock command after RE.d completes rejection", () => {
         h.sfsm.receiveSignal("CR.cc$", { value: 1 });
         h.sfsm.receiveSignal("RE.d");
-        expect(h.device.getCommandsReceived()).toContain("TS.l");
+        expect(h.device.getCommandsReceived()).toContain("TS.lock");
     });
 });
 
@@ -196,9 +196,9 @@ describe("SFSM – Turnstile: banknote (value=1, no change)", () => {
         expect(h.sfsm.getHeadState()).toBe("U");
     });
 
-    it("should issue TS.ut command when banknote is valid", () => {
+    it("should issue TS.unlock command when banknote is valid", () => {
         h.sfsm.receiveSignal("BR.bc$", { value: 1 });
-        expect(h.device.getCommandsReceived()).toContain("TS.ut");
+        expect(h.device.getCommandsReceived()).toContain("TS.unlock");
     });
 
     it("should lock turnstile after person passes following banknote payment", () => {
@@ -207,10 +207,10 @@ describe("SFSM – Turnstile: banknote (value=1, no change)", () => {
         expect(h.sfsm.getHeadState()).toBe("L");
     });
 
-    it("should issue TS.l after passage following banknote payment", () => {
+    it("should issue TS.lock after passage following banknote payment", () => {
         h.sfsm.receiveSignal("BR.bc$", { value: 1 });
         h.device.triggerPassage();
-        expect(h.device.getCommandsReceived()).toContain("TS.l");
+        expect(h.device.getCommandsReceived()).toContain("TS.lock");
     });
 });
 
@@ -232,9 +232,9 @@ describe("SFSM – Turnstile: banknote (value=10, fare=5, change=5)", () => {
         expect(h.changer.getLastChangeAmount()).toBe(5);
     });
 
-    it("should issue TS.ut after change is dispensed for banknote", () => {
+    it("should issue TS.unlock after change is dispensed for banknote", () => {
         h.sfsm.receiveSignal("BR.bc$", { value: 10 });
-        expect(h.device.getCommandsReceived()).toContain("TS.ut");
+        expect(h.device.getCommandsReceived()).toContain("TS.unlock");
     });
 
     it("should lock turnstile after person passes following banknote-with-change", () => {
@@ -265,10 +265,10 @@ describe("SFSM – Turnstile: rejected banknote", () => {
         expect(h.sfsm.getHeadState()).toBe("L");
     });
 
-    it("should issue TS.l command after banknote rejection completes", () => {
+    it("should issue TS.lock command after banknote rejection completes", () => {
         h.sfsm.receiveSignal("BR.bc$", { value: 1 });
         h.sfsm.receiveSignal("RE.d");
-        expect(h.device.getCommandsReceived()).toContain("TS.l");
+        expect(h.device.getCommandsReceived()).toContain("TS.lock");
     });
 });
 
@@ -384,11 +384,11 @@ describe("SFSM – loadFA resets state", () => {
 });
 
 describe("SFSM – Log correctness", () => {
-    it("first log entry should have correct stack and signal after TS.s", () => {
+    it("first log entry should have correct stack and signal after TS.start", () => {
         const { sfsm, service } = buildHarness();
         service.start();
         const log = sfsm.getLog();
-        expect(log[0].signal).toBe("TS.s");
+        expect(log[0].signal).toBe("TS.start");
         expect(log[0].stack).toEqual(["TS"]);
         expect(log[0].state).toBe("I");
         expect(log[0].newState).toBe("L");
@@ -396,10 +396,10 @@ describe("SFSM – Log correctness", () => {
     });
 
     it("bubble-up rule is labelled '2.2.2.1' when ancestor FA handles signal", () => {
-        // Bubble-up scenario: engine is in CPP:CW (deep in stack), send TS.ps.
-        // TS.ps has no match in CPP or PP, but TS has U --TS.ps--> L.
+        // Bubble-up scenario: engine is in CPP:CW (deep in stack), send TS.pass.
+        // TS.pass has no match in CPP or PP, but TS has U --TS.pass--> L.
         // However U is not the current state of TS (it"s PP), so it won"t match either.
-        // Instead test a simpler bubble-up: after unlocking, send TS.ps from PP sub-FA.
+        // Instead test a simpler bubble-up: after unlocking, send TS.pass from PP sub-FA.
         // Actually, after a coin enters PP, the TS layer is TS(PP). TS has PP --CH.d--> U.
         // That"s not bubble-up (it"s the exit mechanism). True bubble-up needs a signal
         // that the head FA can"t handle but an ancestor can with the ancestor"s *current* state.
@@ -409,7 +409,7 @@ describe("SFSM – Log correctness", () => {
         const { sfsm, service } = buildHarness();
         service.start();
         const log = sfsm.getLog();
-        const tsEntry = log.find(e => e.signal === "TS.s");
+        const tsEntry = log.find(e => e.signal === "TS.start");
         expect(tsEntry?.rule).toBe("2.1");
     });
 });

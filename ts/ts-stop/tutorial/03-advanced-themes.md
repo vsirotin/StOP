@@ -89,7 +89,7 @@ For larger SFSMs, it is recommended to namespace state names with their own FA's
 ```json
 {
   "TS": [
-    ["TS.I", "TS.s",   "TS.L"],
+    ["TS.I", "TS.start",   "TS.L"],
     ["TS.L", "TS.coin", "TS.U"],
     ["TS.U", "TS.push", "TS.L"]
   ]

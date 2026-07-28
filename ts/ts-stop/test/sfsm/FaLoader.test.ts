@@ -135,9 +135,9 @@ describe("loadFAFromFile – Sfsm integration with compact FA", () => {
 
 const COMPACT_FA_FIXTURE = {
     TS: [
-        ["I", "TS.s", "L"],
+        ["I", "TS.start", "L"],
         ["L", "CR.cc$", "PU"],
-        ["PU", "CA.n", "U", "TS.ut"],
+        ["PU", "CA.n", "U", "TS.unlock"],
     ],
     PU: [
         ["I", "CR.cc$", "CPU"],
@@ -152,7 +152,7 @@ const COMPACT_FA_FIXTURE = {
 const EXTENDED_FA_FIXTURE = {
     TS: {
         ts: [
-            ["I", "TS.s", "L"],
+            ["I", "TS.start", "L"],
         ],
     },
 };

@@ -64,12 +64,12 @@ describe("SFSM – Log: coin (value=2) with change, then passage", () => {
         // 1: TS(I→L), 2: TS(L→PP), 3: PP(I→CPP), 4: CPP(I→CW),
         // 5: CPP(CW→CF), 6: CPP(CF→A), 7: CPP(A→E_C/pop→PP),
         // 8: PP(CPP→CH), 9: PP(CH→E_P/pop→TS), 10: TS(PP→U),
-        // 11: TS(U→L from TS.ps)
+        // 11: TS(U→L from TS.pass)
         expect(log.length).toBeGreaterThanOrEqual(7);
     });
 
-    it("step 1 should have signal TS.s and new state L", () => {
-        const step1 = log.find(e => e.signal === "TS.s");
+    it("step 1 should have signal TS.start and new state L", () => {
+        const step1 = log.find(e => e.signal === "TS.start");
         expect(step1).toBeDefined();
         expect(step1!.newState).toBe("L");
     });
@@ -79,17 +79,17 @@ describe("SFSM – Log: coin (value=2) with change, then passage", () => {
         expect(entry).toBeDefined();
     });
 
-    it("should contain an entry where TS.ut command is issued", () => {
-        const entry = log.find(e => e.command === "TS.ut");
+    it("should contain an entry where TS.unlock command is issued", () => {
+        const entry = log.find(e => e.command === "TS.unlock");
         expect(entry).toBeDefined();
         expect(entry!.newState).toBe("U");
     });
 
-    it("should contain an entry where TS.ps causes transition to L with TS.l command", () => {
-        const entry = log.find(e => e.signal === "TS.ps");
+    it("should contain an entry where TS.pass causes transition to L with TS.lock command", () => {
+        const entry = log.find(e => e.signal === "TS.pass");
         expect(entry).toBeDefined();
         expect(entry!.newState).toBe("L");
-        expect(entry!.command).toBe("TS.l");
+        expect(entry!.command).toBe("TS.lock");
     });
 
     it("each log step number should be sequential starting at 1", () => {
