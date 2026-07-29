@@ -1,9 +1,9 @@
 {
     "TS": [
         ["TS:I", "TS>start", "TS:Locked"],
-        ["TS:Locked", "BR.bc$", "PU"],
+        ["TS:Locked", "BPU>Banknote candidate inserted", "PU"],
         ["TS:Locked", "CR.cc$", "PU"],
-        ["PU", "BA.n", "TS:Unlocked", "TS.unlock"],
+        ["PU", "BPU>Banknote change not needed", "TS:Unlocked", "TS.unlock"],
         ["PU", "CA.n", "TS:Unlocked", "TS.unlock"],
         ["PU", "CH.d", "TS:Unlocked", "TS.unlock"],
         ["PU", "RE.d", "TS:Locked", "TS.lock"],
@@ -11,11 +11,11 @@
         ["TS:Unlocked", "TS>pass", "TS:Locked", "TS.lock"]
     ],
     "PU": [
-        ["PU:I", "BR.bc$", "BPU"],
+        ["PU:I", "BPU>Banknote candidate inserted", "BPU"],
         ["PU:I", "CR.cc$", "CPU"],
-        ["BPU", "BC.r$", "ReB"],
-        ["BPU", "BA.c$", "CCM", "CH.c$"],
-        ["BPU", "BA.n", "E_N"],
+        ["BPU", "BPU>Banknote is false", "ReB"],
+        ["BPU", "BPU>Banknote change needed", "CCM", "CH.c$"],
+        ["BPU", "BPU>Banknote change not needed", "E_N"],
         ["CPU", "CC.r$", "ReB"],
         ["CPU", "CA.c$", "CCM", "CH.c$"],
         ["CPU", "CA.n", "E_P"],
@@ -23,11 +23,11 @@
         ["CCM", "CH.d", "E_P"]
     ],
     "BPU": [
-        ["BPU:I", "BR.bc$", "BPU:Check of banknote", "BC.c$"],
-        ["BPU:Check of banknote", "BC.p$", "BPU:Acceptance of banknote", "BA.a$"],
-        ["BPU:Check of banknote", "BC.r$", "E_R"],
-        ["BPU:Acceptance of banknote", "BA.c$", "E_C"],
-        ["BPU:Acceptance of banknote", "BA.n", "E_N"]
+        ["BPU:I", "BPU>Banknote candidate inserted", "BPU:Check of banknote", "BPU>Banknote change needed"],
+        ["BPU:Check of banknote", "BPU>Banknote is ok", "BPU:Acceptance of banknote", "BA.a$"],
+        ["BPU:Check of banknote", "BPU>Banknote is false", "E_R"],
+        ["BPU:Acceptance of banknote", "BPU>Banknote change needed", "E_C"],
+        ["BPU:Acceptance of banknote", "BPU>Banknote change not needed", "E_N"]
     ],
     "CPU": [
         ["CPU:I", "CR.cc$", "CW", "CC.cw$"],

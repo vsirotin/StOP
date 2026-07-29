@@ -14,10 +14,10 @@ describe("mergeFAs", () => {
                     PP: {
                         states: {
                             BPP: {
-                                ts: [["I", "BR.bc$", "E_N"]]
+                                ts: [["I", "BPU>Banknote candidate inserted", "E_N"]]
                             }
                         },
-                        ts: [["I", "BR.bc$", "BPU"]]
+                        ts: [["I", "BPU>Banknote candidate inserted", "BPU"]]
                     }
                 },
                 ts: [["I", "TS>start", "PU"]]
@@ -33,8 +33,8 @@ describe("mergeFAs", () => {
         expect(warnings).toEqual([]);
         expect(merged).toEqual({
             TS: [["I", "TS>start", "PU"]],
-            PP: [["I", "BR.bc$", "BPU"]],
-            BPP: [["I", "BR.bc$", "E_N"]],
+            PP: [["I", "BPU>Banknote candidate inserted", "BPU"]],
+            BPP: [["I", "BPU>Banknote candidate inserted", "E_N"]],
             AUX: [["I", "A.s", "E_N"]]
         });
     });

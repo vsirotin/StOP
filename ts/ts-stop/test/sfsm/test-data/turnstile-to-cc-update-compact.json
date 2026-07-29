@@ -3,9 +3,9 @@
     "add": {
         "TS": [
             ["I",  "TS>start",     "TS:Locked"           ],
-            ["TS:Locked",  "BR.bc$",   "PU"          ],
+            ["TS:Locked",  "BPU>Banknote candidate inserted",   "PU"          ],
             ["TS:Locked",  "CCRD.sw$", "PU"          ],
-            ["PU", "BA.n",     "TS:Unlocked",  "TS.unlock" ],
+            ["PU", "BPU>Banknote change not needed",     "TS:Unlocked",  "TS.unlock" ],
             ["PU", "CH.d",     "TS:Unlocked",  "TS.unlock" ],
             ["PU", "CCRD.a$",  "TS:Unlocked",  "TS.unlock" ],
             ["PU", "RE.d",     "TS:Locked",  "TS.lock"  ],
@@ -13,11 +13,11 @@
             ["TS:Unlocked",  "TS>pass",    "TS:Locked",  "TS.lock"  ]
         ],
         "PU": [
-            ["I",    "BR.bc$",   "BPU"         ],
+            ["I",    "BPU>Banknote candidate inserted",   "BPU"         ],
             ["I",    "CCRD.sw$", "CCPP"        ],
-            ["BPU",  "BC.r$",    "ReB"          ],
-            ["BPU",  "BA.c$",    "CCM", "CH.c$" ],
-            ["BPU",  "BA.n",     "E_N"         ],
+            ["BPU",  "BPU>Banknote is false",    "ReB"          ],
+            ["BPU",  "BPU>Banknote change needed",    "CCM", "CH.c$" ],
+            ["BPU",  "BPU>Banknote change not needed",     "E_N"         ],
             ["CCPP", "CCRD.r$",  "ReB"          ],
             ["CCPP", "CCRD.a$",  "E_P"         ],
             ["ReB",   "RE.d",     "E_R"         ],

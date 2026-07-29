@@ -1,9 +1,9 @@
 {
     "TS": [
         ["TS:I", "TS>start", "TS:Locked"],
-        ["TS:Locked", "BR.bc$", "PU"],
+        ["TS:Locked", "BPU>Banknote candidate inserted", "PU"],
         ["TS:Locked", "CR.cc$", "PU"],
-        ["PU", "BA.n", "TS:Unlocked", "TS.unlock"],
+        ["PU", "BPU>Banknote change not needed", "TS:Unlocked", "TS.unlock"],
         ["PU", "CA.n", "TS:Unlocked", "TS.unlock"],
         ["PU", "CH.d", "TS:Unlocked", "TS.unlock"],
         ["PU", "RE.d", "TS:Locked", "TS.lock"],

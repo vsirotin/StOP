@@ -33,9 +33,9 @@
         },
         "ts": [
             ["TS:I","TS>start","TS:Locked"],
-            ["TS:Locked","BR.bc$","PU"],
+            ["TS:Locked","BPU>Banknote candidate inserted","PU"],
             ["TS:Locked","CR.cc$","PU"],
-            ["PU","BA.n","TS:Unlocked","TS.unlock"],
+            ["PU","BPU>Banknote change not needed","TS:Unlocked","TS.unlock"],
             ["PU","CA.n","TS:Unlocked","TS.unlock"],
             ["PU","CH.d","TS:Unlocked","TS.unlock"],
             ["PU","RE.d","TS:Locked","TS.lock"],
@@ -57,6 +57,8 @@
                 "description": "Payment unit is a sub-FA of turnstile device that handles payment with coin or banknote. It can be in one of two sub-FAs: BPU (Banknote Payment Process) or CPU (Coin Payment Process).",
                 "states": {
                     "BPU": {
+                        "name": "Banknote Payment Unit",
+                        "description": "Banknote Payment Unit is a sub-FA of Payment Unit that handles payment with banknote. It can be in one of two states: Check of banknote or Acceptance of banknote.",
                         "states": {
                             "BPU:Check of banknote": {
                                 "name": "Check of banknote",
@@ -68,34 +70,34 @@
                             }
                         },
                         "signals": {
-                            "BR.bc$": {
+                            "BPU>Banknote candidate inserted": {
                                 "name": "Banknote candidate",
                                 "description": "Some artifact is putted in banknote slot. This signal contains data with this artifact",
                                 "sender": "Banknote Receiver"
                             },
-                            "BC.p$": {
+                            "BPU>Banknote is ok": {
                                 "name": "Banknote is ok",
                                 "description": "Banknote checker send this signal, when banknote is checked and can be used as payment element. This signal contains data with this banknote",
                                 "sender": "Banknote Checker"
                             },
-                            "BC.r$": {
+                            "BPU>Banknote is false": {
                                 "name": "Banknote is not ok (rejected)",
                                 "description": "Banknote checker send this signal, when banknote is checked and can't be used as payment element. This signal contains data with this banknote",
                                 "sender": "Banknote Checker"
                             },
-                            "BA.c$": {
+                            "BPU>Banknote change needed": {
                                 "name": "Change is needed",
                                 "description": "Banknote Acceptor sends this signal when the accepted banknote requires change. Data contains the change value.",
                                 "sender": "Banknote Acceptor"
                             },
-                            "BA.n": {
+                            "BPU>Banknote change not needed": {
                                 "name": "Change is not needed",
                                 "description": "Banknote Acceptor sends this signal when the accepted banknote requires no change.",
                                 "sender": "Banknote Acceptor"
                             }
                         },
                         "commands": {
-                            "BC.c$": {
+                            "BPU>Banknote change needed": {
                                 "name": "Check banknote",
                                 "description": "Command to banknote checker with data with banknote for checking",
                                 "receiver": "Banknote Checker"
@@ -107,14 +109,16 @@
                             }
                         },
                         "ts": [
-                            ["BPU:I","BR.bc$","BPU:Check of banknote","BC.c$"],
-                            ["BPU:Check of banknote","BC.p$","BPU:Acceptance of banknote","BA.a$"],
-                            ["BPU:Check of banknote","BC.r$","E_R"],
-                            ["BPU:Acceptance of banknote","BA.c$","E_C"],
-                            ["BPU:Acceptance of banknote","BA.n","E_N"]
+                            ["BPU:I","BPU>Banknote candidate inserted","BPU:Check of banknote","BPU>Banknote change needed"],
+                            ["BPU:Check of banknote","BPU>Banknote is ok","BPU:Acceptance of banknote","BA.a$"],
+                            ["BPU:Check of banknote","BPU>Banknote is false","E_R"],
+                            ["BPU:Acceptance of banknote","BPU>Banknote change needed","E_C"],
+                            ["BPU:Acceptance of banknote","BPU>Banknote change not needed","E_N"]
                         ]
                     },
                     "CPU": {
+                        "name": "Coin Payment Unit",
+                        "description": "Coin Payment Unit is a sub-FA of Payment Unit that handles payment with coin. It can be in one of three states: Check of weight of coin, Check of form of coin, or Acceptance of coin.",
                         "states": {
                             "CW": {
                                 "name": "Check of weight of coin",
@@ -214,11 +218,11 @@
                     }
                 },
                 "ts": [
-                    ["PU:I","BR.bc$","BPU"],
+                    ["PU:I","BPU>Banknote candidate inserted","BPU"],
                     ["PU:I","CR.cc$","CPU"],
-                    ["BPU","BC.r$","ReB"],
-                    ["BPU","BA.c$","CCM","CH.c$"],
-                    ["BPU","BA.n","E_N"],
+                    ["BPU","BPU>Banknote is false","ReB"],
+                    ["BPU","BPU>Banknote change needed","CCM","CH.c$"],
+                    ["BPU","BPU>Banknote change not needed","E_N"],
                     ["CPU","CC.r$","ReB"],
                     ["CPU","CA.c$","CCM","CH.c$"],
                     ["CPU","CA.n","E_P"],
