@@ -20,7 +20,7 @@ describe("mergeFAs", () => {
                         ts: [["I", "BR.bc$", "BPU"]]
                     }
                 },
-                ts: [["I", "TS.start", "PU"]]
+                ts: [["I", "TS>start", "PU"]]
             }
         };
 
@@ -32,7 +32,7 @@ describe("mergeFAs", () => {
 
         expect(warnings).toEqual([]);
         expect(merged).toEqual({
-            TS: [["I", "TS.start", "PU"]],
+            TS: [["I", "TS>start", "PU"]],
             PP: [["I", "BR.bc$", "BPU"]],
             BPP: [["I", "BR.bc$", "E_N"]],
             AUX: [["I", "A.s", "E_N"]]
@@ -58,18 +58,18 @@ describe("mergeFAs", () => {
 
     it("should overwrite duplicate FA keys from later inputs and report warnings", () => {
         const inputA: FaDefinition = {
-            TS: [["I", "TS.start", "L"]],
+            TS: [["I", "TS>start", "TS:Locked"]],
             PP: [["I", "PP.s", "E_N"]]
         };
         const inputB: FaDefinition = {
             PP: [["I", "PP.s2", "E_P"]],
-            TS: [["I", "TS.s2", "U"]]
+            TS: [["I", "TS.s2", "TS:Unlocked"]]
         };
 
         const { merged, warnings } = mergeFAs([inputA, inputB]);
 
         expect(merged).toEqual({
-            TS: [["I", "TS.s2", "U"]],
+            TS: [["I", "TS.s2", "TS:Unlocked"]],
             PP: [["I", "PP.s2", "E_P"]]
         });
         expect(warnings).toHaveLength(2);

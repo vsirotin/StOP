@@ -3,17 +3,17 @@
         "name": "Turnstile device",
         "description": "Turnstile device is a device that allows or denies passage of people into metro or paid restroom. It can be unlocked by payment with coin or banknote.",
         "signals": {
-            "TS.start": {
+            "TS>start": {
                 "name": "System start",
                 "description": "SFSM initialization signal that transitions the turnstile into its initial Locked state.",
                 "sender": "SFSM"
             },
-            "TS.timeout": {
+            "TS>timeout": {
                 "name": "Turnstile timeout",
                 "description": "Turnstile is in unlocked state too long and should be locked",
                 "sender": "Turnstile"
             },
-            "TS.pass": {
+            "TS>pass": {
                 "name": "Passage",
                 "description": "Someone pass through turnstile and it should be locked",
                 "sender": "Turnstile"
@@ -32,15 +32,15 @@
             }
         },
         "ts": [
-            ["I","TS.start","L"],
-            ["L","BR.bc$","PU"],
-            ["L","CR.cc$","PU"],
-            ["PU","BA.n","U","TS.unlock"],
-            ["PU","CA.n","U","TS.unlock"],
-            ["PU","CH.d","U","TS.unlock"],
-            ["PU","RE.d","L","TS.lock"],
-            ["U","TS.timeout","L","TS.lock"],
-            ["U","TS.pass","L","TS.lock"]
+            ["TS:I","TS>start","TS:Locked"],
+            ["TS:Locked","BR.bc$","PU"],
+            ["TS:Locked","CR.cc$","PU"],
+            ["PU","BA.n","TS:Unlocked","TS.unlock"],
+            ["PU","CA.n","TS:Unlocked","TS.unlock"],
+            ["PU","CH.d","TS:Unlocked","TS.unlock"],
+            ["PU","RE.d","TS:Locked","TS.lock"],
+            ["TS:Unlocked","TS>timeout","TS:Locked","TS.lock"],
+            ["TS:Unlocked","TS>pass","TS:Locked","TS.lock"]
         ],
 
         "states": {
@@ -48,6 +48,14 @@
                 "name": "Payment unit",
                 "description": "Payment unit is a sub-FA of turnstile device that handles payment with coin or banknote. It can be in one of two sub-FAs: BPU (Banknote Payment Process) or CPU (Coin Payment Process).",
                 "states": {
+                    "TS:Locked": {
+                        "name": "Locked",
+                        "description": "Turnstile is locked and doesn't let someone into the metro or a paid restroom"
+                    },
+                    "TS:Unlocked": {
+                        "name": "Unlocked",
+                        "description": "Turnstile is unlocked and let someone into the metro or a paid restroom"
+                    },
                     "BPU": {
                         "states": {
                             "C": {
@@ -99,7 +107,7 @@
                             }
                         },
                         "ts": [
-                            ["I","BR.bc$","C","BC.c$"],
+                            ["BPU:I","BR.bc$","C","BC.c$"],
                             ["C","BC.p$","A","BA.a$"],
                             ["C","BC.r$","E_R"],
                             ["A","BA.c$","E_C"],
@@ -166,7 +174,7 @@
                             }
                         },
                         "ts": [
-                            ["I","CR.cc$","CW","CC.cw$"],
+                            ["CPU:I","CR.cc$","CW","CC.cw$"],
                             ["CW","CC.p$","CF","CC.cf$"],
                             ["CF","CC.p$","A","CA.a$"],
                             ["CW","CC.r$","E_R"],
@@ -204,8 +212,8 @@
                     }
                 },
                 "ts": [
-                    ["I","BR.bc$","BPU"],
-                    ["I","CR.cc$","CPU"],
+                    ["PU:I","BR.bc$","BPU"],
+                    ["PU:I","CR.cc$","CPU"],
                     ["BPU","BC.r$","ReB"],
                     ["BPU","BA.c$","CCM","CH.c$"],
                     ["BPU","BA.n","E_N"],
@@ -215,14 +223,6 @@
                     ["ReB","RE.d","E_R"],
                     ["CCM","CH.d","E_P"]
                 ]
-            },
-            "L": {
-                "name": "Locked",
-                "description": "Turnstile is locked and doesn't let someone into the metro or a paid restroom"
-            },
-            "U": {
-                "name": "Unlocked",
-                "description": "Turnstile is unlocked and let someone into the metro or a paid restroom"
             }
         }
         

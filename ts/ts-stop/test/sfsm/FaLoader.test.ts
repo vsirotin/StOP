@@ -84,7 +84,7 @@ describe("loadFAFromFile – Sfsm integration with extended FA", () => {
         service.start();
 
         sfsm.receiveSignal("CR.cc$", { value: 1 });
-        expect(sfsm.getHeadState()).toBe("U");
+        expect(sfsm.getHeadState()).toBe("TS:Unlocked");
     });
 });
 
@@ -125,7 +125,7 @@ describe("loadFAFromFile – Sfsm integration with compact FA", () => {
         service.start();
 
         sfsm.receiveSignal("CR.cc$", { value: 1 });
-        expect(sfsm.getHeadState()).toBe("U");
+        expect(sfsm.getHeadState()).toBe("TS:Unlocked");
     });
 });
 
@@ -135,9 +135,9 @@ describe("loadFAFromFile – Sfsm integration with compact FA", () => {
 
 const COMPACT_FA_FIXTURE = {
     TS: [
-        ["I", "TS.start", "L"],
-        ["L", "CR.cc$", "PU"],
-        ["PU", "CA.n", "U", "TS.unlock"],
+        ["I", "TS>start", "TS:Locked"],
+        ["TS:Locked", "CR.cc$", "PU"],
+        ["PU", "CA.n", "TS:Unlocked", "TS.unlock"],
     ],
     PU: [
         ["I", "CR.cc$", "CPU"],
@@ -152,7 +152,7 @@ const COMPACT_FA_FIXTURE = {
 const EXTENDED_FA_FIXTURE = {
     TS: {
         ts: [
-            ["I", "TS.start", "L"],
+            ["I", "TS>start", "TS:Locked"],
         ],
     },
 };

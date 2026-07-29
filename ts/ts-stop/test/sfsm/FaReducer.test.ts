@@ -53,15 +53,15 @@ describe("reduceFA – output shape", () => {
     it("TS transitions should match original ts array", () => {
         const tsTransitions = reduced["TS"] as Transition[];
         expect(tsTransitions).toEqual([
-            ["I", "TS.start", "L"],
-            ["L", "BR.bc$", "PU"],
-            ["L", "CR.cc$", "PU"],
-            ["PU", "BA.n", "U", "TS.unlock"],
-            ["PU", "CA.n", "U", "TS.unlock"],
-            ["PU", "CH.d", "U", "TS.unlock"],
-            ["PU", "RE.d", "L", "TS.lock"],
-            ["U", "TS.timeout", "L", "TS.lock"],
-            ["U", "TS.pass", "L", "TS.lock"]
+            ["I", "TS>start", "TS:Locked"],
+            ["TS:Locked", "BR.bc$", "PU"],
+            ["TS:Locked", "CR.cc$", "PU"],
+            ["PU", "BA.n", "TS:Unlocked", "TS.unlock"],
+            ["PU", "CA.n", "TS:Unlocked", "TS.unlock"],
+            ["PU", "CH.d", "TS:Unlocked", "TS.unlock"],
+            ["PU", "RE.d", "TS:Locked", "TS.lock"],
+            ["TS:Unlocked", "TS>timeout", "TS:Locked", "TS.lock"],
+            ["TS:Unlocked", "TS>pass", "TS:Locked", "TS.lock"]
         ]);
     });
 
@@ -168,9 +168,9 @@ describe("reduceFA – round-trip: reduce then load produces same behaviour", ()
         const h = buildHarness(1, reduced);
         h.service.start();
         h.sfsm.receiveSignal("CR.cc$", { value: 1 });
-        expect(h.sfsm.getHeadState()).toBe("U");
+        expect(h.sfsm.getHeadState()).toBe("TS:Unlocked");
         h.device.triggerPassage();
-        expect(h.sfsm.getHeadState()).toBe("L");
+        expect(h.sfsm.getHeadState()).toBe("TS:Locked");
     });
 
     it("coin with change: reduced FA dispenses correct change and reaches U", () => {
@@ -179,7 +179,7 @@ describe("reduceFA – round-trip: reduce then load produces same behaviour", ()
         h.service.start();
         h.sfsm.receiveSignal("CR.cc$", { value: 2 });
         expect(h.changer.getLastChangeAmount()).toBe(1);
-        expect(h.sfsm.getHeadState()).toBe("U");
+        expect(h.sfsm.getHeadState()).toBe("TS:Unlocked");
     });
 
     it("banknote exact fare: reduced FA reaches U then L after passage", () => {
@@ -187,9 +187,9 @@ describe("reduceFA – round-trip: reduce then load produces same behaviour", ()
         const h = buildHarness(1, reduced);
         h.service.start();
         h.sfsm.receiveSignal("BR.bc$", { value: 1 });
-        expect(h.sfsm.getHeadState()).toBe("U");
+        expect(h.sfsm.getHeadState()).toBe("TS:Unlocked");
         h.device.triggerPassage();
-        expect(h.sfsm.getHeadState()).toBe("L");
+        expect(h.sfsm.getHeadState()).toBe("TS:Locked");
     });
 
     it("reduced FA log entry has no metadata name fields", () => {

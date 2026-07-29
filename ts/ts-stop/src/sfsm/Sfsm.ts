@@ -14,7 +14,7 @@ interface StackFrame {
  *   const sfsm = new Sfsm(options);
  *   sfsm.setCommandReceiver(receiver);
  *   sfsm.loadFA(definition);   // auto-activates state I of root FA
- *   sfsm.receiveSignal('TS.start');
+ *   sfsm.receiveSignal('TS>start');
  *
  * Signal re-entrancy: if receiveSignal is called while the engine is already
  * processing a signal (e.g. from within a command receiver callback), the
@@ -63,7 +63,7 @@ export class Sfsm implements ISignalReceiver {
      * Load a FA definition and initialise the engine.
      * The root FA is pushed onto the stack with active state "I".
      * No signal is sent automatically — the caller is responsible for
-     * sending the first signal (e.g. "TS.start") to drive out of state I.
+     * sending the first signal (e.g. "TS>start") to drive out of state I.
      */
     loadFA(definition: FaDefinition): void {
         this.resolver = new FaResolver(definition);

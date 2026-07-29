@@ -3,7 +3,7 @@ import { ICommandReceiver, SignalSender } from '../../../src/sfsm';
 /**
  * Simulator for the Turnstile physical device.
  * Receives commands TS.lock (lock) and TS.unlock (unlock-with-timeout).
- * Can emit signals TS.pass (passage) and TS.timeout (timeout) back to the SFSM.
+ * Can emit signals TS>pass (passage) and TS>timeout (timeout) back to the SFSM.
  *
  * In tests, call triggerPassage() or triggerTimeout() to simulate physical events.
  */
@@ -13,7 +13,7 @@ export class TurnstileDevice extends SignalSender implements ICommandReceiver {
     private commandsReceived: string[] = [];
 
     getSignalNames(): readonly string[] {
-        return ['TS.timeout', 'TS.pass'];
+        return ['TS>timeout', 'TS>pass'];
     }
 
     getCommandNames(): readonly string[] {
@@ -30,11 +30,11 @@ export class TurnstileDevice extends SignalSender implements ICommandReceiver {
     }
 
     triggerPassage(): void {
-        this.sendSignal('TS.pass');
+        this.sendSignal('TS>pass');
     }
 
     triggerTimeout(): void {
-        this.sendSignal('TS.timeout');
+        this.sendSignal('TS>timeout');
     }
 
     isLocked(): boolean {

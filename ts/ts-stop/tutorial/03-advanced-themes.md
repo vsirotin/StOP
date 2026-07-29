@@ -82,14 +82,14 @@ A runnable version of this example is available as a unit test: [06-controllers-
 
 ### 7. Name conventions
 
-Every example so far has named the entry state simply `"I"` and exit states `"E_something"` — perfectly fine for a small, self-contained FA. Once a stacked SFSM grows to dozens of FAs, plain abbreviations like `"L"`, `"U"`, `"I"`, `"E_R"` start colliding in your head across FAs, and it becomes hard to tell, just by looking at a state name, *which* FA it belongs to.
+Every example so far has named the entry state simply `"I"` and exit states `"E_something"` — perfectly fine for a small, self-contained FA. Once a stacked SFSM grows to dozens of FAs, plain abbreviations like `"TS:Locked"`, `"TS:Unlocked"`, `"I"`, `"E_R"` start colliding in your head across FAs, and it becomes hard to tell, just by looking at a state name, *which* FA it belongs to.
 
 For larger SFSMs, it is recommended to namespace state names with their own FA's name, using a dot: `<FaName>.I` for the entry state, and `<FaName>.<state>` for ordinary states — e.g. `TS.I`, `TS.L`, `TS.U` instead of bare `I`, `L`, `U`. Exit states keep their familiar `E_` marker but move it after the FA-name dot: `<FaName>.E_<name>` — e.g. `TS.E_ok` instead of bare `E_ok`.
 
 ```json
 {
   "TS": [
-    ["TS.I", "TS.start",   "TS.L"],
+    ["TS.I", "TS>start",   "TS.L"],
     ["TS.L", "TS.coin", "TS.U"],
     ["TS.U", "TS.push", "TS.L"]
   ]

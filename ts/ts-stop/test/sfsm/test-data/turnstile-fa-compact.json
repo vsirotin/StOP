@@ -1,14 +1,14 @@
 {
     "TS": [
-        ["I", "TS.start", "L"],
-        ["L", "BR.bc$", "PU"],
-        ["L", "CR.cc$", "PU"],
-        ["PU", "BA.n", "U", "TS.unlock"],
-        ["PU", "CA.n", "U", "TS.unlock"],
-        ["PU", "CH.d", "U", "TS.unlock"],
-        ["PU", "RE.d", "L", "TS.lock"],
-        ["U", "TS.timeout", "L", "TS.lock"],
-        ["U", "TS.pass", "L", "TS.lock"]
+        ["I", "TS>start", "TS:Locked"],
+        ["TS:Locked", "BR.bc$", "PU"],
+        ["TS:Locked", "CR.cc$", "PU"],
+        ["PU", "BA.n", "TS:Unlocked", "TS.unlock"],
+        ["PU", "CA.n", "TS:Unlocked", "TS.unlock"],
+        ["PU", "CH.d", "TS:Unlocked", "TS.unlock"],
+        ["PU", "RE.d", "TS:Locked", "TS.lock"],
+        ["TS:Unlocked", "TS>timeout", "TS:Locked", "TS.lock"],
+        ["TS:Unlocked", "TS>pass", "TS:Locked", "TS.lock"]
     ],
     "PU": [
         ["I", "BR.bc$", "BPU"],
