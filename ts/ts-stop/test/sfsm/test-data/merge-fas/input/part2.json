@@ -4,18 +4,18 @@
         ["PU:I", "CR.cc$", "CPU"],
         ["BPU", "BPU>Banknote is false", "ReB"],
         ["BPU", "BPU>Banknote change needed", "CCM", "CH.c$"],
-        ["BPU", "BPU>Banknote change not needed", "E_N"],
+        ["BPU", "BPU>Banknote change not needed", "E_Change not needed"],
         ["CPU", "CC.r$", "ReB"],
         ["CPU", "CA.c$", "CCM", "CH.c$"],
         ["CPU", "CA.n", "E_P"],
-        ["ReB", "RE.d", "E_R"],
+        ["ReB", "RE.d", "E_Rejected"],
         ["CCM", "CH.d", "E_P"]
     ],
     "BPU": [
         ["BPU:I", "BPU>Banknote candidate inserted", "BPU:Check of banknote", "BPU.check banknote"],
-        ["BPU:Check of banknote", "BPU>Banknote is ok", "BPU:Acceptance of banknote", "BA.a$"],
-        ["BPU:Check of banknote", "BPU>Banknote is false", "E_R"],
-        ["BPU:Acceptance of banknote", "BPU>Banknote change needed", "E_C"],
-        ["BPU:Acceptance of banknote", "BPU>Banknote change not needed", "E_N"]
+        ["BPU:Check of banknote", "BPU>Banknote is ok", "BPU:Acceptance of banknote", "BPU.accept banknote"],
+        ["BPU:Check of banknote", "BPU>Banknote is false", "E_Rejected"],
+        ["BPU:Acceptance of banknote", "BPU>Banknote change needed", "E_Change needed"],
+        ["BPU:Acceptance of banknote", "BPU>Banknote change not needed", "E_Change not needed"]
     ]
 }

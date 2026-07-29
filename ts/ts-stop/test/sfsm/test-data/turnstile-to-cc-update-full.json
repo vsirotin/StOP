@@ -49,7 +49,7 @@
                                     "description": "Command to banknote checker with data with banknote for checking",
                                     "receiver": "Banknote Checker"
                                 },
-                                "BA.a$": {
+                                "BPU.accept banknote": {
                                     "name": "Accept banknote",
                                     "description": "Command to banknote acceptor with data with banknote for acceptance",
                                     "receiver": "Banknote Acceptor"
@@ -57,10 +57,10 @@
                             },
                             "ts": [
                                 ["I", "BPU>Banknote candidate inserted", "BPU:Check of banknote",   "BPU.check banknote"],
-                                ["BPU:Check of banknote", "BPU>Banknote is ok",  "BPU:Acceptance of banknote",   "BA.a$"],
-                                ["BPU:Check of banknote", "BPU>Banknote is false",  "E_R"         ],
-                                ["BPU:Acceptance of banknote", "BPU>Banknote change needed",  "E_C"         ],
-                                ["BPU:Acceptance of banknote", "BPU>Banknote change not needed",   "E_N"         ]
+                                ["BPU:Check of banknote", "BPU>Banknote is ok",  "BPU:Acceptance of banknote",   "BPU.accept banknote"],
+                                ["BPU:Check of banknote", "BPU>Banknote is false",  "E_Rejected"         ],
+                                ["BPU:Acceptance of banknote", "BPU>Banknote change needed",  "E_Change needed"         ],
+                                ["BPU:Acceptance of banknote", "BPU>Banknote change not needed",   "E_Change not needed"         ]
                             ]
                         },
                         "CCPP": {
@@ -96,8 +96,8 @@
                             },
                             "ts": [
                                 ["I", "CCRD.sw$", "BPU:Check of banknote",   "CCRD.c$"],
-                                ["BPU:Check of banknote", "CCRD.a$",  "E_C"           ],
-                                ["BPU:Check of banknote", "CCRD.r$",  "E_R"           ]
+                                ["BPU:Check of banknote", "CCRD.a$",  "E_Change needed"           ],
+                                ["BPU:Check of banknote", "CCRD.r$",  "E_Rejected"           ]
                             ]
                         }
                     },
@@ -133,10 +133,10 @@
                         ["I",    "CCRD.sw$", "CCPP"        ],
                         ["BPU",  "BPU>Banknote is false",    "ReB"          ],
                         ["BPU",  "BPU>Banknote change needed",    "CCM", "CH.c$" ],
-                        ["BPU",  "BPU>Banknote change not needed",     "E_N"         ],
+                        ["BPU",  "BPU>Banknote change not needed",     "E_Change not needed"         ],
                         ["CCPP", "CCRD.r$",  "ReB"          ],
                         ["CCPP", "CCRD.a$",  "E_P"         ],
-                        ["ReB",   "RE.d",     "E_R"         ],
+                        ["ReB",   "RE.d",     "E_Rejected"         ],
                         ["CCM",   "CH.d",     "E_P"         ]
                     ]
                 },

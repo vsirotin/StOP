@@ -323,7 +323,7 @@ describe.skip("SFSM compact – Stack inspection", () => {
 
     it("stack grows to ['TS','PP','CPP'] when entering coin payment sub-FA", () => {
         const device2 = new TurnstileDevice();
-        const absorb = new AbsorbingCommandReceiver(["CC.cw$", "CC.cf$", "CA.a$", "CH.c$", "BPU.check banknote", "BA.a$"]);
+        const absorb = new AbsorbingCommandReceiver(["CC.cw$", "CC.cf$", "CA.a$", "CH.c$", "BPU.check banknote", "BPU.accept banknote"]);
         new ControllerHub()
             .registerSignalSender(device2)
             .registerCommandReceiver(device2)
@@ -332,7 +332,7 @@ describe.skip("SFSM compact – Stack inspection", () => {
 
         h.sfsm.receiveSignal("CR.cc$", { value: 1 });
         expect(h.sfsm.getCurrentStack()).toEqual(["TS", "PU", "CPU"]);
-        expect(h.sfsm.getHeadState()).toBe("CW");
+        expect(h.sfsm.getHeadState()).toBe("CPU:Check of coin weight");
     });
 
     it("stack returns to ['TS'] after full transaction", () => {

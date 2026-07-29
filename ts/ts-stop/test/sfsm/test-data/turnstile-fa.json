@@ -102,7 +102,7 @@
                                 "description": "Command to banknote checker with data with banknote for checking",
                                 "receiver": "Banknote Checker"
                             },
-                            "BA.a$": {
+                            "BPU.accept banknote": {
                                 "name": "Accept banknote",
                                 "description": "Command to banknote acceptor with data with banknote for acceptance",
                                 "receiver": "Banknote Acceptor"
@@ -110,25 +110,25 @@
                         },
                         "ts": [
                             ["BPU:I","BPU>Banknote candidate inserted","BPU:Check of banknote","BPU.check banknote"],
-                            ["BPU:Check of banknote","BPU>Banknote is ok","BPU:Acceptance of banknote","BA.a$"],
-                            ["BPU:Check of banknote","BPU>Banknote is false","E_R"],
-                            ["BPU:Acceptance of banknote","BPU>Banknote change needed","E_C"],
-                            ["BPU:Acceptance of banknote","BPU>Banknote change not needed","E_N"]
+                            ["BPU:Check of banknote","BPU>Banknote is ok","BPU:Acceptance of banknote","BPU.accept banknote"],
+                            ["BPU:Check of banknote","BPU>Banknote is false","E_Rejected"],
+                            ["BPU:Acceptance of banknote","BPU>Banknote change needed","E_Change needed"],
+                            ["BPU:Acceptance of banknote","BPU>Banknote change not needed","E_Change not needed"]
                         ]
                     },
                     "CPU": {
                         "name": "Coin Payment Unit",
                         "description": "Coin Payment Unit is a sub-FA of Payment Unit that handles payment with coin. It can be in one of three states: Check of weight of coin, Check of form of coin, or Acceptance of coin.",
                         "states": {
-                            "CW": {
+                            "CPU:Check of coin weight": {
                                 "name": "Check of weight of coin",
                                 "description": "Checks if a weight of a coin is in accepted interval"
                             },
-                            "CF": {
+                            "CPU:Check of coin form": {
                                 "name": "Check of form of coin",
                                 "description": "Checks if a form of coin is accepted"
                             },
-                            "BPU:Acceptance of banknote": {
+                            "CPU:Acceptance of coin": {
                                 "name": "Aceceptance of coin",
                                 "description": "Accept a real coin and save it in internal tresor"
                             }
@@ -178,13 +178,13 @@
                             }
                         },
                         "ts": [
-                            ["CPU:I","CR.cc$","CW","CC.cw$"],
-                            ["CW","CC.p$","CF","CC.cf$"],
-                            ["CF","CC.p$","BPU:Acceptance of banknote","CA.a$"],
-                            ["CW","CC.r$","E_R"],
-                            ["CF","CC.r$","E_R"],
-                            ["BPU:Acceptance of banknote","CA.c$","E_C"],
-                            ["BPU:Acceptance of banknote","CA.n","E_N"]
+                            ["CPU:I","CR.cc$","CPU:Check of coin weight","CC.cw$"],
+                            ["CPU:Check of coin weight","CC.p$","CPU:Check of coin form","CC.cf$"],
+                            ["CPU:Check of coin form","CC.p$","CPU:Acceptance of coin","CA.a$"],
+                            ["CPU:Check of coin weight","CC.r$","E_Rejected"],
+                            ["CPU:Check of coin form","CC.r$","E_Rejected"],
+                            ["CPU:Acceptance of coin","CA.c$","E_Change needed"],
+                            ["CPU:Acceptance of coin","CA.n","E_Change not needed"]
                         ]
                     }
                 },
@@ -222,11 +222,11 @@
                     ["PU:I","CR.cc$","CPU"],
                     ["BPU","BPU>Banknote is false","ReB"],
                     ["BPU","BPU>Banknote change needed","CCM","CH.c$"],
-                    ["BPU","BPU>Banknote change not needed","E_N"],
+                    ["BPU","BPU>Banknote change not needed","E_Change not needed"],
                     ["CPU","CC.r$","ReB"],
                     ["CPU","CA.c$","CCM","CH.c$"],
                     ["CPU","CA.n","E_P"],
-                    ["ReB","RE.d","E_R"],
+                    ["ReB","RE.d","E_Rejected"],
                     ["CCM","CH.d","E_P"]
                 ]
             }

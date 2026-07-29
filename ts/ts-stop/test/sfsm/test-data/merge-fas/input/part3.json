@@ -1,15 +1,15 @@
 {
     "CPU": {
             "states": {
-                "CW": {
+                "CPU:Check of coin weight": {
                     "name": "Check of weight of coin",
                     "description": "Checks if a weight of a coin is in accepted interval"
                 },
-                "CF": {
+                "CPU:Check of coin form": {
                     "name": "Check of form of coin",
                     "description": "Checks if a form of coin is accepted"
                 },
-                "BPU:Acceptance of banknote": {
+                "CPU:Acceptance of coin": {
                     "name": "Aceceptance of coin",
                     "description": "Accept a real coin and save it in internal tresor"
                 }
@@ -59,13 +59,13 @@
                 }
             },
             "ts": [
-                ["CPU:I","CR.cc$","CW","CC.cw$"],
-                ["CW","CC.p$","CF","CC.cf$"],
-                ["CF","CC.p$","BPU:Acceptance of banknote","CA.a$"],
-                ["CW","CC.r$","E_R"],
-                ["CF","CC.r$","E_R"],
-                ["BPU:Acceptance of banknote","CA.c$","E_C"],
-                ["BPU:Acceptance of banknote","CA.n","E_N"]
+                ["CPU:I","CR.cc$","CPU:Check of coin weight","CC.cw$"],
+                ["CPU:Check of coin weight","CC.p$","CPU:Check of coin form","CC.cf$"],
+                ["CPU:Check of coin form","CC.p$","CPU:Acceptance of coin","CA.a$"],
+                ["CPU:Check of coin weight","CC.r$","E_Rejected"],
+                ["CPU:Check of coin form","CC.r$","E_Rejected"],
+                ["CPU:Acceptance of coin","CA.c$","E_Change needed"],
+                ["CPU:Acceptance of coin","CA.n","E_Change not needed"]
             ]
         }
 }

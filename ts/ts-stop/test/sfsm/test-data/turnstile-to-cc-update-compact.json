@@ -17,16 +17,16 @@
             ["I",    "CCRD.sw$", "CCPP"        ],
             ["BPU",  "BPU>Banknote is false",    "ReB"          ],
             ["BPU",  "BPU>Banknote change needed",    "CCM", "CH.c$" ],
-            ["BPU",  "BPU>Banknote change not needed",     "E_N"         ],
+            ["BPU",  "BPU>Banknote change not needed",     "E_Change not needed"         ],
             ["CCPP", "CCRD.r$",  "ReB"          ],
             ["CCPP", "CCRD.a$",  "E_P"         ],
-            ["ReB",   "RE.d",     "E_R"         ],
+            ["ReB",   "RE.d",     "E_Rejected"         ],
             ["CCM",   "CH.d",     "E_P"         ]
         ],
         "CCPP": [
             ["I", "CCRD.sw$", "BPU:Check of banknote",   "CCRD.c$"],
-            ["BPU:Check of banknote", "CCRD.a$",  "E_C"           ],
-            ["BPU:Check of banknote", "CCRD.r$",  "E_R"           ]
+            ["BPU:Check of banknote", "CCRD.a$",  "E_Change needed"           ],
+            ["BPU:Check of banknote", "CCRD.r$",  "E_Rejected"           ]
         ]
     }
 }

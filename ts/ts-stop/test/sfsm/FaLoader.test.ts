@@ -144,8 +144,8 @@ const COMPACT_FA_FIXTURE = {
         ["CPU", "CA.n", "E_P"],
     ],
     CPU: [
-        ["I", "CR.cc$", "CW", "CC.cw$"],
-        ["CW", "CC.p$", "CF", "CC.cf$"],
+        ["I", "CR.cc$", "CPU:Check of coin weight", "CC.cw$"],
+        ["CPU:Check of coin weight", "CC.p$", "CPU:Check of coin form", "CC.cf$"],
     ],
 };
 

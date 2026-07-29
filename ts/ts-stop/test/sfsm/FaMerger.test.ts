@@ -14,7 +14,7 @@ describe("mergeFAs", () => {
                     PP: {
                         states: {
                             BPP: {
-                                ts: [["I", "BPU>Banknote candidate inserted", "E_N"]]
+                                ts: [["I", "BPU>Banknote candidate inserted", "E_Change not needed"]]
                             }
                         },
                         ts: [["I", "BPU>Banknote candidate inserted", "BPU"]]
@@ -25,7 +25,7 @@ describe("mergeFAs", () => {
         };
 
         const inputB: FaDefinition = {
-            AUX: [["I", "A.s", "E_N"]]
+            AUX: [["I", "A.s", "E_Change not needed"]]
         };
 
         const { merged, warnings } = mergeFAs([inputA, inputB]);
@@ -34,32 +34,32 @@ describe("mergeFAs", () => {
         expect(merged).toEqual({
             TS: [["I", "TS>start", "PU"]],
             PP: [["I", "BPU>Banknote candidate inserted", "BPU"]],
-            BPP: [["I", "BPU>Banknote candidate inserted", "E_N"]],
-            AUX: [["I", "A.s", "E_N"]]
+            BPP: [["I", "BPU>Banknote candidate inserted", "E_Change not needed"]],
+            AUX: [["I", "A.s", "E_Change not needed"]]
         });
     });
 
     it("should keep compact input unchanged before merge", () => {
         const compactA: FaDefinition = {
-            A: [["I", "A.s", "E_N"]]
+            A: [["I", "A.s", "E_Change not needed"]]
         };
         const compactB: FaDefinition = {
-            B: [["I", "B.s", "E_N"]]
+            B: [["I", "B.s", "E_Change not needed"]]
         };
 
         const { merged, warnings } = mergeFAs([compactA, compactB]);
 
         expect(warnings).toEqual([]);
         expect(merged).toEqual({
-            A: [["I", "A.s", "E_N"]],
-            B: [["I", "B.s", "E_N"]]
+            A: [["I", "A.s", "E_Change not needed"]],
+            B: [["I", "B.s", "E_Change not needed"]]
         });
     });
 
     it("should overwrite duplicate FA keys from later inputs and report warnings", () => {
         const inputA: FaDefinition = {
             TS: [["I", "TS>start", "TS:Locked"]],
-            PP: [["I", "PP.s", "E_N"]]
+            PP: [["I", "PP.s", "E_Change not needed"]]
         };
         const inputB: FaDefinition = {
             PP: [["I", "PP.s2", "E_P"]],

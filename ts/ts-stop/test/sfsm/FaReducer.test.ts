@@ -69,23 +69,23 @@ describe("reduceFA – output shape", () => {
         const bppTransitions = reduced["BPU"] as Transition[];
         expect(bppTransitions).toEqual([
             ["BPU:I", "BPU>Banknote candidate inserted", "BPU:Check of banknote", "BPU.check banknote"],
-            ["BPU:Check of banknote", "BPU>Banknote is ok", "BPU:Acceptance of banknote", "BA.a$"],
-            ["BPU:Check of banknote", "BPU>Banknote is false", "E_R"],
-            ["BPU:Acceptance of banknote", "BPU>Banknote change needed", "E_C"],
-            ["BPU:Acceptance of banknote", "BPU>Banknote change not needed", "E_N"]
+            ["BPU:Check of banknote", "BPU>Banknote is ok", "BPU:Acceptance of banknote", "BPU.accept banknote"],
+            ["BPU:Check of banknote", "BPU>Banknote is false", "E_Rejected"],
+            ["BPU:Acceptance of banknote", "BPU>Banknote change needed", "E_Change needed"],
+            ["BPU:Acceptance of banknote", "BPU>Banknote change not needed", "E_Change not needed"]
         ]);
     });
 
     it("CPU transitions should match original ts array", () => {
         const cpuTransitions = reduced["CPU"] as Transition[];
         expect(cpuTransitions).toEqual([
-            ["CPU:I", "CR.cc$", "CW", "CC.cw$"],
-            ["CW", "CC.p$", "CF", "CC.cf$"],
-            ["CF", "CC.p$", "BPU:Acceptance of banknote", "CA.a$"],
-            ["CW", "CC.r$", "E_R"],
-            ["CF", "CC.r$", "E_R"],
-            ["BPU:Acceptance of banknote", "CA.c$", "E_C"],
-            ["BPU:Acceptance of banknote", "CA.n", "E_N"]
+            ["CPU:I", "CR.cc$", "CPU:Check of coin weight", "CC.cw$"],
+            ["CPU:Check of coin weight", "CC.p$", "CPU:Check of coin form", "CC.cf$"],
+            ["CPU:Check of coin form", "CC.p$", "CPU:Acceptance of coin", "CA.a$"],
+            ["CPU:Check of coin weight", "CC.r$", "E_Rejected"],
+            ["CPU:Check of coin form", "CC.r$", "E_Rejected"],
+            ["CPU:Acceptance of coin", "CA.c$", "E_Change needed"],
+            ["CPU:Acceptance of coin", "CA.n", "E_Change not needed"]
         ]);
     });
 });
@@ -112,10 +112,10 @@ describe("reduceFA – single-level extended FA", () => {
             "BPU": {
                 ts: [
                     ["I", "BPU>Banknote candidate inserted", "BPU:Check of banknote", "BPU.check banknote"],
-                    ["BPU:Check of banknote", "BPU>Banknote is ok", "BPU:Acceptance of banknote", "BA.a$"],
-                    ["BPU:Check of banknote", "BPU>Banknote is false", "E_R"],
-                    ["BPU:Acceptance of banknote", "BPU>Banknote change needed", "E_C"],
-                    ["BPU:Acceptance of banknote", "BPU>Banknote change not needed", "E_N"]
+                    ["BPU:Check of banknote", "BPU>Banknote is ok", "BPU:Acceptance of banknote", "BPU.accept banknote"],
+                    ["BPU:Check of banknote", "BPU>Banknote is false", "E_Rejected"],
+                    ["BPU:Acceptance of banknote", "BPU>Banknote change needed", "E_Change needed"],
+                    ["BPU:Acceptance of banknote", "BPU>Banknote change not needed", "E_Change not needed"]
                 ]
             }
         };
