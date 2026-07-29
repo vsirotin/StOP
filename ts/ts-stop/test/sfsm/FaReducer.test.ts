@@ -68,7 +68,7 @@ describe("reduceFA – output shape", () => {
     it("BPU transitions should match original ts array", () => {
         const bppTransitions = reduced["BPU"] as Transition[];
         expect(bppTransitions).toEqual([
-            ["BPU:I", "BPU>Banknote candidate inserted", "BPU:Check of banknote", "BPU>Banknote change needed"],
+            ["BPU:I", "BPU>Banknote candidate inserted", "BPU:Check of banknote", "BPU.check banknote"],
             ["BPU:Check of banknote", "BPU>Banknote is ok", "BPU:Acceptance of banknote", "BA.a$"],
             ["BPU:Check of banknote", "BPU>Banknote is false", "E_R"],
             ["BPU:Acceptance of banknote", "BPU>Banknote change needed", "E_C"],
@@ -111,7 +111,7 @@ describe("reduceFA – single-level extended FA", () => {
         const singleFa: FaDefinition = {
             "BPU": {
                 ts: [
-                    ["I", "BPU>Banknote candidate inserted", "BPU:Check of banknote", "BPU>Banknote change needed"],
+                    ["I", "BPU>Banknote candidate inserted", "BPU:Check of banknote", "BPU.check banknote"],
                     ["BPU:Check of banknote", "BPU>Banknote is ok", "BPU:Acceptance of banknote", "BA.a$"],
                     ["BPU:Check of banknote", "BPU>Banknote is false", "E_R"],
                     ["BPU:Acceptance of banknote", "BPU>Banknote change needed", "E_C"],

@@ -42,7 +42,7 @@
                             }
                         },
                         "commands": {
-                            "BPU>Banknote change needed": {
+                            "BPU.check banknote": {
                                 "name": "Check banknote",
                                 "description": "Command to banknote checker with data with banknote for checking",
                                 "receiver": "Banknote Checker"
@@ -54,7 +54,7 @@
                             }
                         },
                         "ts": [
-                            ["I", "BPU>Banknote candidate inserted", "BPU:Check of banknote",   "BPU>Banknote change needed"],
+                            ["I", "BPU>Banknote candidate inserted", "BPU:Check of banknote",   "BPU.check banknote"],
                             ["BPU:Check of banknote", "BPU>Banknote is ok",  "BPU:Acceptance of banknote",   "BA.a$"],
                             ["BPU:Check of banknote", "BPU>Banknote is false",  "E_R"         ],
                             ["BPU:Acceptance of banknote", "BPU>Banknote change needed",  "E_C"         ],

@@ -323,7 +323,7 @@ describe.skip("SFSM – Stack inspection", () => {
     it("stack grows to ['TS','PU'] when entering payment sub-FA", () => {
         // Wire a blocking hub — absorbs all commands so the cascade stalls mid-way
         const device2 = new TurnstileDevice();
-        const absorb = new AbsorbingCommandReceiver(["CC.cw$", "CC.cf$", "CA.a$", "CH.c$", "BPU>Banknote change needed", "BA.a$"]);
+        const absorb = new AbsorbingCommandReceiver(["CC.cw$", "CC.cf$", "CA.a$", "CH.c$", "BPU.check banknote", "BA.a$"]);
         new ControllerHub()
             .registerSignalSender(device2)
             .registerCommandReceiver(device2)

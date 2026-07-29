@@ -323,7 +323,7 @@ describe.skip("SFSM compact – Stack inspection", () => {
 
     it("stack grows to ['TS','PP','CPP'] when entering coin payment sub-FA", () => {
         const device2 = new TurnstileDevice();
-        const absorb = new AbsorbingCommandReceiver(["CC.cw$", "CC.cf$", "CA.a$", "CH.c$", "BPU>Banknote change needed", "BA.a$"]);
+        const absorb = new AbsorbingCommandReceiver(["CC.cw$", "CC.cf$", "CA.a$", "CH.c$", "BPU.check banknote", "BA.a$"]);
         new ControllerHub()
             .registerSignalSender(device2)
             .registerCommandReceiver(device2)
