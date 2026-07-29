@@ -12,10 +12,10 @@
         ["CCM", "CH.d", "E_P"]
     ],
     "BPU": [
-        ["BPU:I", "BR.bc$", "C", "BC.c$"],
-        ["C", "BC.p$", "A", "BA.a$"],
-        ["C", "BC.r$", "E_R"],
-        ["A", "BA.c$", "E_C"],
-        ["A", "BA.n", "E_N"]
+        ["BPU:I", "BR.bc$", "BPU:Check of banknote", "BC.c$"],
+        ["BPU:Check of banknote", "BC.p$", "BPU:Acceptance of banknote", "BA.a$"],
+        ["BPU:Check of banknote", "BC.r$", "E_R"],
+        ["BPU:Acceptance of banknote", "BA.c$", "E_C"],
+        ["BPU:Acceptance of banknote", "BA.n", "E_N"]
     ]
 }

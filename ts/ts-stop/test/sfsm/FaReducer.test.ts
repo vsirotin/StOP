@@ -68,11 +68,11 @@ describe("reduceFA – output shape", () => {
     it("BPU transitions should match original ts array", () => {
         const bppTransitions = reduced["BPU"] as Transition[];
         expect(bppTransitions).toEqual([
-            ["BPU:I", "BR.bc$", "C", "BC.c$"],
-            ["C", "BC.p$", "A", "BA.a$"],
-            ["C", "BC.r$", "E_R"],
-            ["A", "BA.c$", "E_C"],
-            ["A", "BA.n", "E_N"]
+            ["BPU:I", "BR.bc$", "BPU:Check of banknote", "BC.c$"],
+            ["BPU:Check of banknote", "BC.p$", "BPU:Acceptance of banknote", "BA.a$"],
+            ["BPU:Check of banknote", "BC.r$", "E_R"],
+            ["BPU:Acceptance of banknote", "BA.c$", "E_C"],
+            ["BPU:Acceptance of banknote", "BA.n", "E_N"]
         ]);
     });
 
@@ -81,11 +81,11 @@ describe("reduceFA – output shape", () => {
         expect(cpuTransitions).toEqual([
             ["CPU:I", "CR.cc$", "CW", "CC.cw$"],
             ["CW", "CC.p$", "CF", "CC.cf$"],
-            ["CF", "CC.p$", "A", "CA.a$"],
+            ["CF", "CC.p$", "BPU:Acceptance of banknote", "CA.a$"],
             ["CW", "CC.r$", "E_R"],
             ["CF", "CC.r$", "E_R"],
-            ["A", "CA.c$", "E_C"],
-            ["A", "CA.n", "E_N"]
+            ["BPU:Acceptance of banknote", "CA.c$", "E_C"],
+            ["BPU:Acceptance of banknote", "CA.n", "E_N"]
         ]);
     });
 });
@@ -111,11 +111,11 @@ describe("reduceFA – single-level extended FA", () => {
         const singleFa: FaDefinition = {
             "BPU": {
                 ts: [
-                    ["I", "BR.bc$", "C", "BC.c$"],
-                    ["C", "BC.p$", "A", "BA.a$"],
-                    ["C", "BC.r$", "E_R"],
-                    ["A", "BA.c$", "E_C"],
-                    ["A", "BA.n", "E_N"]
+                    ["I", "BR.bc$", "BPU:Check of banknote", "BC.c$"],
+                    ["BPU:Check of banknote", "BC.p$", "BPU:Acceptance of banknote", "BA.a$"],
+                    ["BPU:Check of banknote", "BC.r$", "E_R"],
+                    ["BPU:Acceptance of banknote", "BA.c$", "E_C"],
+                    ["BPU:Acceptance of banknote", "BA.n", "E_N"]
                 ]
             }
         };

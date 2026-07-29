@@ -24,9 +24,9 @@
             ["CCM",   "CH.d",     "E_P"         ]
         ],
         "CCPP": [
-            ["I", "CCRD.sw$", "C",   "CCRD.c$"],
-            ["C", "CCRD.a$",  "E_C"           ],
-            ["C", "CCRD.r$",  "E_R"           ]
+            ["I", "CCRD.sw$", "BPU:Check of banknote",   "CCRD.c$"],
+            ["BPU:Check of banknote", "CCRD.a$",  "E_C"           ],
+            ["BPU:Check of banknote", "CCRD.r$",  "E_R"           ]
         ]
     }
 }

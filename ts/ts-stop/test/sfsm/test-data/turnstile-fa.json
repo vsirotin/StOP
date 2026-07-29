@@ -44,25 +44,25 @@
         ],
 
         "states": {
+            "TS:Locked": {
+                "name": "Locked",
+                "description": "Turnstile is locked and doesn't let someone into the metro or a paid restroom"
+            },
+            "TS:Unlocked": {
+                "name": "Unlocked",
+                "description": "Turnstile is unlocked and let someone into the metro or a paid restroom"
+            },
             "PU": {
                 "name": "Payment unit",
                 "description": "Payment unit is a sub-FA of turnstile device that handles payment with coin or banknote. It can be in one of two sub-FAs: BPU (Banknote Payment Process) or CPU (Coin Payment Process).",
                 "states": {
-                    "TS:Locked": {
-                        "name": "Locked",
-                        "description": "Turnstile is locked and doesn't let someone into the metro or a paid restroom"
-                    },
-                    "TS:Unlocked": {
-                        "name": "Unlocked",
-                        "description": "Turnstile is unlocked and let someone into the metro or a paid restroom"
-                    },
                     "BPU": {
                         "states": {
-                            "C": {
+                            "BPU:Check of banknote": {
                                 "name": "Check of banknote",
                                 "description": "Checks if a banknote is an official and can be used as payment element"
                             },
-                            "A": {
+                            "BPU:Acceptance of banknote": {
                                 "name": "Acceptance of banknote",
                                 "description": "Accept a real banknote and save it in internal tresor"
                             }
@@ -107,11 +107,11 @@
                             }
                         },
                         "ts": [
-                            ["BPU:I","BR.bc$","C","BC.c$"],
-                            ["C","BC.p$","A","BA.a$"],
-                            ["C","BC.r$","E_R"],
-                            ["A","BA.c$","E_C"],
-                            ["A","BA.n","E_N"]
+                            ["BPU:I","BR.bc$","BPU:Check of banknote","BC.c$"],
+                            ["BPU:Check of banknote","BC.p$","BPU:Acceptance of banknote","BA.a$"],
+                            ["BPU:Check of banknote","BC.r$","E_R"],
+                            ["BPU:Acceptance of banknote","BA.c$","E_C"],
+                            ["BPU:Acceptance of banknote","BA.n","E_N"]
                         ]
                     },
                     "CPU": {
@@ -124,7 +124,7 @@
                                 "name": "Check of form of coin",
                                 "description": "Checks if a form of coin is accepted"
                             },
-                            "A": {
+                            "BPU:Acceptance of banknote": {
                                 "name": "Aceceptance of coin",
                                 "description": "Accept a real coin and save it in internal tresor"
                             }
@@ -176,17 +176,24 @@
                         "ts": [
                             ["CPU:I","CR.cc$","CW","CC.cw$"],
                             ["CW","CC.p$","CF","CC.cf$"],
-                            ["CF","CC.p$","A","CA.a$"],
+                            ["CF","CC.p$","BPU:Acceptance of banknote","CA.a$"],
                             ["CW","CC.r$","E_R"],
                             ["CF","CC.r$","E_R"],
-                            ["A","CA.c$","E_C"],
-                            ["A","CA.n","E_N"]
+                            ["BPU:Acceptance of banknote","CA.c$","E_C"],
+                            ["BPU:Acceptance of banknote","CA.n","E_N"]
                         ]
                     }
                 },
                 "ReB": {
                     "name": "Reject bin",
-                    "description": "Rejection of false artifacts (coin or banknote) and send them to reject box"
+                    "description": "Rejection of false artifacts (coin or banknote) and send them to reject box",   
+                    "signals": {
+                        "RE.d": {
+                            "name": "Rejection done",
+                            "description": "Rejection of artifact is done. ",
+                            "sender": "Rejector"
+                        }
+                    }
                 },
                 "CCM": {
                     "name": "Currency change machine ",
@@ -200,11 +207,6 @@
                     }
                 },
                 "signals": {
-                    "RE.d": {
-                        "name": "Rejection done",
-                        "description": "Rejection of artifact is done. ",
-                        "sender": "Rejector"
-                    },
                     "CH.d": {
                         "name": "Change is done",
                         "description": "Making change is done. ",

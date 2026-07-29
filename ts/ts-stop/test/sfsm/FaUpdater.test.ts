@@ -55,7 +55,7 @@ describe("updateCompactFA", () => {
         it("should add a new FA key that was not in the source", () => {
             const source = load("turnstile-fa-compact.json");
             const update: FaUpdate = {
-                add: { "CCPP": [["I", "CCRD.sw$", "C", "CCRD.c$"]] }
+                add: { "CCPP": [["I", "CCRD.sw$", "BPU:Check of banknote", "CCRD.c$"]] }
             };
             const result = updateCompactFA(source, update);
             expect(Object.keys(result)).toContain("CCPP");

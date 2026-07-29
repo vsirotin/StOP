@@ -9,7 +9,7 @@
                     "name": "Check of form of coin",
                     "description": "Checks if a form of coin is accepted"
                 },
-                "A": {
+                "BPU:Acceptance of banknote": {
                     "name": "Aceceptance of coin",
                     "description": "Accept a real coin and save it in internal tresor"
                 }
@@ -61,11 +61,11 @@
             "ts": [
                 ["CPU:I","CR.cc$","CW","CC.cw$"],
                 ["CW","CC.p$","CF","CC.cf$"],
-                ["CF","CC.p$","A","CA.a$"],
+                ["CF","CC.p$","BPU:Acceptance of banknote","CA.a$"],
                 ["CW","CC.r$","E_R"],
                 ["CF","CC.r$","E_R"],
-                ["A","CA.c$","E_C"],
-                ["A","CA.n","E_N"]
+                ["BPU:Acceptance of banknote","CA.c$","E_C"],
+                ["BPU:Acceptance of banknote","CA.n","E_N"]
             ]
         }
 }
