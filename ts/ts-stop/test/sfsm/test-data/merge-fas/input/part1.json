@@ -1,6 +1,6 @@
 {
     "TS": [
-        ["I", "TS>start", "TS:Locked"],
+        ["TS:I", "TS>start", "TS:Locked"],
         ["TS:Locked", "BR.bc$", "PU"],
         ["TS:Locked", "CR.cc$", "PU"],
         ["PU", "BA.n", "TS:Unlocked", "TS.unlock"],

@@ -349,7 +349,7 @@ describe("SFSM – Policy: byMissingTransition", () => {
         sfsm.loadFA(loadTurnstileFa());
         // State I — send an unknown signal; expect no throw and state unchanged
         expect(() => sfsm.receiveSignal("UNKNOWN.xyz")).not.toThrow();
-        expect(sfsm.getHeadState()).toBe("I");
+        expect(sfsm.getHeadState()).toBe("TS:I");
     });
 
     it("'log_warning' policy: unknown signal produces a console.warn, no throw", () => {
@@ -358,7 +358,7 @@ describe("SFSM – Policy: byMissingTransition", () => {
         const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => { /* suppress */ });
         expect(() => sfsm.receiveSignal("UNKNOWN.xyz")).not.toThrow();
         expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("UNKNOWN.xyz"));
-        expect(sfsm.getHeadState()).toBe("I");
+        expect(sfsm.getHeadState()).toBe("TS:I");
         warnSpy.mockRestore();
     });
 
@@ -377,7 +377,7 @@ describe("SFSM – loadFA resets state", () => {
 
         // Reload — engine resets
         sfsm.loadFA(loadTurnstileFa());
-        expect(sfsm.getHeadState()).toBe("I");
+        expect(sfsm.getHeadState()).toBe("TS:I");
         expect(sfsm.getCurrentStack()).toEqual(["TS"]);
         expect(sfsm.getLog()).toHaveLength(0);
     });
@@ -390,7 +390,7 @@ describe("SFSM – Log correctness", () => {
         const log = sfsm.getLog();
         expect(log[0].signal).toBe("TS>start");
         expect(log[0].stack).toEqual(["TS"]);
-        expect(log[0].state).toBe("I");
+        expect(log[0].state).toBe("TS:I");
         expect(log[0].newState).toBe("TS:Locked");
         expect(log[0].rule).toBe("2.1");
     });

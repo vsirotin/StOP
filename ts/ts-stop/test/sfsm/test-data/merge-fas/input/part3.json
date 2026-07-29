@@ -59,7 +59,7 @@
                 }
             },
             "ts": [
-                ["I","CR.cc$","CW","CC.cw$"],
+                ["CPU:I","CR.cc$","CW","CC.cw$"],
                 ["CW","CC.p$","CF","CC.cf$"],
                 ["CF","CC.p$","A","CA.a$"],
                 ["CW","CC.r$","E_R"],

@@ -53,7 +53,7 @@ describe("reduceFA – output shape", () => {
     it("TS transitions should match original ts array", () => {
         const tsTransitions = reduced["TS"] as Transition[];
         expect(tsTransitions).toEqual([
-            ["I", "TS>start", "TS:Locked"],
+            ["TS:I", "TS>start", "TS:Locked"],
             ["TS:Locked", "BR.bc$", "PU"],
             ["TS:Locked", "CR.cc$", "PU"],
             ["PU", "BA.n", "TS:Unlocked", "TS.unlock"],
@@ -65,10 +65,10 @@ describe("reduceFA – output shape", () => {
         ]);
     });
 
-    it("BPP transitions should match original ts array", () => {
+    it("BPU transitions should match original ts array", () => {
         const bppTransitions = reduced["BPU"] as Transition[];
         expect(bppTransitions).toEqual([
-            ["I", "BR.bc$", "C", "BC.c$"],
+            ["BPU:I", "BR.bc$", "C", "BC.c$"],
             ["C", "BC.p$", "A", "BA.a$"],
             ["C", "BC.r$", "E_R"],
             ["A", "BA.c$", "E_C"],
@@ -76,10 +76,10 @@ describe("reduceFA – output shape", () => {
         ]);
     });
 
-    it("CPP transitions should match original ts array", () => {
-        const cppTransitions = reduced["CPU"] as Transition[];
-        expect(cppTransitions).toEqual([
-            ["I", "CR.cc$", "CW", "CC.cw$"],
+    it("CPU transitions should match original ts array", () => {
+        const cpuTransitions = reduced["CPU"] as Transition[];
+        expect(cpuTransitions).toEqual([
+            ["CPU:I", "CR.cc$", "CW", "CC.cw$"],
             ["CW", "CC.p$", "CF", "CC.cf$"],
             ["CF", "CC.p$", "A", "CA.a$"],
             ["CW", "CC.r$", "E_R"],

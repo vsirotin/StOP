@@ -1,6 +1,6 @@
 {
     "TS": [
-        ["I", "TS>start", "TS:Locked"],
+        ["TS:I", "TS>start", "TS:Locked"],
         ["TS:Locked", "BR.bc$", "PU"],
         ["TS:Locked", "CR.cc$", "PU"],
         ["PU", "BA.n", "TS:Unlocked", "TS.unlock"],
@@ -11,8 +11,8 @@
         ["TS:Unlocked", "TS>pass", "TS:Locked", "TS.lock"]
     ],
     "PU": [
-        ["I", "BR.bc$", "BPU"],
-        ["I", "CR.cc$", "CPU"],
+        ["PU:I", "BR.bc$", "BPU"],
+        ["PU:I", "CR.cc$", "CPU"],
         ["BPU", "BC.r$", "ReB"],
         ["BPU", "BA.c$", "CCM", "CH.c$"],
         ["BPU", "BA.n", "E_N"],
@@ -23,14 +23,14 @@
         ["CCM", "CH.d", "E_P"]
     ],
     "BPU": [
-        ["I", "BR.bc$", "C", "BC.c$"],
+        ["BPU:I", "BR.bc$", "C", "BC.c$"],
         ["C", "BC.p$", "A", "BA.a$"],
         ["C", "BC.r$", "E_R"],
         ["A", "BA.c$", "E_C"],
         ["A", "BA.n", "E_N"]
     ],
     "CPU": [
-        ["I", "CR.cc$", "CW", "CC.cw$"],
+        ["CPU:I", "CR.cc$", "CW", "CC.cw$"],
         ["CW", "CC.p$", "CF", "CC.cf$"],
         ["CF", "CC.p$", "A", "CA.a$"],
         ["CW", "CC.r$", "E_R"],

@@ -169,7 +169,7 @@ export class FaResolver {
      */
     private resolveEntryState(transitions: Transition[]): string {
         for (const t of transitions) {
-            if (t[0] === 'I' || t[0].endsWith('.I')) {
+            if (t[0] === 'I' || t[0].endsWith(':I') || t[0].endsWith('.I')) {
                 return t[0];
             }
         }
