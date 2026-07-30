@@ -4,9 +4,9 @@
         ["TS:Locked", "BPU>Banknote candidate inserted", "PU"],
         ["TS:Locked", "CCRD.sw$", "PU"],
         ["PU", "BPU>Banknote change not needed", "TS:Unlocked", "TS.unlock"],
-        ["PU", "CH.d", "TS:Unlocked", "TS.unlock"],
+        ["PU", "CCM>Change is done", "TS:Unlocked", "TS.unlock"],
         ["PU", "CCRD.a$", "TS:Unlocked", "TS.unlock"],
-        ["PU", "RE.d", "TS:Locked", "TS.lock"],
+        ["PU", "ReB>Rejection done", "TS:Locked", "TS.lock"],
         ["TS:Unlocked", "TS>timeout", "TS:Locked", "TS.lock"],
         ["TS:Unlocked", "TS>pass", "TS:Locked", "TS.lock"]
     ],
@@ -14,12 +14,12 @@
         ["I", "BPU>Banknote candidate inserted", "BPU"],
         ["I", "CCRD.sw$", "CCPP"],
         ["BPU", "BPU>Banknote is false", "ReB"],
-        ["BPU", "BPU.check banknote", "CCM", "CH.c$"],
+        ["BPU", "BPU.check banknote", "CCM", "CCM.Make change"],
         ["BPU", "BPU>Banknote change not needed", "E_Change not needed"],
         ["CCPP", "CCRD.r$", "ReB"],
-        ["CCPP", "CCRD.a$", "E_P"],
-        ["ReB", "RE.d", "E_Rejected"],
-        ["CCM", "CH.d", "E_P"]
+        ["CCPP", "CCRD.a$", "E_Payment_OK"],
+        ["ReB", "ReB>Rejection done", "E_Rejected"],
+        ["CCM", "CCM>Change is done", "E_Payment_OK"]
     ],
     "BPU": [
         ["I", "BPU>Banknote candidate inserted", "BPU:Check of banknote", "BPU.check banknote"],

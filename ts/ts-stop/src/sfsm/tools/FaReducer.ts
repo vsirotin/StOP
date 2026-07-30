@@ -1,4 +1,4 @@
-import { FaDefinition, FaNode, Transition } from './types';
+import { FaDefinition, FaNode, Transition } from '../types';
 
 /**
  * Converts an extended FA definition (nested FaNode tree) into compact format

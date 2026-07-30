@@ -1,4 +1,4 @@
-import { FaDefinition, FaNode, Transition } from './types';
+import { FaDefinition, FaNode, Transition } from '../types';
 
 /**
  * Resolved, flat representation of one FA ready for engine processing.

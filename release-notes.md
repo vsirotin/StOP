@@ -1,4 +1,6 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.0.0 build 78
+Project structure and some essential classes will be refactored.
 
 ## Version: 2.4.2 build 77
 dist: ts-stop — Fix: Licensing files (LICENSE-COMMERCIAL.md, LICENSE-PUBLIC.md) and release-notes.md now properly included in npm package. Updated package.json "files" array and publish-local.sh to copy licensing files from monorepo root before packing. Updated DEVELOPMENT.md deployment workflow documentation.

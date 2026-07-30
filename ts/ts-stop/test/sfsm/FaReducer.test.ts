@@ -55,11 +55,11 @@ describe("reduceFA – output shape", () => {
         expect(tsTransitions).toEqual([
             ["TS:I", "TS>start", "TS:Locked"],
             ["TS:Locked", "BPU>Banknote candidate inserted", "PU"],
-            ["TS:Locked", "CR.cc$", "PU"],
+            ["TS:Locked", "CPU>Coin candidate inserted", "PU"],
             ["PU", "BPU>Banknote change not needed", "TS:Unlocked", "TS.unlock"],
-            ["PU", "CA.n", "TS:Unlocked", "TS.unlock"],
-            ["PU", "CH.d", "TS:Unlocked", "TS.unlock"],
-            ["PU", "RE.d", "TS:Locked", "TS.lock"],
+            ["PU", "CPU>Change is not needed", "TS:Unlocked", "TS.unlock"],
+            ["PU", "CCM>Change is done", "TS:Unlocked", "TS.unlock"],
+            ["PU", "ReB>Rejection done", "TS:Locked", "TS.lock"],
             ["TS:Unlocked", "TS>timeout", "TS:Locked", "TS.lock"],
             ["TS:Unlocked", "TS>pass", "TS:Locked", "TS.lock"]
         ]);
@@ -79,13 +79,13 @@ describe("reduceFA – output shape", () => {
     it("CPU transitions should match original ts array", () => {
         const cpuTransitions = reduced["CPU"] as Transition[];
         expect(cpuTransitions).toEqual([
-            ["CPU:I", "CR.cc$", "CPU:Check of coin weight", "CC.cw$"],
-            ["CPU:Check of coin weight", "CC.p$", "CPU:Check of coin form", "CC.cf$"],
-            ["CPU:Check of coin form", "CC.p$", "CPU:Acceptance of coin", "CA.a$"],
-            ["CPU:Check of coin weight", "CC.r$", "E_Rejected"],
-            ["CPU:Check of coin form", "CC.r$", "E_Rejected"],
-            ["CPU:Acceptance of coin", "CA.c$", "E_Change needed"],
-            ["CPU:Acceptance of coin", "CA.n", "E_Change not needed"]
+            ["CPU:I", "CPU>Coin candidate inserted", "CPU:Check of coin weight", "CPU.Check coin weight"],
+            ["CPU:Check of coin weight", "CPU>Coin is OK", "CPU:Check of coin form", "CPU.Check coin form"],
+            ["CPU:Check of coin form", "CPU>Coin is OK", "CPU:Acceptance of coin", "CPU.accept coin"],
+            ["CPU:Check of coin weight", "CPU>Coin rejected", "E_Rejected"],
+            ["CPU:Check of coin form", "CPU>Coin rejected", "E_Rejected"],
+            ["CPU:Acceptance of coin", "CPU>Change is needed", "E_Change needed"],
+            ["CPU:Acceptance of coin", "CPU>Change is not needed", "E_Change not needed"]
         ]);
     });
 });
@@ -167,7 +167,7 @@ describe.skip("reduceFA – round-trip: reduce then load produces same behaviour
         const reduced = reduceFA(loadExtendedFa());
         const h = buildHarness(1, reduced);
         h.service.start();
-        h.sfsm.receiveSignal("CR.cc$", { value: 1 });
+        h.sfsm.receiveSignal("CPU>Coin candidate inserted", { value: 1 });
         expect(h.sfsm.getHeadState()).toBe("TS:Unlocked");
         h.device.triggerPassage();
         expect(h.sfsm.getHeadState()).toBe("TS:Locked");
@@ -177,7 +177,7 @@ describe.skip("reduceFA – round-trip: reduce then load produces same behaviour
         const reduced = reduceFA(loadExtendedFa());
         const h = buildHarness(1, reduced);
         h.service.start();
-        h.sfsm.receiveSignal("CR.cc$", { value: 2 });
+        h.sfsm.receiveSignal("CPU>Coin candidate inserted", { value: 2 });
         expect(h.changer.getLastChangeAmount()).toBe(1);
         expect(h.sfsm.getHeadState()).toBe("TS:Unlocked");
     });

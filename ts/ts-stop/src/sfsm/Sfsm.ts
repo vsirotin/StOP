@@ -1,6 +1,6 @@
 import { FaDefinition, LogEntry, SfsmOptions } from './types';
 import { ICommandReceiver, ISignalReceiver } from './interfaces';
-import { FaResolver } from './FaResolver';
+import { FaResolver } from './tools/FaResolver';
 
 interface StackFrame {
     faName: string;

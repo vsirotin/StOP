@@ -100,29 +100,29 @@ describe.skip("SFSM compact – Turnstile: coin (value=1, no change)", () => {
     });
 
     it("should unlock turnstile after exact-fare coin inserted", () => {
-        h.sfsm.receiveSignal("CR.cc$", { value: 1 });
+        h.sfsm.receiveSignal("CPU>Coin candidate inserted", { value: 1 });
         expect(h.sfsm.getHeadState()).toBe("TS:Unlocked");
     });
 
     it("should issue TS.unlock command when coin is valid", () => {
-        h.sfsm.receiveSignal("CR.cc$", { value: 1 });
+        h.sfsm.receiveSignal("CPU>Coin candidate inserted", { value: 1 });
         expect(h.device.getCommandsReceived()).toContain("TS.unlock");
     });
 
     it("should lock turnstile after person passes", () => {
-        h.sfsm.receiveSignal("CR.cc$", { value: 1 });
+        h.sfsm.receiveSignal("CPU>Coin candidate inserted", { value: 1 });
         h.device.triggerPassage();
         expect(h.sfsm.getHeadState()).toBe("TS:Locked");
     });
 
     it("should issue TS.lock command after passage", () => {
-        h.sfsm.receiveSignal("CR.cc$", { value: 1 });
+        h.sfsm.receiveSignal("CPU>Coin candidate inserted", { value: 1 });
         h.device.triggerPassage();
         expect(h.device.getCommandsReceived()).toContain("TS.lock");
     });
 
     it("should lock turnstile on timeout", () => {
-        h.sfsm.receiveSignal("CR.cc$", { value: 1 });
+        h.sfsm.receiveSignal("CPU>Coin candidate inserted", { value: 1 });
         h.device.triggerTimeout();
         expect(h.sfsm.getHeadState()).toBe("TS:Locked");
     });
@@ -137,22 +137,22 @@ describe.skip("SFSM compact – Turnstile: coin (value=2, change=1)", () => {
     });
 
     it("should unlock turnstile after coin with change inserted", () => {
-        h.sfsm.receiveSignal("CR.cc$", { value: 2 });
+        h.sfsm.receiveSignal("CPU>Coin candidate inserted", { value: 2 });
         expect(h.sfsm.getHeadState()).toBe("TS:Unlocked");
     });
 
     it("should issue CH.c$ command to Changer for change", () => {
-        h.sfsm.receiveSignal("CR.cc$", { value: 2 });
+        h.sfsm.receiveSignal("CPU>Coin candidate inserted", { value: 2 });
         expect(h.changer.getLastChangeAmount()).toBe(1);
     });
 
     it("should issue TS.unlock after change is dispensed", () => {
-        h.sfsm.receiveSignal("CR.cc$", { value: 2 });
+        h.sfsm.receiveSignal("CPU>Coin candidate inserted", { value: 2 });
         expect(h.device.getCommandsReceived()).toContain("TS.unlock");
     });
 
     it("should lock turnstile after person passes following coin-with-change", () => {
-        h.sfsm.receiveSignal("CR.cc$", { value: 2 });
+        h.sfsm.receiveSignal("CPU>Coin candidate inserted", { value: 2 });
         h.device.triggerPassage();
         expect(h.sfsm.getHeadState()).toBe("TS:Locked");
     });
@@ -168,20 +168,20 @@ describe.skip("SFSM compact – Turnstile: rejected coin", () => {
     });
 
     it("should be in PP:RE state while rejection is in progress", () => {
-        h.sfsm.receiveSignal("CR.cc$", { value: 1 });
+        h.sfsm.receiveSignal("CPU>Coin candidate inserted", { value: 1 });
         expect(h.sfsm.getCurrentStack()).toEqual(["TS", "PU"]);
         expect(h.sfsm.getHeadState()).toBe("ReB");
     });
 
     it("should lock turnstile after rejector signals RE.d", () => {
-        h.sfsm.receiveSignal("CR.cc$", { value: 1 });
-        h.sfsm.receiveSignal("RE.d");
+        h.sfsm.receiveSignal("CPU>Coin candidate inserted", { value: 1 });
+        h.sfsm.receiveSignal("ReB>Rejection done");
         expect(h.sfsm.getHeadState()).toBe("TS:Locked");
     });
 
     it("should issue TS.lock command after RE.d completes rejection", () => {
-        h.sfsm.receiveSignal("CR.cc$", { value: 1 });
-        h.sfsm.receiveSignal("RE.d");
+        h.sfsm.receiveSignal("CPU>Coin candidate inserted", { value: 1 });
+        h.sfsm.receiveSignal("ReB>Rejection done");
         expect(h.device.getCommandsReceived()).toContain("TS.lock");
     });
 });
@@ -264,13 +264,13 @@ describe.skip("SFSM compact – Turnstile: rejected banknote", () => {
 
     it("should lock turnstile after rejector signals RE.d", () => {
         h.sfsm.receiveSignal("BPU>Banknote candidate inserted", { value: 1 });
-        h.sfsm.receiveSignal("RE.d");
+        h.sfsm.receiveSignal("ReB>Rejection done");
         expect(h.sfsm.getHeadState()).toBe("TS:Locked");
     });
 
     it("should issue TS.lock command after banknote rejection completes", () => {
         h.sfsm.receiveSignal("BPU>Banknote candidate inserted", { value: 1 });
-        h.sfsm.receiveSignal("RE.d");
+        h.sfsm.receiveSignal("ReB>Rejection done");
         expect(h.device.getCommandsReceived()).toContain("TS.lock");
     });
 });
@@ -284,20 +284,20 @@ describe.skip("SFSM compact – Turnstile: sequential transactions", () => {
     });
 
     it("should handle two successive coin payments correctly", () => {
-        h.sfsm.receiveSignal("CR.cc$", { value: 1 });
+        h.sfsm.receiveSignal("CPU>Coin candidate inserted", { value: 1 });
         expect(h.sfsm.getHeadState()).toBe("TS:Unlocked");
         h.device.triggerPassage();
         expect(h.sfsm.getHeadState()).toBe("TS:Locked");
 
         h.device.reset();
-        h.sfsm.receiveSignal("CR.cc$", { value: 1 });
+        h.sfsm.receiveSignal("CPU>Coin candidate inserted", { value: 1 });
         expect(h.sfsm.getHeadState()).toBe("TS:Unlocked");
         h.device.triggerPassage();
         expect(h.sfsm.getHeadState()).toBe("TS:Locked");
     });
 
     it("should handle coin payment followed by banknote payment", () => {
-        h.sfsm.receiveSignal("CR.cc$", { value: 1 });
+        h.sfsm.receiveSignal("CPU>Coin candidate inserted", { value: 1 });
         h.device.triggerPassage();
         expect(h.sfsm.getHeadState()).toBe("TS:Locked");
 
@@ -323,20 +323,20 @@ describe.skip("SFSM compact – Stack inspection", () => {
 
     it("stack grows to ['TS','PP','CPP'] when entering coin payment sub-FA", () => {
         const device2 = new TurnstileDevice();
-        const absorb = new AbsorbingCommandReceiver(["CC.cw$", "CC.cf$", "CA.a$", "CH.c$", "BPU.check banknote", "BPU.accept banknote"]);
+        const absorb = new AbsorbingCommandReceiver(["CPU.Check coin weight", "CPU.Check coin form", "CPU.accept coin", "CCM.Make change", "BPU.check banknote", "BPU.accept banknote"]);
         new ControllerHub()
             .registerSignalSender(device2)
             .registerCommandReceiver(device2)
             .registerCommandReceiver(absorb)
             .connectTo(h.sfsm);
 
-        h.sfsm.receiveSignal("CR.cc$", { value: 1 });
+        h.sfsm.receiveSignal("CPU>Coin candidate inserted", { value: 1 });
         expect(h.sfsm.getCurrentStack()).toEqual(["TS", "PU", "CPU"]);
         expect(h.sfsm.getHeadState()).toBe("CPU:Check of coin weight");
     });
 
     it("stack returns to ['TS'] after full transaction", () => {
-        h.sfsm.receiveSignal("CR.cc$", { value: 1 });
+        h.sfsm.receiveSignal("CPU>Coin candidate inserted", { value: 1 });
         h.device.triggerPassage();
         expect(h.sfsm.getCurrentStack()).toEqual(["TS"]);
     });

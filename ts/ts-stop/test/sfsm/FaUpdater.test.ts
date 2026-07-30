@@ -100,7 +100,7 @@ describe("updateCompactFA", () => {
             const ts = result["TS"] as [string, string, string][];
             const signals = ts.map(t => t[1]);
             expect(signals).toContain("CCRD.sw$");
-            expect(signals).not.toContain("CR.cc$");
+            expect(signals).not.toContain("CPU>Coin candidate inserted");
         });
     });
 });
@@ -195,7 +195,7 @@ describe("updateFullFA", () => {
             const tsTs = result["TS"]["ts"] as [string, string, string][];
             const signals = tsTs.map(t => t[1]);
             expect(signals).toContain("CCRD.sw$");
-            expect(signals).not.toContain("CR.cc$");
+            expect(signals).not.toContain("CPU>Coin candidate inserted");
         });
     });
 });

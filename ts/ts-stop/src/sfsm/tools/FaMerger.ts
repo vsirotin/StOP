@@ -1,4 +1,4 @@
-import { FaDefinition } from './types';
+import { FaDefinition } from '../types';
 import { reduceFA } from './FaReducer';
 
 export interface MergeFaResult {

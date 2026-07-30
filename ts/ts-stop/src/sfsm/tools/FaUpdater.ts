@@ -1,4 +1,4 @@
-import { FaDefinition, FaNode, FaUpdate, Transition } from './types';
+import { FaDefinition, FaNode, FaUpdate, Transition } from '../types';
 
 /**
  * Apply an update to a compact FA definition (flat Record<string, Transition[]>).

@@ -62,7 +62,7 @@ describe("mergeFAs", () => {
             PP: [["I", "PP.s", "E_Change not needed"]]
         };
         const inputB: FaDefinition = {
-            PP: [["I", "PP.s2", "E_P"]],
+            PP: [["I", "PP.s2", "E_Payment_OK"]],
             TS: [["I", "TS.s2", "TS:Unlocked"]]
         };
 
@@ -70,7 +70,7 @@ describe("mergeFAs", () => {
 
         expect(merged).toEqual({
             TS: [["I", "TS.s2", "TS:Unlocked"]],
-            PP: [["I", "PP.s2", "E_P"]]
+            PP: [["I", "PP.s2", "E_Payment_OK"]]
         });
         expect(warnings).toHaveLength(2);
         expect(warnings[0]).toContain("Duplicate FA key 'PP'");
