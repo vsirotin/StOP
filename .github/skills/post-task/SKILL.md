@@ -45,6 +45,8 @@ Follow these sub-steps in order:
 
 Insert the new version entry **at the beginning** (after the header, at line 3) in `release-notes.md`. If the file does not exist, create it and add the new version entry as the first item. Include the remembered version number and a short explanation of the version update. Latest release appears first, oldest releases appear last. Do not reorder or overwrite previous entries. Update `datetime` to the current date and time in ISO 8601 format.
 
+Update the technical files with version like `package.json`, `Cargo.toml`, `pyproject.toml`, etc. with the new version number.
+
 ### 5. Write commit text proposal
 
 Update **only** the workspace-root file: `commit-text-proposal.txt` (in the workspace root directory where this skill file is located, not in sub-project directories).

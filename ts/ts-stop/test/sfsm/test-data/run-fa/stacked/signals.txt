@@ -1,0 +1,8 @@
+# Signals for the stacked turnstile happy path (with command interpretation).
+# Only "start" and "coin" are needed — the rest of the signals are generated
+# by the command interpreter translating commands back into signals:
+#   check-weight → weight-ok
+#   check-form   → coin-ok
+#   unlock       → push
+start
+coin

@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.1.0 build 79
+feat: ts-stop — Added FaRunner and CommandInterpreter classes (src/sfsm/tools/runner/) for driving an Sfsm through a signal sequence with optional command-to-signal translation. New run-fa.js CLI script for running FAs from the command line. Rewrote tutorial chapter 2 (Stacked Finite State Machines) with a CheckCoin sub-FA example extending the chapter 1 turnstile. 159 tests passing.
+
 ## Version: 3.0.0 build 78
 Project structure and some essential classes will be refactored.
 

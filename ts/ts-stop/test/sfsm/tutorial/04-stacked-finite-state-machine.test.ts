@@ -1,60 +1,124 @@
 import { Sfsm, FaDefinition } from "../../../src/sfsm";
 
 // ---------------------------------------------------------------------------
-// The standalone banknote-payment FA from docs/Tutorial/Tutorial.md,
-// "4. What is a Stacked Finite State Machine (SFSM)?".
-// This is a single, self-contained FA (no sub-FAs of its own) — a minimal
-// illustration of the compact format before hierarchies are introduced.
+// The stacked turnstile FA from the tutorial, "4.1 Extending the turnstile
+// with a CheckCoin sub-FA".
+//
+// This is the same FA used in FaRunnerStacked.test.ts, kept identical to the
+// tutorial markdown so readers can copy-paste-verify. The root Turnstile FA
+// delegates coin verification to a CheckCoin sub-FA that checks weight and
+// form in two steps before exiting with E_OK (accepted) or E_Rejected
+// (rejected).
 // ---------------------------------------------------------------------------
 
-const banknotePaymentFa: FaDefinition = {
-    BPP: [
-        ["I", "BR.bc", "checking", "BC.check"],
-        ["checking", "BC.pass", "accepting", "BA.accept"],
-        ["checking", "BC.reject", "E_rejected"],
-        ["accepting", "BA.changeNeeded", "E_changeNeeded"],
-        ["accepting", "BA.noChangeNeeded", "E_noChangeNeeded"]
+const turnstileWithCheckCoinFa: FaDefinition = {
+    Turnstile: [
+        ["I", "start", "locked"],
+        ["locked", "coin", "CheckCoin"],
+        ["CheckCoin", "coin-ok", "unlocked", "unlock"],
+        ["CheckCoin", "weight-bad", "locked"],
+        ["CheckCoin", "form-bad", "locked"],
+        ["unlocked", "push", "locked"]
+    ],
+    CheckCoin: [
+        ["I", "coin", "checking-weight", "check-weight"],
+        ["checking-weight", "weight-ok", "checking-form", "check-form"],
+        ["checking-form", "coin-ok", "E_OK"],
+        ["checking-weight", "weight-bad", "E_Rejected"],
+        ["checking-form", "form-bad", "E_Rejected"]
     ]
 };
 
 function buildSfsm(): Sfsm {
     const sfsm = new Sfsm();
-    sfsm.loadFA(banknotePaymentFa);
+    sfsm.loadFA(turnstileWithCheckCoinFa);
     return sfsm;
 }
 
-describe("Tutorial – What is a Stacked Finite State Machine (banknote payment)", () => {
-    it("should start in the reserved state 'I'", () => {
+describe("Tutorial – Stacked Finite State Machine (turnstile with CheckCoin)", () => {
+
+    // ── Entry state and stack ──────────────────────────────────────────────
+
+    it("should start in the reserved state 'I' with only Turnstile on the stack", () => {
         const sfsm = buildSfsm();
         expect(sfsm.getHeadState()).toBe("I");
+        expect(sfsm.getCurrentStack()).toEqual(["Turnstile"]);
     });
 
-    it("should move to 'checking' when a banknote candidate arrives", () => {
+    it("should move to 'locked' after the start signal", () => {
         const sfsm = buildSfsm();
-        sfsm.receiveSignal("BR.bc");
-        expect(sfsm.getHeadState()).toBe("checking");
+        sfsm.receiveSignal("start");
+        expect(sfsm.getHeadState()).toBe("locked");
+        expect(sfsm.getCurrentStack()).toEqual(["Turnstile"]);
     });
 
-    it("should reach the 'accepting' state after the checker passes the banknote", () => {
+    // ── Sub-FA push ────────────────────────────────────────────────────────
+
+    it("should push CheckCoin onto the stack when 'coin' is received while locked", () => {
         const sfsm = buildSfsm();
-        sfsm.receiveSignal("BR.bc");
-        sfsm.receiveSignal("BC.pass");
-        expect(sfsm.getHeadState()).toBe("accepting");
+        sfsm.receiveSignal("start");
+        sfsm.receiveSignal("coin");
+        // CheckCoin is pushed; the 'coin' signal is forwarded into it,
+        // driving it from 'I' to 'checking-weight'.
+        expect(sfsm.getCurrentStack()).toEqual(["Turnstile", "CheckCoin"]);
+        expect(sfsm.getHeadState()).toBe("checking-weight");
     });
 
-    it("should reset to 'I' after an exit state is reached (rejected banknote)", () => {
+    it("should advance to 'checking-form' after the weight check passes", () => {
         const sfsm = buildSfsm();
-        sfsm.receiveSignal("BR.bc");
-        sfsm.receiveSignal("BC.reject");
-        // BPP is the (only) root FA here, so reaching an exit state resets it to I
-        expect(sfsm.getHeadState()).toBe("I");
+        sfsm.receiveSignal("start");
+        sfsm.receiveSignal("coin");
+        sfsm.receiveSignal("weight-ok");
+        expect(sfsm.getHeadState()).toBe("checking-form");
+        expect(sfsm.getCurrentStack()).toEqual(["Turnstile", "CheckCoin"]);
     });
 
-    it("should reset to 'I' after an exit state is reached (accepted, change needed)", () => {
+    // ── Sub-FA pop on success (E_OK) ───────────────────────────────────────
+
+    it("should pop CheckCoin and unlock when both checks pass (E_OK → coin-ok forwarded)", () => {
         const sfsm = buildSfsm();
-        sfsm.receiveSignal("BR.bc");
-        sfsm.receiveSignal("BC.pass");
-        sfsm.receiveSignal("BA.changeNeeded");
-        expect(sfsm.getHeadState()).toBe("I");
+        sfsm.receiveSignal("start");
+        sfsm.receiveSignal("coin");
+        sfsm.receiveSignal("weight-ok");
+        sfsm.receiveSignal("coin-ok");
+        // CheckCoin reached E_OK → popped, 'coin-ok' forwarded to Turnstile
+        // → transition to 'unlocked' with 'unlock' command.
+        expect(sfsm.getCurrentStack()).toEqual(["Turnstile"]);
+        expect(sfsm.getHeadState()).toBe("unlocked");
+    });
+
+    it("should lock again after a push signal following a successful coin check", () => {
+        const sfsm = buildSfsm();
+        sfsm.receiveSignal("start");
+        sfsm.receiveSignal("coin");
+        sfsm.receiveSignal("weight-ok");
+        sfsm.receiveSignal("coin-ok");
+        sfsm.receiveSignal("push");
+        expect(sfsm.getHeadState()).toBe("locked");
+    });
+
+    // ── Sub-FA pop on rejection (E_Rejected) ───────────────────────────────
+
+    it("should pop CheckCoin and stay locked when the weight check fails", () => {
+        const sfsm = buildSfsm();
+        sfsm.receiveSignal("start");
+        sfsm.receiveSignal("coin");
+        sfsm.receiveSignal("weight-bad");
+        // CheckCoin reached E_Rejected → popped, 'weight-bad' forwarded to
+        // Turnstile → transition back to 'locked'.
+        expect(sfsm.getCurrentStack()).toEqual(["Turnstile"]);
+        expect(sfsm.getHeadState()).toBe("locked");
+    });
+
+    it("should pop CheckCoin and stay locked when the form check fails", () => {
+        const sfsm = buildSfsm();
+        sfsm.receiveSignal("start");
+        sfsm.receiveSignal("coin");
+        sfsm.receiveSignal("weight-ok");
+        sfsm.receiveSignal("form-bad");
+        // CheckCoin reached E_Rejected → popped, 'form-bad' forwarded to
+        // Turnstile → transition back to 'locked'.
+        expect(sfsm.getCurrentStack()).toEqual(["Turnstile"]);
+        expect(sfsm.getHeadState()).toBe("locked");
     });
 });

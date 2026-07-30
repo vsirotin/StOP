@@ -1,0 +1,17 @@
+{
+    "Turnstile": [
+        ["I", "start", "locked"],
+        ["locked", "coin", "CheckCoin"],
+        ["CheckCoin", "coin-ok", "unlocked", "unlock"],
+        ["CheckCoin", "weight-bad", "locked"],
+        ["CheckCoin", "form-bad", "locked"],
+        ["unlocked", "push", "locked"]
+    ],
+    "CheckCoin": [
+        ["I", "coin", "checking-weight", "check-weight"],
+        ["checking-weight", "weight-ok", "checking-form", "check-form"],
+        ["checking-form", "coin-ok", "E_OK"],
+        ["checking-weight", "weight-bad", "E_Rejected"],
+        ["checking-form", "form-bad", "E_Rejected"]
+    ]
+}

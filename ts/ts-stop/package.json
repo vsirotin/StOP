@@ -1,6 +1,6 @@
 {
   "name": "@vsirotin/ts-stop",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "State Oriented Programming library for TypeScript",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -31,7 +31,8 @@
     "merge-fas": "./scripts/merge-fas.js",
     "merge-fas-from-dir": "./scripts/merge-fas-from-dir.js",
     "update-full-fa": "./scripts/update-fa.js",
-    "update-compact-fa": "./scripts/update-fa.js"
+    "update-compact-fa": "./scripts/update-fa.js",
+    "run-fa": "./scripts/run-fa.js"
   },
   "scripts": {
     "build": "npm run build:cjs && npm run build:esm",
@@ -45,7 +46,8 @@
     "merge-fas": "node scripts/merge-fas.js",
     "merge-fas-from-dir": "node scripts/merge-fas-from-dir.js",
     "update-full-fa": "node scripts/update-fa.js --format=full",
-    "update-compact-fa": "node scripts/update-fa.js --format=compact"
+    "update-compact-fa": "node scripts/update-fa.js --format=compact",
+    "run-fa": "node scripts/run-fa.js"
   },
   "keywords": [
     "typescript",

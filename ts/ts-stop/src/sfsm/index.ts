@@ -10,3 +10,5 @@ export { reduceFA } from './tools/FaReducer';
 export { mergeFAs, MergeFaResult } from './tools/FaMerger';
 export { updateCompactFA, updateFullFA } from './tools/FaUpdater';
 export { loadFAFromFile, loadFAFromURL } from './tools/FaLoader';
+export { CommandInterpreter } from './tools/runner/CommandInterpreter';
+export { FaRunner } from './tools/runner/FaRunner';

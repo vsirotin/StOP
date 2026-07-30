@@ -1,0 +1,7 @@
+I, start, locked
+locked, coin, CheckCoin
+I, coin, checking-weight, check-weight
+checking-weight, weight-ok, checking-form, check-form
+checking-form, coin-ok, E_OK
+CheckCoin, coin-ok, unlocked, unlock
+unlocked, push, locked
