@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.2.0 build 80
+feat: ts-stop — Added FaValidator class (src/sfsm/tools/runner/FaValidator.ts) for validating compact/extended FA definitions against 14 structural rules (11 from spec + 3 pragmatic additions). New validate-fa.js CLI script. 32 unit tests covering all rules using abstract FA names. 191 tests passing.
+
 ## Version: 3.1.0 build 79
 feat: ts-stop — Added FaRunner and CommandInterpreter classes (src/sfsm/tools/runner/) for driving an Sfsm through a signal sequence with optional command-to-signal translation. New run-fa.js CLI script for running FAs from the command line. Rewrote tutorial chapter 2 (Stacked Finite State Machines) with a CheckCoin sub-FA example extending the chapter 1 turnstile. 159 tests passing.
 

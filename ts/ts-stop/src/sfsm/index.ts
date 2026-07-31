@@ -12,3 +12,5 @@ export { updateCompactFA, updateFullFA } from './tools/FaUpdater';
 export { loadFAFromFile, loadFAFromURL } from './tools/FaLoader';
 export { CommandInterpreter } from './tools/runner/CommandInterpreter';
 export { FaRunner } from './tools/runner/FaRunner';
+export { FaValidator } from './tools/runner/FaValidator';
+export type { IValidationIssue, IValidationResult } from './tools/runner/FaValidator';
