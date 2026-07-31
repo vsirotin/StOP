@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.2.1 build 81
+doc: Project: ts-stop — Tutorials restructured.
+
 ## Version: 3.2.0 build 80
 feat: ts-stop — Added FaValidator class (src/sfsm/tools/runner/FaValidator.ts) for validating compact/extended FA definitions against 14 structural rules (11 from spec + 3 pragmatic additions). New validate-fa.js CLI script. 32 unit tests covering all rules using abstract FA names. 191 tests passing.
 

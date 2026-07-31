@@ -1,12 +1,12 @@
-# StOP Tutorial. Part 3: Advanced Themes
+# StOP Tutorial. Chapter 3: Advanced Themes
 
-## 5. How stacked states are processed
+## 3.1 How stacked states are processed
 
 Once an FA can contain other FAs, "processing a signal" needs a precise algorithm — not just "look up the transition," but also "where do I look, and what happens once I find (or fail to find) one." Here are the rules the `Sfsm` engine actually implements (verified directly against its source, `Sfsm.ts`):
 
 1. After `loadFA()`, the root FA is the only element on the stack and its active state is `"I"`. The engine now waits for a signal.
 2. When a signal `s` arrives, the engine searches for a matching transition, starting at the **head** of the stack (the innermost, currently active FA) and, if needed, continuing down through each ancestor FA towards the root:
-   - **2.1** — If the head FA has a transition matching its own active state and `s` (including joker fallbacks, see chapter 3), that transition is applied directly: the head's active state becomes the transition's target. This step is logged with rule `"2.1"`.
+   - **2.1** — If the head FA has a transition matching its own active state and `s` (including joker fallbacks, see chapter 1 §1.3), that transition is applied directly: the head's active state becomes the transition's target. This step is logged with rule `"2.1"`.
    - **2.2** — If the head FA has *no* matching transition, the search continues in its parent FA, then that FA's parent, and so on down to the root.
      - **2.2.1** — If a matching transition is found in some ancestor FA, every FA above it on the stack is popped (they are abandoned mid-flight), that ancestor becomes the new head, and the transition is applied there. 
      - **2.2.2** — If **no** FA anywhere in the stack — from the head all the way down to the root — has a matching transition, **no log entry is created**, and the engine instead applies the `byMissingTransition` policy (`'error'` throws, `'log_warning'` warns and does nothing, `'ignore'` silently does nothing).
@@ -19,7 +19,7 @@ Once an FA can contain other FAs, "processing a signal" needs a precise algorith
 
 The example of using the SFSM engine can be found in [Sfsm.log.test.ts](../../ts-stop/test/sfsm/Sfsm.log.test.ts).
 
-## 6. Signal Senders, Command Receivers, Controllers, and the Controller Hub
+## 3.2 Signal Senders, Command Receivers, Controllers, and the Controller Hub
 
 Everything so far has driven the `Sfsm` engine directly, by calling `receiveSignal()` from test code. In a real application, signals come from real devices — a coin slot, a push sensor, a button — and commands need to reach real devices too — a lock, a light, a dispenser. The library gives you three small building blocks to wire this up cleanly:
 
@@ -78,9 +78,9 @@ gate.isLocked();      // true  — the SFSM sent 'GATE.lock' in response to 'pus
 
 Notice that `TurnstileGate` never touches the `Sfsm` instance directly: it only knows how to emit its own signals and react to its own commands. All the wiring — "which Controller sends which signal," "which Controller handles which command" — lives in one place, the `ControllerHub`, which also gives you `getRegisteredSignals()` / `getRegisteredCommands()` for diagnostics (e.g. to validate that every signal and command mentioned in an FA definition actually has a Controller behind it).
 
-A runnable version of this example is available as a unit test: [06-controllers-and-controller-hub.test.ts](../../ts-stop/test/sfsm/tutorial/06-controllers-and-controller-hub.test.ts).
+A runnable version of this example is available as a unit test: [3-2-controllers-and-controller-hub.test.ts](../../ts-stop/test/sfsm/tutorial/3-2-controllers-and-controller-hub.test.ts).
 
-### 7. Name conventions
+## 3.3 Name conventions
 
 Every example so far has named the entry state simply `"I"` and exit states `"E_something"` — perfectly fine for a small, self-contained FA. Once a stacked SFSM grows to dozens of FAs, plain abbreviations like `"TS:Locked"`, `"TS:Unlocked"`, `"I"`, `"E_R"` start colliding in your head across FAs, and it becomes hard to tell, just by looking at a state name, *which* FA it belongs to.
 
@@ -105,6 +105,6 @@ This means:
 - you can freely mix both styles across FAs in the same SFSM (e.g. namespace only the FAs that are large enough to benefit from it);
 - nothing else changes — this is purely a naming convention for readability, not a new engine feature: no new `SfsmOptions`, no change to how transitions, pushes, pops, or jokers are matched.
 
-A runnable version of this example, built entirely with namespaced names, is available as a unit test: [08-namespaced-state-names.test.ts](../../ts-stop/test/sfsm/tutorial/08-namespaced-state-names.test.ts).
+A runnable version of this example, built entirely with namespaced names, is available as a unit test: [3-3-namespaced-state-names.test.ts](../../ts-stop/test/sfsm/tutorial/3-3-namespaced-state-names.test.ts).
 
-In future this part of tutorial will be expanded with more advanced topics, including description of best practices for building large SFSMs, and a few more examples of real-world applications.
+In future this chapter will be expanded with more advanced topics, including description of best practices for building large SFSMs, and a few more examples of real-world applications.
