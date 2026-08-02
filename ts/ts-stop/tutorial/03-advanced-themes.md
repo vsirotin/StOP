@@ -23,10 +23,12 @@ The example of using the SFSM engine can be found in [Sfsm.log.test.ts](../../ts
 
 Everything so far has driven the `Sfsm` engine directly, by calling `receiveSignal()` from test code. In a real application, signals come from real devices — a coin slot, a push sensor, a button — and commands need to reach real devices too — a lock, a light, a dispenser. The library gives you three small building blocks to wire this up cleanly:
 
-- **`SignalSender`** — an abstract base class you extend on any component that needs to emit signals into the SFSM. You implement `getSignalNames()` (the list of signal names it may ever send) and call the protected `sendSignal(name, data?)` method whenever something happens in the real world.
-- **`CommandReceiver`** — an abstract base class (or, if a class already extends something else, the `ICommandReceiver` interface it mirrors) for any component that needs to react to commands coming *from* the SFSM. You implement `getCommandNames()` (the commands it can handle) and `receiveCommand(command, data?)`.
-- **Controller** — not a class, but a *role*: any component that plays the `SignalSender` role, the `CommandReceiver` role, or (as most real devices do) both at once, is called a Controller.
-- **`ControllerHub`** — the wiring hub that connects every Controller to one `Sfsm` instance. You register each Controller once with `registerSignalSender()` and/or `registerCommandReceiver()`, then call `connectTo(sfsm)`. From then on, the hub automatically routes every command the SFSM sends to the right Controller (by the exact command name), and forwards every signal a Controller sends into the SFSM.
+- **`ISignalSender`** — an interface, that needs to emit signals from some object into the SFSM.
+- **`ICommandReceiver`** — an interface that needs to react to commands coming *from* the SFSM.
+- **`Controller`** — (also often named as the **Bidirectional Protocol Controller** or more simply - *Mapper*) is the class that can wire many signal senders and/or command receivers together in one unit. It is useful in special cases, when some object should play the role of both an `ISignalSender` and an `ICommandReceiver` for the SFSM.
+- **`ControllerHub`** — the wiring hub that connects every signal sender and command receiver (also via controller) to one `Sfsm` instance.
+
+Then you cannot extend your class to implement `ISignalSender` or/and `ICommandReceiver`; you should implement some adapter for your class, that will implement `ISignalSender` or/and `ICommandReceiver` and will be used in `ControllerHub` to connect your class to `Sfsm`.
 
 Here is a minimal physical turnstile "gate" Controller — it plays both roles at once, exactly like the real simulators used elsewhere in this library's own test suite:
 

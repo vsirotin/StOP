@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.2.2 build 82
+doc: .github/skills — Added user-story-writer skill for interactive, structured user story elicitation.
+
 ## Version: 3.2.1 build 81
 doc: Project: ts-stop — Tutorials restructured.
 
