@@ -147,6 +147,5 @@ Every step verb must be chosen from the table below whenever a listed action app
 
 ---
 
-## Reference Example
-
-See `ts/ts-stop/tutorial/case-study-turnstile-sfsm/use-cases.md` for a worked (partially complete) example that demonstrates the expected format, step granularity, and cross-reference style.
+## Reference Examples
+Use the [example](use-case-example.md) as a reference for style, structure, and level of detail.

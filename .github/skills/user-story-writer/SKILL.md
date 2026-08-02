@@ -82,5 +82,5 @@ Before presenting any draft, verify all of the following:
 - Visible and hidden element lists use a flat bullet format (no sub-bullets).
 - Do not use phrases like "it should", "it must", "the system shall" — state behaviour as fact.
 
-## Examples
+## Reference Examples
 Use the [example](user-story-example.md) as a reference for style, structure, and level of detail.

@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.2.6 build 86
+doc: ts-stop — Rewrote turnstile case study use cases per use-case-writer skill: fixed numbering gaps, applied action vocabulary (validate, display, send, receive, decide, notify), split compound actions into atomic steps, added missing use cases (invalid banknote, insufficient change, hardware fault, unlocked state timeout), and ensured full traceability with the user story.
+
 ## Version: 3.2.5 build 85
 doc: .github/skills — Added action vocabulary table to use-case-writer skill.
 
