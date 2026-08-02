@@ -40,13 +40,13 @@ Ask the user the following questions (you may combine them in one message):
 6. **Structural elements** — List the physical or logical parts. Which are visible to the user? Which are internal?
 7. **Actors beyond the primary user** — Are there other actors (operators, service workers, external systems)?
 
-Wait for the user's answers before proceeding.
+Wait for the user's answers before proceeding. If the user's answers are too brief to continue (e.g. fewer than 4 questions answered with meaningful detail), ask targeted follow-up questions before moving to Step 2. Do not proceed to Step 2 with insufficient information.
 
 ### Step 2 — Identify a similar known-domain example
 
 Based on the user's answers, identify a real-world analogue — a well-known system from a similar domain that shares the same interaction pattern (e.g. "this resembles a vending machine", "this is similar to an ATM", "this behaves like a subway gate"). State the analogy explicitly and ask the user: *"Does this analogy fit your system, or is there a better one?"*
 
-Use the analogy to fill in unstated but obvious details (standard edge cases, typical structural elements). Do **not** invent details that contradict the user's description.
+Use the analogy only to prompt targeted clarifying questions about gaps, not to silently populate the story with assumed details.
 
 ### Step 3 — Clarification round
 
@@ -82,8 +82,5 @@ Before presenting any draft, verify all of the following:
 - Visible and hidden element lists use a flat bullet format (no sub-bullets).
 - Do not use phrases like "it should", "it must", "the system shall" — state behaviour as fact.
 
----
-
-## Reference Example
-
-See `ts/ts-stop/tutorial/case-study-turnstile-sfsm/user-story.md` for a worked example that demonstrates the expected level of detail, tone, and structure.
+## Examples
+Use the [example](user-story-example.md) as a reference for style, structure, and level of detail.

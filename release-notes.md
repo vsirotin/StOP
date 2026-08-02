@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.2.3 build 83
+doc: ts-stop — Improved turnstile case study user story: professional wording, consistent element naming, corrected form-checker scope (coins not banknotes), fixed grammar, and aligned with user-story-writer skill quality criteria.
+
 ## Version: 3.2.2 build 82
 doc: .github/skills — Added user-story-writer skill for interactive, structured user story elicitation.
 
