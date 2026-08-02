@@ -1,5 +1,7 @@
 # Turnstile: Use Cases
 
+Base user story: [Turnstile: User Story](user-story.md)
+
 1. Happy path with coin and changing:
     1.1 User insert a coin in the coin slot.
     1.3 The coin-receiver register the coin and push coin to the weight-checker.

@@ -1,4 +1,10 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.2.5 build 85
+doc: .github/skills — Added action vocabulary table to use-case-writer skill.
+
+## Version: 3.2.4 build 84
+doc: .github/skills — Added use-case-writer skill for interactive, traceable use case elicitation from a user story.
+
 ## Version: 3.2.3 build 83
 doc: ts-stop — Improved turnstile case study user story: professional wording, consistent element naming, corrected form-checker scope (coins not banknotes), fixed grammar, and aligned with user-story-writer skill quality criteria.
 
