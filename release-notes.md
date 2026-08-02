@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.3.0 build 87
+feat: ts-stop + .github/skills — Added simulator-writer skill and full turnstile simulator set (15 simulator classes, 10 workflow tests, all passing). Extended jest and tsconfig to cover tutorial directory.
+
 ## Version: 3.2.6 build 86
 doc: ts-stop — Rewrote turnstile case study use cases per use-case-writer skill: fixed numbering gaps, applied action vocabulary (validate, display, send, receive, decide, notify), split compound actions into atomic steps, added missing use cases (invalid banknote, insufficient change, hardware fault, unlocked state timeout), and ensured full traceability with the user story.
 
