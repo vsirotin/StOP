@@ -22,6 +22,9 @@ Every user story must contain **exactly** these sections, in this order:
 
 Do **not** add sections beyond these two. Do **not** include implementation notes, tech stack, or acceptance criteria unless explicitly requested.
 
+When using action verbs, try to follow the [Action Vocabulary](action-vocabulary.md) whenever possible. Use unlisted verbs only when no entry fits.
+---
+
 ---
 
 ## Workflow
