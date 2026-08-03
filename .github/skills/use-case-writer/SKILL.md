@@ -18,6 +18,17 @@ A finished user story (written with the `user-story-writer` skill or equivalent)
 
 ---
 
+## Initialization Use Case
+
+Every use-case document for a stateful system must include exactly one **Initialization Use Case**, numbered `0`, placed before use case 1. It describes how the system moves from "not yet running" into the operational condition in which use case 1 begins — mirroring the reserved entry state `"I"` of a Stacked Finite State Machine and the mandatory transition out of it (see the StOP tutorial, [chapter 1.2](../../../ts/ts-stop/tutorial/01-finite-state-machine.md#12-defining-the-turnstile-with-the-stop-library)).
+
+- Title: "System initialization" (or a title reflecting the domain-specific startup action).
+- Steps are numbered `0.1`, `0.2`, … and follow the same ITS, active/passive-actor, and citation rules as every other use case. This is the sole exception to the "use cases start at 1" numbering rule.
+- The user story rarely describes this action explicitly, since it is easy to take a running system for granted. If the initialization trigger is not stated and cannot be safely inferred from the user story, stop and ask the user how the system starts (e.g., *"How does this system move from off/idle into its first operational state — who or what triggers it?"*) before drafting use case 0.
+- Use case 0 is exempt from the "Steps X.Y–X.Z" reuse convention: since it always runs first and exactly once, no other use case ever needs to cite it.
+
+---
+
 ## Output Structure
 
 The document must open with a back-link to its source user story:
@@ -36,7 +47,7 @@ The body is an ordered list of use cases. Each use case follows this layout:
 ```
 
 **Numbering rules:**
-- Use cases are numbered sequentially from 1 with no gaps.
+- Use cases are numbered sequentially from 1 with no gaps, except for the mandatory Initialization Use Case, which is always numbered `0` and precedes use case 1 (see **Initialization Use Case** above).
 - Steps within a use case are numbered `<use-case-number>.<step-number>` starting from 1, sequentially with no gaps.
 - When a use case reuses steps from another use case, cite them as `Steps <N>.<S>–<N>.<E>` on a line by itself, then continue with new steps if needed.
 
@@ -127,6 +138,7 @@ Produce an internal checklist — do not show it to the user unless asked.
 
 From the checklist, derive the full set of use cases needed to cover the user story:
 
+- Use case `0`: the mandatory Initialization Use Case (see **Initialization Use Case** above). Ask the user for the startup trigger if the user story does not state it.
 - One use case per distinct happy path (combinations of inputs or actors that lead to a successful outcome).
 - One use case per distinct error path.
 - One use case per distinct timeout or service-state transition.
@@ -191,6 +203,7 @@ Before presenting any draft, verify all of the following:
 | **Step-citation validity** | Every step whose input is not the immediately preceding step of the same use case (timeouts, and Send steps not covered by the multi-receiver exception above) explicitly cites the originating step number. |
 | **Timer prerequisites** | Every timer referenced in a timeout-detection step has an explicit "starts" step earlier in the document. |
 | **Ordering & assumption consistency** | No step commits an object irreversibly before all verification/allocation steps whose failure would require reversing it have completed successfully. Every failure or insufficient-resource branch that must return an object does so through an object that a shared prior step has not already committed elsewhere. |
+| **Initialization present** | The document contains exactly one Initialization Use Case, numbered `0`, preceding use case 1, describing how the system reaches the state in which use case 1 begins. |
 | **Active vs. passive actors** | Every passive (non-external-world) actor's step receives an explicitly named signal or object that some earlier step's Send phase sent to it by name — never a bare "now that X" description or an uncaused statement. |
 | **Step-reference validity** | Every `Steps X.Y–X.Z` citation has been verified to be semantically correct in the borrowing use case. No step in the cited range contradicts the purpose of the borrowing use case. |
 | **Numbering integrity** | Use case numbers and step numbers are sequential with no gaps. |

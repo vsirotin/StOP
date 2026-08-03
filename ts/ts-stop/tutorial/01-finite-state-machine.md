@@ -1,6 +1,6 @@
-# StOP Tutorial. Part 1; Finite State Machines
+# StOP Tutorial. Chapter 1: Finite State Machines
 
-## 1. What is a Finite Automaton?
+## 1.1 What is a Finite Automaton?
 
 Mountains of scientific and educational books and articles have been written about finite automata (FA), which manage in an amazing way to not only confuse the reader, but also to frighten practitioners away from using them.
 
@@ -29,7 +29,7 @@ Like this:
 
 This automaton has two states: **locked** and **unlocked**, and two signals: **coin received** (coin) and **person passed through** (push).
 
-## 2. Defining the turnstile with the StOP library
+## 1.2 Defining the turnstile with the StOP library
 
 The [TypeScript StOP library](https://github.com/vsirotin/StOP) processes finite automata with the `Sfsm` engine (available from the `@vsirotin/ts-stop` package). 
 
@@ -81,9 +81,9 @@ sfsm.receiveSignal('push');
 sfsm.getHeadState();          // 'locked'
 ```
 
-A runnable version of this exact example is available as a unit test: [01-what-is-a-finite-automaton.test.ts](../../ts-stop/test/sfsm/tutorial/01-what-is-a-finite-automaton.test.ts).
+A runnable version of this exact example is available as a unit test: [1-1-what-is-a-finite-automaton.test.ts](../../ts-stop/test/sfsm/tutorial/1-1-what-is-a-finite-automaton.test.ts).
 
-### 2.1 A type-safe alternative
+### 1.2.1 A type-safe alternative
 
 The plain-string form above is convenient, but nothing stops a typo like `"lokced"` from silently compiling — the `Transition` type accepts any string in each slot. If you would rather have the TypeScript compiler catch such typos, declare your states and signals as string-literal union types first, and write the transition list against them with a small generic helper:
 
@@ -117,10 +117,10 @@ const sfsm = new Sfsm();
 sfsm.loadFA(turnstileFa);
 ```
 
-This costs nothing at runtime — `typedTransitions()` just returns its argument — but any misspelled state or signal name is now a compile-time error instead of a silent bug. A runnable version of this example is available as a unit test: [02-type-safe-fa-definition.test.ts](../../ts-stop/test/sfsm/tutorial/02-type-safe-fa-definition.test.ts).
+This costs nothing at runtime — `typedTransitions()` just returns its argument — but any misspelled state or signal name is now a compile-time error instead of a silent bug. A runnable version of this example is available as a unit test: [1-2-1-type-safe-fa-definition.test.ts](../../ts-stop/test/sfsm/tutorial/1-2-1-type-safe-fa-definition.test.ts).
 
 
-## 3. Jokers: wildcard signals and states
+## 1.3 Jokers: wildcard signals and states
 
 Writing out every single `<s0, g, s1>` transition by hand works well for a tidy, well-behaved automaton like our turnstile. Real devices, however, are messier: they can receive signals nobody planned for, and they can be told to do the same thing no matter what they happen to be doing at the time. Enumerating every combination by hand would make the transition list explode and, worse, would be all too easy to forget a case.
 
@@ -142,7 +142,7 @@ const sfsm = new Sfsm({
 
 You will rarely need to change these from the default `"*"`; the option exists mainly so you can pick a different symbol if `"*"` ever needs to be a real state or signal name in your own FA.
 
-### 3.1 Joker signal: reacting to the unexpected (e.g. a power failure)
+### 1.3.1 Joker signal: reacting to the unexpected (e.g. a power failure)
 
 Imagine our turnstile's electronics can, at any moment, receive all sorts of diagnostic signals from its sensors — most of which are irrelevant, except that *any* signal that isn't part of its normal vocabulary (`coin`, `push`) should be treated as a sign that something is wrong (power dropping out, a sensor glitching, a cable disconnected...) and the safest reaction is to shut the turnstile down into a safe `off` state.
 
@@ -178,9 +178,9 @@ sfsm.getHeadState();             // 'off'       (joker-signal fallback)
 
 The turnstile keeps behaving exactly as before for `coin` and `push`; only signals it has no explicit rule for fall through to `*` and trigger the safety shutdown.
 
-A runnable version of this example is available as a unit test: [03-joker-signal.test.ts](../../ts-stop/test/sfsm/tutorial/03-joker-signal.test.ts).
+A runnable version of this example is available as a unit test: [1-3-1-joker-signal.test.ts](../../ts-stop/test/sfsm/tutorial/1-3-1-joker-signal.test.ts).
 
-### 3.2 Joker state: a universal signal for technical personnel
+### 1.3.2 Joker state: a universal signal for technical personnel
 
 Now imagine the opposite situation: a maintenance technician needs to send a `service` signal that must always work, no matter what the turnstile happens to be doing — locked, unlocked, mid-transaction, or even already `off`. The technician should not need to know (or care) about the turnstile's current state; they just need "put this thing into maintenance mode, now."
 
@@ -217,7 +217,6 @@ sfsm.getHeadState();             // 'maintenance' — reached just as easily fro
 
 One transition now covers "enter maintenance mode" from every current and future state — including states added to the FA later, with no changes needed to the `service` rule itself.
 
-A runnable version of this example is available as a unit test: [03-joker-state.test.ts](../../ts-stop/test/sfsm/tutorial/03-joker-state.test.ts).
+A runnable version of this example is available as a unit test: [1-3-2-joker-state.test.ts](../../ts-stop/test/sfsm/tutorial/1-3-2-joker-state.test.ts).
 
 In the [next chapter](./02-stacked-finite-state-machine.md) we will see how to combine multiple FAs into a hierarchy, and how the `Sfsm` engine processes signals through that hierarchy.
-

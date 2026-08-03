@@ -2,6 +2,10 @@
 
 Base user story: [Turnstile: User Story](user-story.md)
 
+0. System initialization:
+    0.1 The service worker presses the service button.
+    0.2 The turnstile receives the button press and transitions to the locked state.
+
 1. Happy path with coin and change:
     1.1 The user inserts a coin in the coin slot.
     1.2 The coin-receiver receives the coin and sends it to the weight-checker.
