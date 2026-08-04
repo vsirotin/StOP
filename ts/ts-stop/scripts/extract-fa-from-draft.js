@@ -7,8 +7,9 @@
  *
  * The script reads a markdown file containing extended transitions (as produced
  * by the stop-sfsm-drafter skill), extracts all transition lines, groups them
- * by FA name (the prefix before ":" in the from-state), and writes the result
- * as a JSON file ready for validation and testing.
+ * by FA name (the prefix before ":" in the from-state), strips the FA name
+ * prefix from state names to produce bare state names compatible with the SFSM
+ * engine, and writes the result as a JSON file ready for validation and testing.
  *
  * Usage:
  *   node extract-fa-from-draft.js <input.md> [output.json]
@@ -111,16 +112,33 @@ if (transitionLines.length === 0) {
     process.exit(1);
 }
 
-// ── Group transitions by FA name ────────────────────────────────────────────
+// ── Helper: strip FA name prefix from state names ──────────────────────────
+
+/**
+ * Strips the FA name prefix from a state name.
+ * The prefix is the part before the first ":".
+ *
+ * "Turnstile:I" → "I"
+ * "Weight Checker:E_Weight_Checked" → "E_Weight_Checked"
+ * "Payment Component" (no prefix) → "Payment Component" (unchanged)
+ */
+function stripFaPrefix(state) {
+    const colonIndex = state.indexOf(':');
+    if (colonIndex > 0) {
+        return state.substring(colonIndex + 1);
+    }
+    return state;
+}
+
+// ── Group transitions by FA name and strip prefixes ─────────────────────────
 
 /**
  * The FA name is the prefix of the from-state (the part before the first ":").
  * If the from-state has no ":", the entire from-state is used as the FA name.
  *
- * Example:
- *   "Turnstile:I" → FA name "Turnstile"
- *   "Weight Checker:E_Weight_Checked" → FA name "Weight Checker"
- *   "locked" → FA name "locked"
+ * State name prefixes are stripped from the from-state (element 0) and
+ * to-state (element 2) to produce bare state names compatible with the SFSM
+ * engine. Signal (element 1) and command (element 3) are kept as-is.
  */
 const faGroups = {};
 const faOrder = []; // Track insertion order for consistent output
@@ -141,7 +159,14 @@ for (const { line, transition } of transitionLines) {
         faOrder.push(faName);
     }
 
-    faGroups[faName].push(transition);
+    // Strip FA name prefix from from-state and to-state
+    const strippedTransition = [...transition];
+    strippedTransition[0] = stripFaPrefix(transition[0]);
+    if (transition.length >= 3) {
+        strippedTransition[2] = stripFaPrefix(transition[2]);
+    }
+
+    faGroups[faName].push(strippedTransition);
 }
 
 // ── Build output object (preserving insertion order) ───────────────────────
