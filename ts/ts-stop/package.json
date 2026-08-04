@@ -1,6 +1,6 @@
 {
   "name": "@vsirotin/ts-stop",
-  "version": "3.2.6",
+  "version": "3.5.0",
   "description": "State Oriented Programming library for TypeScript",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -33,7 +33,8 @@
     "update-full-fa": "./scripts/update-fa.js",
     "update-compact-fa": "./scripts/update-fa.js",
     "run-fa": "./scripts/run-fa.js",
-    "validate-fa": "./scripts/validate-fa.js"
+    "validate-fa": "./scripts/validate-fa.js",
+    "extract-fa-from-draft": "./scripts/extract-fa-from-draft.js"
   },
   "scripts": {
     "build": "npm run build:cjs && npm run build:esm",
@@ -49,7 +50,8 @@
     "update-full-fa": "node scripts/update-fa.js --format=full",
     "update-compact-fa": "node scripts/update-fa.js --format=compact",
     "run-fa": "node scripts/run-fa.js",
-    "validate-fa": "node scripts/validate-fa.js"
+    "validate-fa": "node scripts/validate-fa.js",
+    "extract-fa-from-draft": "node scripts/extract-fa-from-draft.js"
   },
   "keywords": [
     "typescript",
