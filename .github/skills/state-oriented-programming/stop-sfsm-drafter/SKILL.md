@@ -3,12 +3,12 @@ name: stop-sfsm-drafter
 description: Interactive SFSM Drafter according StOP (State-oriented Programming paradigm). Transforms an existing user story and use cases into an SFSM draft document containing an FA-structure, extended transitions, and command descriptions. Use when a user asks to draft, create, or generate an SFSM from existing use cases and a user story.
 metadata:
   author: vsirotin
-  version: "0.1"
+  version: "0.2"
 ---
 
 # SFSM Drafter
 
-This skill produces an SFSM draft document (extended transitions) derived from an existing user story and use-case document. The result is a hierarchical FA-structure, a list of extended transitions, and command descriptions — unambiguous for human readers and AI coding agents alike.
+This skill produces an SFSM draft document (extended transitions) derived from an existing user story and use-case document. The result is a hierarchical FA-structure, a list of extended transitions, and event/command descriptions — unambiguous for human readers and AI coding agents alike.
 
 ---
 
@@ -32,7 +32,8 @@ Base use cases: [<System Name>: Use Cases](<use-cases-filename>.md)
 The body contains the following sections, in this order:
 
 1. **FA-structure** — A hierarchical component tree derived from the user story's Structure Overview. This tree is the architectural backbone of the SFSM: each group is a candidate Finite Automaton (FA), and the nesting defines the parent–child (stack) relationships between FAs.
-2. *(Additional sections — extended transitions, command descriptions — will be defined in later steps of this skill's development.)*
+2. **Event and Command Descriptions** — A catalog of all events (external signals entering the SFSM) and commands (actions the SFSM sends to components), with the possible result signals each command can produce.
+3. **Extended Transitions** — The use-case steps, each commented out and annotated with the SFSM transitions it generates, following the transformation rules.
 
 ---
 
@@ -125,28 +126,161 @@ Apply any corrections and produce the final FA-structure.
 
 ---
 
+## Step 2: Event and Command Descriptions
+
+### Goal
+
+Catalog all events (external signals entering the SFSM) and commands (actions the SFSM sends to components) that are discovered during the transformation of use cases into extended transitions (Step 3). This section is built incrementally — new entries are added as each use-case step is processed.
+
+### Output Format
+
+Each component that generates events or receives commands gets its own subsection:
+
+```
+### <Component Name>
+Event: <eventName>(<parameters>) -> send "<Component Name>:<signal name>"
+
+Command: <commandName> can send:
+- "<Component Name>:<signal name>" if <condition>
+- "<Component Name>:<signal name>" if <condition>
+```
+
+**Formatting rules:**
+- **Events** describe signals that originate from outside the SFSM (user actions, sensor detections, timer expirations). The format is: `Event: <methodName>(<parameters>) -> send "<Component>:<Signal>"`
+- **Commands** describe actions the SFSM sends to components. A command may produce multiple possible result signals depending on the outcome. The format is: `Command: <commandName> can send:` followed by a bullet list of possible signals.
+- Signal names use the format `<Component Name>:<signal description>` (e.g., "Weight Checker>WeightCanNeedChange", "Coin Slot>Coin Inserted").
+- Command names use the format `<Component Name>.<commandName>` (e.g., "Weight Checker.checkWeight").
+
+### Rules for Adding Events and Commands
+
+1. **Events** are added when a use-case step describes an external actor (user, service worker) interacting with a visible element, or when a sensor/timer detects an external occurrence. The event describes the signal that enters the SFSM from this interaction.
+
+2. **Commands** are added when a use-case step describes a component performing a processing action (validating, deciding, dispensing, displaying, locking, starting). The command describes the action and all possible result signals it can produce.
+
+3. **Multiple outcomes**: When a command's result depends on its input (e.g., a coin can be valid or invalid), list each possible outcome as a separate bullet with its condition. Do not model this as a generic "validates" command followed by a separate "decides" command — merge validation and decision into one command with multiple possible results.
+
+4. **Incremental building**: The Event and Command Descriptions section is built incrementally as use-case steps are processed. When a step reveals a new event or command, add it to this section. When a step uses an already-documented event or command, no new entry is needed.
+
+---
+
+## Step 3: Extended Transitions — Transforming Use Cases
+
+### Goal
+
+Transform each use-case step into SFSM transitions, following the transformation rules. The result is a code block containing the commented-out use-case steps interleaved with the generated transitions and rule annotations.
+
+### Input
+
+The use-case document, processed step by step. Each use case is numbered (0, 1, 2, …) with steps numbered `<use-case>.<step>` (e.g., 1.4, 1.5).
+
+### Output Format
+
+The extended transitions are rendered inside a `code` block. Each use-case step is:
+1. Copied verbatim and prefixed with `//` (commented out).
+2. Followed by the SFSM transitions it generates (if any).
+3. Followed by `//-- Rule X: <explanation>` annotations (first occurrence of a rule includes the full explanation; subsequent occurrences use just `//-- Rule X`).
+
+Example:
+```code
+//    1.3 The weight-checker validates the weight of the coin and sends it to the form-checker.
+["Weight Checker:I", "Coin Slot>Coin Inserted", "Weight Checker:E_Weight_Checked", "Weight Checker.checkWeight"]
+//-- Rule 4: After completing its task the components to report result to parent use state with name >Component name>:E_*
+
+["Coin Component:I", "Weight Checker>WeightCanNeedChange", "Form Checker"]
+//-- Rule 2
+```
+
+**Transition format:** `["<from-state>", "<signal>", "<to-state>"]` or `["<from-state>", "<signal>", "<to-state>", "<command>"]`
+
+**State naming conventions:**
+- Entry state: `<Component>:I` (e.g., "Turnstile:I", "Weight Checker:I")
+- Regular states: `<Component>:<StateName>` (e.g., "Turnstile:Locked", "Turnstile:Unlocked")
+- Exit states: `<Component>:E_<Description>` (e.g., "Weight Checker:E_Weight_Checked", "Locking Mechanism:E_Unlocked")
+
+**Signal naming conventions:**
+- External events: `<Component>:<EventDescription>` (e.g., "Coin Slot>Coin Inserted", "Push Sensor>Passage")
+- Component results: `<Component>:<ResultDescription>` (e.g., "Weight Checker>WeightCanNeedChange", "Locking Mechanism>Unlocked")
+
+**Command naming conventions:**
+- `<Component>.<commandName>` (e.g., "Weight Checker.checkWeight", "Locking Mechanism.unlock")
+
+### Transformation Rules
+
+**Rule 1 — External events are not converted into transitions.**
+When a use-case step describes an action by an external actor (user, service worker) in the external world, no transition is generated. The step is commented out and annotated with Rule 1. However, if the step reveals a new event (e.g., a user inserting a coin, a service worker pressing a button), an Event entry is added to the Event and Command Descriptions section.
+
+**Rule 2 — Simple state transition or delegation without commands.**
+When a component receives a signal and transitions to a new state without executing a command, this is a simple transition. This also covers **delegation**: when a parent component receives a signal it cannot process in a business sense, it delegates to the appropriate child component. The parent knows only the names and capabilities of its child components, not their internal structure. The transition target is the child component name (which the SFSM engine pushes as a sub-FA).
+
+**Rule 3 — Component starts in initial state.**
+When a sub-FA is entered (pushed onto the stack), it starts in its initial state `I`. The from-state for the first transition in a newly entered sub-FA is `<Component>:I`.
+
+**Rule 4 — Component exits with E_* state to report result to parent.**
+When a leaf component completes its task (validating, checking, dispensing, etc.), it transitions to an exit state `<Component>:E_<Description>` and optionally executes a command. The command produces a result signal in the format `<Component>:<ResultDescription>`, which is sent to the parent. The parent then processes this result signal (typically delegating to the next child or exiting itself).
+
+When an intermediate (non-leaf) component has completed all its sub-tasks, it also exits with an E_* state to report its result to the parent. If the component has no processing logic of its own (a pass-through orchestrator), it exits without a command, and the signal it received from its last child is forwarded to the parent.
+
+**Rule 5 — Cross-branch routing.**
+When a result signal needs to reach a component in a different branch of the FA-structure tree, it propagates up through each parent (each parent exiting with an E_* state per Rule 4) until it reaches a common ancestor. The common ancestor then routes the signal to the target branch by transitioning to the appropriate child component (Rule 2). This is how signals cross from one subsystem (e.g., Payment Component) to another (e.g., Access Component).
+
+**Rule 6 — Already-covered steps.**
+When a use-case step is already fully covered by transitions generated for a previous step (e.g., a fan-out receiver that was handled as part of the sender's routing), no new transitions are generated. The step is commented out and annotated with Rule 6, noting which previous step's transitions cover it.
+
+### Workflow
+
+Follow these steps in order. Do not skip a step.
+
+#### Step 3.1 — Copy use cases into the code block
+
+Copy each use case (title and all steps) into the `code` block, prefixing every line with `//`. Process use cases in order (0, 1, 2, …), and within each use case, process steps in order.
+
+#### Step 3.2 — Process each step line by line
+
+For each commented-out step, determine which transformation rule(s) apply and generate the corresponding transitions. Insert the transitions directly below the commented step. Add `//-- Rule X` annotations after each transition.
+
+As you process each step, check whether it reveals new events or commands. If so, add them to the Event and Command Descriptions section (Step 2).
+
+#### Step 3.3 — Present and confirm
+
+Present the complete extended transitions to the user and ask: *"Do these transitions correctly capture the use-case flow, or should any transitions be adjusted?"*
+
+Apply any corrections and produce the final version.
+
+---
+
 ## Quality Criteria
 
-Before presenting any draft FA-structure, verify all of the following:
+Before presenting any draft, verify all of the following:
 
 | Criterion | Check |
 |---|---|
-| **Completeness** | Every element from the Structure Overview (visible and hidden) appears exactly once in the tree. |
-| **No inventions** | No element appears in the tree that was not listed in the Structure Overview. |
-| **Business coherence** | Each group contains elements that share a common business or physical purpose. The grouping is driven by what the elements do together, not by surface similarity of names. |
-| **Hierarchy depth** | The tree is no deeper than necessary. Single-element sub-groups are flattened unless justified by internal complexity. |
-| **Naming consistency** | Element names match the user story's Structure Overview, normalized to Title Case. Group names are descriptive, in Title Case, and reflect the business purpose of their children. |
-| **Use-case alignment** | Every component referenced in the use cases has a corresponding node in the tree. No use-case actor is left unplaced. |
+| **FA-structure completeness** | Every element from the Structure Overview (visible and hidden) appears exactly once in the tree. |
+| **FA-structure no inventions** | No element appears in the tree that was not listed in the Structure Overview. |
+| **FA-structure business coherence** | Each group contains elements that share a common business or physical purpose. |
+| **FA-structure hierarchy depth** | The tree is no deeper than necessary. Single-element sub-groups are flattened unless justified. |
+| **FA-structure naming** | Element names match the user story's Structure Overview, normalized to Title Case. Group names are descriptive and in Title Case. |
+| **FA-structure use-case alignment** | Every component referenced in the use cases has a corresponding node in the tree. |
+| **Transition completeness** | Every use-case step is either converted into transitions or annotated with a rule explaining why no transitions are needed (Rules 1, 6). |
+| **Transition traceability** | Every transition can be traced back to a specific use-case step. |
+| **State naming** | States follow the `<Component>:<State>` convention. Entry states use `I`, exit states use `E_<Description>`. |
+| **Signal naming** | Signals follow the `<Component>:<SignalDescription>` convention. External events and component results are distinguishable. |
+| **Command naming** | Commands follow the `<Component>.<commandName>` convention. |
+| **Event/command completeness** | Every event referenced in a transition has an entry in the Event and Command Descriptions section. Every command referenced in a transition has an entry with all possible result signals. |
+| **Cross-branch routing** | When a signal crosses branches, it propagates up through parents to a common ancestor, which routes it to the target branch (Rule 5). |
+| **Fan-out handling** | When a step sends to multiple receivers, the first receiver is handled within the same branch, then the result propagates up and across to the other receiver(s). Already-covered receivers are annotated with Rule 6. |
 
 ---
 
 ## Style Rules
 
-- Write group names in Title Case, using descriptive nouns that reflect the group's business purpose (e.g., "Payment Component", "Coin Component", "Lock Component").
-- Normalize element names from the user story to Title Case. Drop leading articles ("a", "an", "the") and convert hyphenated names to spaced Title Case (e.g., "a coin-receiver" → "Coin Receiver", "a timer for the artifact-box" → "Timer for Artifact Box").
-- The tree uses `- ` (dash + space) for each indentation level, repeated per depth.
+- Write group names in Title Case, using descriptive nouns that reflect the group's business purpose.
+- Normalize element names from the user story to Title Case. Drop leading articles ("a", "an", "the") and convert hyphenated names to spaced Title Case.
+- The FA-structure tree uses `- ` (dash + space) for each indentation level, repeated per depth.
 - Do not add prose explanations inside the tree code block. The tree is purely structural.
-- Do not annotate elements as "visible" or "hidden" in the tree — the Structure Overview already records this distinction, and the FA-structure is a unified architectural view.
+- In the Extended Transitions code block, prefix every use-case line with `//`.
+- After each transition, add `//-- Rule X` on its own line. First occurrence of a rule includes the full explanation; subsequent occurrences use just the rule number.
+- Leave a blank line between the last transition of one step and the `//` comment of the next step, for readability.
+- In the Event and Command Descriptions section, use `###` headings for each component, and bullet lists for multiple command outcomes.
 
 ---
 

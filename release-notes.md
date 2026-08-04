@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.4.1 build 89
+feat: .github/skills — Extended stop-sfsm-drafter skill with Step 2 (Event and Command Descriptions) and Step 3 (Extended Transitions transformation rules). Added Rules 1-6 for transforming use-case steps into SFSM transitions, including cross-branch routing (Rule 5) and already-covered steps (Rule 6). Processed use-case steps 1.4-1.17 in the turnstile example with full event/command descriptions for Form Checker, Change Dispenser, Locking Mechanism, Light Indicator, Timer for Unlocked State, and Push Sensor.
+
 ## Version: 3.4.0 build 88
 feat: .github/skills — Added stop-sfsm-drafter skill (Step 1: FA-structure transformation). Transforms the flat Structure Overview from a user story into a hierarchical component tree by grouping elements by business and physical nature, then creating groups of groups. Includes transformation rules, workflow, quality criteria, and a turnstile example. Completed the FA-structure paragraph in the turnstile case study extended-transitions document.
 
