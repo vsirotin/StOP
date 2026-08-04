@@ -12,7 +12,7 @@ The AI-supported skills are listed in the last column.
 |--|--|--|--|--|
 |1|User Story Definition|Creating of User Story inclusive structure description|*-user-story.md|stop-user-story-writer|
 |2|Use Case Definition|Creating of Use Case according special rules and format|*-use-cases.md|stop-use-case-writer|
-|3|SFSM draft|Transformation of Use Cases in a FA-structure, list of extended transitions and command descriptions|extended-transitions.md|stop-sfsm-drafter|
+|3|SFSM draft|Transformation of Use Cases in a FA-structure, list of extended transitions and command descriptions|*-extended-transitions.md|stop-sfsm-drafter|
 |4|Autonomous SFSM test|Test of SFSM without environment|*-sfsm.json|stop-autonomous-sfsm-tester|
 |5|Simulation|Development of simulators and testing of all use cases|simulator and runner code|stop-simulation-developer|
 |6|Production|Production code development|production code|stop-production-developer|
