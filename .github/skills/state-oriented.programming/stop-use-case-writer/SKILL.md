@@ -1,6 +1,6 @@
 ---
-name: use-case-writer
-description: Interactive Use Case Writer. Given an existing user story, elicits missing details through structured questioning and produces a complete, traceable, professionally written use-case document following the project's established structure and style. Use when a user asks to write, draft, or create use cases for a user story.
+name: stop-use-case-writer
+description: Interactive Use Case Writer according StOP (State-oriented Programming paradig). Given an existing user story, elicits missing details through structured questioning and produces a complete, traceable, professionally written use-case document following the project's established structure and style. Use when a user asks to write, draft, or create use cases for a user story.
 metadata:
   author: vsirotin
   version: "1.5"

@@ -1,6 +1,6 @@
 ---
-name: user-story-writer
-description: Interactive User Story Writer. Elicits requirements through structured questioning, finds a similar known-domain example, and produces a concise, professional user story following the project's established structure and style. Use when a user asks to write, draft, or create a user story.
+name: stop-user-story-writer
+description: Interactive User Story Writer according StOP (State-oriented Programming paradig). Elicits requirements through structured questioning, finds a similar known-domain example, and produces a concise, professional user story following the project's established structure and style. Use when a user asks to write, draft, or create a user story.
 metadata:
   author: vsirotin
   version: "1.0"
