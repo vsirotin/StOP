@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.4.0 build 88
+feat: .github/skills — Added stop-sfsm-drafter skill (Step 1: FA-structure transformation). Transforms the flat Structure Overview from a user story into a hierarchical component tree by grouping elements by business and physical nature, then creating groups of groups. Includes transformation rules, workflow, quality criteria, and a turnstile example. Completed the FA-structure paragraph in the turnstile case study extended-transitions document.
+
 ## Version: 3.3.0 build 87
 feat: ts-stop + .github/skills — Added simulator-writer skill and full turnstile simulator set (15 simulator classes, 10 workflow tests, all passing). Extended jest and tsconfig to cover tutorial directory.
 

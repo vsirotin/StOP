@@ -1,6 +1,6 @@
 ---
 name: stop-use-case-writer
-description: Interactive Use Case Writer according StOP (State-oriented Programming paradig). Given an existing user story, elicits missing details through structured questioning and produces a complete, traceable, professionally written use-case document following the project's established structure and style. Use when a user asks to write, draft, or create use cases for a user story.
+description: Interactive Use Case Writer according StOP (State-oriented Programming paradigm). Given an existing user story, elicits missing details through structured questioning and produces a complete, traceable, professionally written use-case document following the project's established structure and style. Use when a user asks to write, draft, or create use cases for a user story.
 metadata:
   author: vsirotin
   version: "1.5"
@@ -20,7 +20,7 @@ A finished user story (written with the `user-story-writer` skill or equivalent)
 
 ## Initialization Use Case
 
-Every use-case document for a stateful system must include exactly one **Initialization Use Case**, numbered `0`, placed before use case 1. It describes how the system moves from "not yet running" into the operational condition in which use case 1 begins — mirroring the reserved entry state `"I"` of a Stacked Finite State Machine and the mandatory transition out of it (see the StOP tutorial, [chapter 1.2](../../../ts/ts-stop/tutorial/01-finite-state-machine.md#12-defining-the-turnstile-with-the-stop-library)).
+Every use-case document for a stateful system must include exactly one **Initialization Use Case**, numbered `0`, placed before use case 1. It describes how the system moves from "not yet running" into the operational condition in which use case 1 begins — mirroring the reserved entry state `"I"` of a Stacked Finite State Machine and the mandatory transition out of it (see the StOP tutorial).
 
 - Title: "System initialization" (or a title reflecting the domain-specific startup action).
 - Steps are numbered `0.1`, `0.2`, … and follow the same ITS, active/passive-actor, and citation rules as every other use case. This is the sole exception to the "use cases start at 1" numbering rule.
