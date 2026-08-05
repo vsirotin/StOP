@@ -119,6 +119,78 @@ const stackedFa: FaDefinition = {
     }
 };
 
+/**
+ * Embedded 3-level stacked SFSM (A → B → C) used to verify that sub-FAs
+ * always re-enter at their entry state `I` when pushed again after being
+ * popped. This is the "deep push/pop cycle" fixture.
+ *
+ * Hierarchy:
+ *   A has state `B` which is a sub-FA.
+ *   B has state `C` which is a sub-FA (nested inside B).
+ *
+ * The deep cycle (one iteration):
+ *   1. enterB  — A:I → B (push B), B:I → B:Working (forwarded enterB)
+ *   2. enterC  — B:Working → C (push C), C:I → C:Working (forwarded enterC)
+ *   3. finishC — C:Working → C:E_done (pop C), B:C → B:Working (forwarded finishC)
+ *   4. enterC  — B:Working → C (push C again), C:I → C:Working (forwarded enterC)
+ *   5. finishC — C:Working → C:E_done (pop C), B:C → B:Working (forwarded finishC)
+ *   6. finishB — B:Working → B:E_done (pop B), A:B → A:I (forwarded finishB)
+ *
+ * After step 6, A is back at I and the cycle can repeat. Steps 4 and 1
+ * (of the next cycle) are the key assertions: if C or B did not reset to
+ * I on re-push, the forwarded signal would find no matching transition
+ * and the engine would throw.
+ */
+const deepStackedFa: FaDefinition = {
+    A: {
+        states: {
+            'I': { name: 'A initial' },
+            'B': {
+                states: {
+                    'I': { name: 'B initial' },
+                    'Working': { name: 'B working' },
+                    'C': {
+                        states: {
+                            'I': { name: 'C initial' },
+                            'Working': { name: 'C working' },
+                            'E_done': { name: 'C done' }
+                        },
+                        signals: {
+                            'enterC': { name: 'Enter C' },
+                            'finishC': { name: 'Finish C' }
+                        },
+                        ts: [
+                            ['I', 'enterC', 'Working'],
+                            ['Working', 'finishC', 'E_done']
+                        ]
+                    },
+                    'E_done': { name: 'B done' }
+                },
+                signals: {
+                    'enterB': { name: 'Enter B' },
+                    'enterC': { name: 'Enter C' },
+                    'finishC': { name: 'Finish C' },
+                    'finishB': { name: 'Finish B' }
+                },
+                ts: [
+                    ['I', 'enterB', 'Working'],
+                    ['Working', 'enterC', 'C'],
+                    ['C', 'finishC', 'Working'],
+                    ['Working', 'finishB', 'E_done']
+                ]
+            }
+        },
+        signals: {
+            'enterB': { name: 'Enter B' },
+            'finishB': { name: 'Finish B' }
+        },
+        ts: [
+            ['I', 'enterB', 'B'],
+            ['B', 'finishB', 'I']
+        ]
+    }
+};
+
 describe('Sfsm core engine', () => {
 
     describe('initialisation', () => {
@@ -490,6 +562,72 @@ describe('Sfsm core engine', () => {
             expect(sfsm.getCurrentStack()).toEqual(['Parent']);
             sfsm.receiveSignal('start');
             expect(sfsm.getCurrentStack()).toEqual(['Parent', 'Child']);
+        });
+    });
+
+    describe('repeated deep push/pop cycles', () => {
+        test('re-entering a sub-FA always starts at its entry state, even after multiple cycles', () => {
+            const sfsm = new Sfsm();
+            sfsm.loadFA(deepStackedFa);
+
+            // Run the deep cycle 3 times. Each cycle pushes B and C onto
+            // the stack, pops C, re-pushes C (which MUST reset to I), pops
+            // C again, then pops B — leaving A back at I for the next cycle.
+            for (let cycle = 1; cycle <= 3; cycle++) {
+                // Step 1: enterB — push B, B starts at I, forwarded enterB drives B to Working
+                sfsm.receiveSignal('enterB');
+                expect(sfsm.getCurrentStack()).toEqual(['A', 'B']);
+                expect(sfsm.getHeadState()).toBe('Working');
+
+                // Step 2: enterC — push C, C starts at I, forwarded enterC drives C to Working
+                sfsm.receiveSignal('enterC');
+                expect(sfsm.getCurrentStack()).toEqual(['A', 'B', 'C']);
+                expect(sfsm.getHeadState()).toBe('Working');
+
+                // Step 3: finishC — C exits, pops, B returns to Working
+                sfsm.receiveSignal('finishC');
+                expect(sfsm.getCurrentStack()).toEqual(['A', 'B']);
+                expect(sfsm.getHeadState()).toBe('Working');
+
+                // Step 4: enterC again — C is re-pushed and MUST start at I again.
+                // If C retained its old state (Working or E_done), the forwarded
+                // enterC signal would find no matching transition and throw.
+                sfsm.receiveSignal('enterC');
+                expect(sfsm.getCurrentStack()).toEqual(['A', 'B', 'C']);
+                expect(sfsm.getHeadState()).toBe('Working');
+
+                // Step 5: finishC — C exits again
+                sfsm.receiveSignal('finishC');
+                expect(sfsm.getCurrentStack()).toEqual(['A', 'B']);
+                expect(sfsm.getHeadState()).toBe('Working');
+
+                // Step 6: finishB — B exits, pops, A returns to I.
+                // If B retained its old state (C or E_done), the next cycle's
+                // forwarded enterB would find no matching transition and throw.
+                sfsm.receiveSignal('finishB');
+                expect(sfsm.getCurrentStack()).toEqual(['A']);
+                expect(sfsm.getHeadState()).toBe('I');
+            }
+
+            // After 3 full cycles, the log should contain a deterministic,
+            // repeating pattern of signals — proving each cycle is identical.
+            // Each step generates 2 log entries (the transition + the forwarded
+            // signal), so 6 steps × 2 = 12 entries per cycle, 36 total.
+            const signals = sfsm.getLog().map(e => e.signal);
+            expect(signals).toHaveLength(36);
+
+            // The signal pattern per cycle (12 entries):
+            //   enterB, enterB, enterC, enterC, finishC, finishC,
+            //   enterC, enterC, finishC, finishC, finishB, finishB
+            const oneCycle = [
+                'enterB', 'enterB',
+                'enterC', 'enterC',
+                'finishC', 'finishC',
+                'enterC', 'enterC',
+                'finishC', 'finishC',
+                'finishB', 'finishB'
+            ];
+            expect(signals).toEqual([...oneCycle, ...oneCycle, ...oneCycle]);
         });
     });
 });

@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.6.1 build 94
+test: ts-stop — Added "repeated deep push/pop cycles" test to Sfsm.test.ts (extended format) and Sfsm.compact.test.ts (compact format). Uses a 3-level FA hierarchy (A → B → C) and runs a 6-step deep cycle 3 times: push B, push C, pop C, re-push C (must reset to I), pop C, pop B. Verifies that sub-FAs always re-enter at their entry state I when pushed again after being popped, and that the log signal pattern is identical across cycles (deterministic repetition). 249 tests total passing.
+
 ## Version: 3.6.1 build 93
 test: ts-stop — Rewrote Sfsm.log.test.ts, Sfsm.test.ts, Sfsm.compact.test.ts, FaReducer.test.ts, and FaLoader.test.ts to use embedded SFSM definitions and a minimal RecordingReceiver instead of external simulators and ControllerHub. Added Sfsm.compact.test.ts (compact multi-FA format, parallel to Sfsm.test.ts). Removed all describe.skip blocks — no skipped tests remain. Each file now has a header comment explaining what it tests. Tests cover: logging, single-FA transitions, exit states, stacked FAs (push/pop), bubble-up, missing-transition/missing-data policies, signal re-entrancy, $-suffix data forwarding, compact-format log metadata, reduceFA round-trip, and loadFAFromFile/loadFAFromURL integration. 247 tests total passing.
 
