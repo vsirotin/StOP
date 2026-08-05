@@ -3,6 +3,18 @@ import { FaDefinition, FaNode, LogEntry } from '../../src/sfsm/types';
 import { ICommandReceiver } from '../../src/sfsm/interfaces';
 
 /**
+ * Sfsm logging tests.
+ *
+ * These tests exercise the SFSM engine's logging behaviour in isolation
+ * (no ControllerHub, no external simulators): log accumulation, step
+ * numbering, log-entry metadata (stack/state/signal/rule/newState/command),
+ * the getLog() copy-on-read guarantee, exit-state reset at root, and the
+ * $-suffix data-forwarding rules for commands. The FA definitions are
+ * embedded directly in this file using the extended FaNode format so the
+ * log entries carry human-readable names alongside the raw identifiers.
+ */
+
+/**
  * A minimal ICommandReceiver implementation that records every command
  * received, so tests can assert on the command stream without pulling in
  * ControllerHub or any other higher-level class.

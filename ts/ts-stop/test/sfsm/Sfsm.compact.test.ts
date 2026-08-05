@@ -1,25 +1,24 @@
 import { Sfsm } from '../../src/sfsm/Sfsm';
-import { FaDefinition } from '../../src/sfsm/types';
+import { FaDefinition, Transition } from '../../src/sfsm/types';
 import { ICommandReceiver } from '../../src/sfsm/interfaces';
 
 /**
- * Sfsm core engine tests.
+ * Sfsm compact-format tests.
  *
  * These tests exercise the SFSM engine in isolation (no ControllerHub, no
- * external simulators) using embedded FA definitions in the extended
- * FaNode format. They cover: initialisation, single-FA transitions
- * (rule 2.1), exit states (rule 5), stacked FAs (rule 4 push/pop),
- * bubble-up (rule 2.2.2.1), missing-transition/missing-data policies,
- * signal re-entrancy, $-suffix data forwarding, and stack inspection.
+ * external simulators) using embedded FA definitions in the compact
+ * multi-FA format: `Record<string, Transition[]>`, where each FA is just a
+ * list of transitions and the engine auto-detects the root FA as the one
+ * whose name is never a transition target in any other FA.
+ *
+ * Because the compact format carries no metadata, log entries produced
+ * from these FAs do NOT populate the human-readable name fields
+ * (stateName, signalName, commandName, receiver) — that is verified
+ * explicitly in the "log metadata" tests below.
  */
 
 /**
  * Minimal ICommandReceiver that records every command received.
- *
- * The SFSM engine itself does not depend on ControllerHub or any other
- * higher-level class — it only needs an object that satisfies the
- * ICommandReceiver interface. Using this lightweight recorder keeps the
- * tests focused on the engine's own behaviour.
  */
 class RecordingReceiver implements ICommandReceiver {
     public calls: Array<{ command: string; data?: unknown }> = [];
@@ -34,97 +33,53 @@ class RecordingReceiver implements ICommandReceiver {
 }
 
 /**
- * Embedded SFSM definitions used across the core engine tests.
+ * Embedded compact turnstile FA (single FA, no sub-FAs).
  *
- * The turnstile FA below is a small but complete example: it uses the
- * extended FaNode format with states, signals, commands and ts, and it
- * exercises the entry/exit-state convention (state `I` is the entry state,
- * `E_ok` is an exit state).
+ * The root FA is `Turnstile` — its name is the only key, so it is
+ * auto-detected as the root. State `I` is the entry state, `E_ok` is an
+ * exit state. Commands `lock`/`unlock` have no `$` suffix, so they do
+ * not require signal data.
  */
-const turnstileFa: FaDefinition = {
-    Turnstile: {
-        states: {
-            'I': { name: 'Initial' },
-            'Locked': { name: 'Locked' },
-            'Unlocked': { name: 'Unlocked' },
-            'E_ok': { name: 'Ok' }
-        },
-        signals: {
-            'coin': { name: 'Coin inserted' },
-            'push': { name: 'Push' },
-            'reset': { name: 'Reset' }
-        },
-        commands: {
-            'lock': { name: 'Lock', receiver: 'TurnstileController' },
-            'unlock': { name: 'Unlock', receiver: 'TurnstileController' }
-        },
-        ts: [
-            ['I', 'coin', 'Unlocked'],
-            ['I', 'push', 'Locked'],
-            ['Locked', 'coin', 'Unlocked', 'unlock'],
-            ['Unlocked', 'push', 'Locked', 'lock'],
-            ['Locked', 'reset', 'E_ok'],
-            ['Unlocked', 'reset', 'E_ok']
-        ]
-    }
+const turnstileCompactFa: FaDefinition = {
+    Turnstile: [
+        ['I', 'coin', 'Unlocked'],
+        ['I', 'push', 'Locked'],
+        ['Locked', 'coin', 'Unlocked', 'unlock'],
+        ['Unlocked', 'push', 'Locked', 'lock'],
+        ['Locked', 'reset', 'E_ok'],
+        ['Unlocked', 'reset', 'E_ok']
+    ] as Transition[]
 };
 
 /**
- * Embedded stacked SFSM: a parent FA whose state `Child` is itself a sub-FA
- * (it has its own `ts` array). The child has its own entry/exit states so
- * that the push/pop mechanics of the SFSM stack can be exercised without
- * any external resources.
- *
- * In the extended FaNode format, a state entry is treated as a sub-FA when
- * its value is an object containing a `ts` array; otherwise it is a leaf
- * state (an ElementMeta with just a name/description).
+ * Embedded compact stacked FA: a parent `Parent` whose state `Child` is a
+ * sub-FA (because `Child` is also a top-level key). The engine auto-detects
+ * `Parent` as the root because `Parent` is never a transition target in
+ * any other FA, while `Child` is a target in `Parent`'s transitions.
  *
  * Note: when the engine pushes a sub-FA, it forwards the very same signal
  * into it (Rule 4 in the tutorial). That is why `Child` has a transition
  * from `I` on `start` — the `start` signal that triggers the push is the
  * one that drives Child out of its entry state.
  */
-const stackedFa: FaDefinition = {
-    Parent: {
-        states: {
-            'I': { name: 'Initial' },
-            'Done': { name: 'Done' },
-            'Child': {
-                states: {
-                    'I': { name: 'Child initial' },
-                    'Working': { name: 'Working' },
-                    'E_done': { name: 'Child done' }
-                },
-                signals: {
-                    'start': { name: 'Start' },
-                    'work': { name: 'Work' },
-                    'finish': { name: 'Finish' }
-                },
-                ts: [
-                    ['I', 'start', 'Working'],
-                    ['Working', 'work', 'Working'],
-                    ['Working', 'finish', 'E_done']
-                ]
-            }
-        },
-        signals: {
-            'start': { name: 'Start' },
-            'work': { name: 'Work' },
-            'finish': { name: 'Finish' }
-        },
-        ts: [
-            ['I', 'start', 'Child'],
-            ['Child', 'finish', 'Done']
-        ]
-    }
+const stackedCompactFa: FaDefinition = {
+    Parent: [
+        ['I', 'start', 'Child'],
+        ['Child', 'finish', 'Done']
+    ] as Transition[],
+    Child: [
+        ['I', 'start', 'Working'],
+        ['Working', 'work', 'Working'],
+        ['Working', 'finish', 'E_done']
+    ] as Transition[]
 };
 
-describe('Sfsm core engine', () => {
+describe('Sfsm compact-format engine', () => {
 
     describe('initialisation', () => {
         test('loadFA activates the root FA at its entry state', () => {
             const sfsm = new Sfsm();
-            sfsm.loadFA(turnstileFa);
+            sfsm.loadFA(turnstileCompactFa);
 
             expect(sfsm.getCurrentStack()).toEqual(['Turnstile']);
             expect(sfsm.getHeadState()).toBe('I');
@@ -132,10 +87,10 @@ describe('Sfsm core engine', () => {
 
         test('loadFA resets the log and the signal queue', () => {
             const sfsm = new Sfsm();
-            sfsm.loadFA(turnstileFa);
+            sfsm.loadFA(turnstileCompactFa);
             sfsm.receiveSignal('coin');
 
-            sfsm.loadFA(turnstileFa);
+            sfsm.loadFA(turnstileCompactFa);
 
             expect(sfsm.getLog()).toEqual([]);
             expect(sfsm.getCurrentStack()).toEqual(['Turnstile']);
@@ -161,7 +116,7 @@ describe('Sfsm core engine', () => {
             sfsm = new Sfsm();
             receiver = new RecordingReceiver();
             sfsm.setCommandReceiver(receiver);
-            sfsm.loadFA(turnstileFa);
+            sfsm.loadFA(turnstileCompactFa);
         });
 
         test('a signal handled by the head FA advances its state', () => {
@@ -176,28 +131,25 @@ describe('Sfsm core engine', () => {
             expect(receiver.calls).toEqual([]);
         });
 
+        test('a transition with a no-$ command fires the command without data', () => {
+            sfsm.receiveSignal('coin');   // I -> Unlocked
+            sfsm.receiveSignal('push');   // Unlocked -> Locked, fires lock
+
+            expect(sfsm.getHeadState()).toBe('Locked');
+            expect(receiver.calls).toHaveLength(1);
+            expect(receiver.calls[0]).toEqual({
+                command: 'lock',
+                data: undefined
+            });
+        });
+
         test('a transition with a $ command forwards signal data to the receiver', () => {
-            // Use a dedicated FA whose command carries the $ suffix, which
-            // tells the engine to forward the signal's data to the receiver.
+            // Use a dedicated compact FA whose command carries the $ suffix.
             const fa: FaDefinition = {
-                DataTurnstile: {
-                    states: {
-                        'I': { name: 'Initial' },
-                        'Locked': { name: 'Locked' },
-                        'Unlocked': { name: 'Unlocked' }
-                    },
-                    signals: {
-                        'coin': { name: 'Coin inserted' },
-                        'push': { name: 'Push' }
-                    },
-                    commands: {
-                        'lock$': { name: 'Lock', receiver: 'TurnstileController' }
-                    },
-                    ts: [
-                        ['I', 'coin', 'Unlocked'],
-                        ['Unlocked', 'push', 'Locked', 'lock$']
-                    ]
-                }
+                DataTurnstile: [
+                    ['I', 'coin', 'Unlocked'],
+                    ['Unlocked', 'push', 'Locked', 'lock$']
+                ] as Transition[]
             };
             const local = new Sfsm();
             const rec = new RecordingReceiver();
@@ -215,25 +167,6 @@ describe('Sfsm core engine', () => {
             });
         });
 
-        test('a transition with a no-$ command does not forward data', () => {
-            const fa: FaDefinition = {
-                NoArg: {
-                    states: { 'I': { name: 'Initial' }, 'A': { name: 'A' } },
-                    signals: { 'go': { name: 'Go' } },
-                    commands: { 'ping': { name: 'Ping', receiver: 'PingController' } },
-                    ts: [['I', 'go', 'A', 'ping']]
-                }
-            };
-            const local = new Sfsm();
-            const rec = new RecordingReceiver();
-            local.setCommandReceiver(rec);
-            local.loadFA(fa);
-
-            local.receiveSignal('go', { payload: 1 });
-
-            expect(rec.calls).toEqual([{ command: 'ping', data: undefined }]);
-        });
-
         test('multiple signals drive the FA through a sequence of states', () => {
             sfsm.receiveSignal('coin');   // I -> Unlocked
             sfsm.receiveSignal('push');   // Unlocked -> Locked
@@ -249,7 +182,7 @@ describe('Sfsm core engine', () => {
     describe('exit states (rule 5)', () => {
         test('reaching an exit state on the root FA resets it to the entry state', () => {
             const sfsm = new Sfsm();
-            sfsm.loadFA(turnstileFa);
+            sfsm.loadFA(turnstileCompactFa);
 
             sfsm.receiveSignal('coin');    // I -> Unlocked
             sfsm.receiveSignal('reset');   // Unlocked -> E_ok -> root resets to I
@@ -260,7 +193,7 @@ describe('Sfsm core engine', () => {
 
         test('reaching an exit state on a non-root FA pops it and forwards the signal', () => {
             const sfsm = new Sfsm();
-            sfsm.loadFA(stackedFa);
+            sfsm.loadFA(stackedCompactFa);
 
             // Push the child FA onto the stack. The 'start' signal is
             // forwarded into Child, driving it from I to Working.
@@ -281,7 +214,7 @@ describe('Sfsm core engine', () => {
     describe('stacked FAs (rule 4 — push sub-FA)', () => {
         test('transitioning to a sub-FA state pushes the sub-FA onto the stack', () => {
             const sfsm = new Sfsm();
-            sfsm.loadFA(stackedFa);
+            sfsm.loadFA(stackedCompactFa);
 
             sfsm.receiveSignal('start');
 
@@ -293,7 +226,7 @@ describe('Sfsm core engine', () => {
 
         test('signals are forwarded to the head of the stack after a push', () => {
             const sfsm = new Sfsm();
-            sfsm.loadFA(stackedFa);
+            sfsm.loadFA(stackedCompactFa);
 
             sfsm.receiveSignal('start');   // push Child, Child.I -> Working
             sfsm.receiveSignal('work');    // Child.Working -> Working (self-loop)
@@ -305,39 +238,19 @@ describe('Sfsm core engine', () => {
 
     describe('bubble-up (rule 2.2.2.1)', () => {
         test('a signal handled by an ancestor FA pops the frames above it', () => {
-            // Build a stacked FA where the parent can handle a signal that
-            // the child has no transition for, so the signal bubbles up.
-            // The child must handle 'start' (the push-trigger signal) so
-            // that the push itself does not fail.
+            // Build a compact stacked FA where the parent can handle a
+            // signal that the child has no transition for, so the signal
+            // bubbles up. The child must handle 'start' (the push-trigger
+            // signal) so that the push itself does not fail.
             const fa: FaDefinition = {
-                Parent: {
-                    states: {
-                        'I': { name: 'Initial' },
-                        'Cancelled': { name: 'Cancelled' },
-                        'Child': {
-                            states: {
-                                'I': { name: 'Child initial' },
-                                'Working': { name: 'Working' }
-                            },
-                            signals: {
-                                'start': { name: 'Start' },
-                                'work': { name: 'Work' }
-                            },
-                            ts: [
-                                ['I', 'start', 'Working'],
-                                ['Working', 'work', 'Working']
-                            ]
-                        }
-                    },
-                    signals: {
-                        'start': { name: 'Start' },
-                        'cancel': { name: 'Cancel' }
-                    },
-                    ts: [
-                        ['I', 'start', 'Child'],
-                        ['Child', 'cancel', 'Cancelled']
-                    ]
-                }
+                Parent: [
+                    ['I', 'start', 'Child'],
+                    ['Child', 'cancel', 'Cancelled']
+                ] as Transition[],
+                Child: [
+                    ['I', 'start', 'Working'],
+                    ['Working', 'work', 'Working']
+                ] as Transition[]
             };
             const sfsm = new Sfsm();
             sfsm.loadFA(fa);
@@ -356,11 +269,9 @@ describe('Sfsm core engine', () => {
 
     describe('missing-transition policy', () => {
         const fa: FaDefinition = {
-            Strict: {
-                states: { 'I': { name: 'Initial' }, 'A': { name: 'A' } },
-                signals: { 'go': { name: 'Go' } },
-                ts: [['I', 'go', 'A']]
-            }
+            Strict: [
+                ['I', 'go', 'A']
+            ] as Transition[]
         };
 
         test('default policy throws on a missing transition', () => {
@@ -394,12 +305,9 @@ describe('Sfsm core engine', () => {
 
     describe('missing-data policy', () => {
         const fa: FaDefinition = {
-            Data: {
-                states: { 'I': { name: 'Initial' }, 'A': { name: 'A' } },
-                signals: { 'go': { name: 'Go' } },
-                commands: { 'ping$': { name: 'Ping', receiver: 'PingController' } },
-                ts: [['I', 'go', 'A', 'ping$']]
-            }
+            Data: [
+                ['I', 'go', 'A', 'ping$']
+            ] as Transition[]
         };
 
         test('default policy throws when a $ command receives no data', () => {
@@ -446,22 +354,10 @@ describe('Sfsm core engine', () => {
             // active; that second signal must be queued and processed
             // after the current step finishes.
             const fa: FaDefinition = {
-                Reentrant: {
-                    states: {
-                        'I': { name: 'Initial' },
-                        'A': { name: 'A' },
-                        'B': { name: 'B' }
-                    },
-                    signals: {
-                        'go': { name: 'Go' },
-                        'next': { name: 'Next' }
-                    },
-                    commands: { 'step$': { name: 'Step', receiver: 'ReentrantController' } },
-                    ts: [
-                        ['I', 'go', 'A', 'step$'],
-                        ['A', 'next', 'B']
-                    ]
-                }
+                Reentrant: [
+                    ['I', 'go', 'A', 'step$'],
+                    ['A', 'next', 'B']
+                ] as Transition[]
             };
 
             const sfsm = new Sfsm();
@@ -485,11 +381,47 @@ describe('Sfsm core engine', () => {
     describe('stack inspection', () => {
         test('getCurrentStack returns the FA names from bottom to head', () => {
             const sfsm = new Sfsm();
-            sfsm.loadFA(stackedFa);
+            sfsm.loadFA(stackedCompactFa);
 
             expect(sfsm.getCurrentStack()).toEqual(['Parent']);
             sfsm.receiveSignal('start');
             expect(sfsm.getCurrentStack()).toEqual(['Parent', 'Child']);
+        });
+    });
+
+    describe('log metadata (compact format)', () => {
+        test('compact log entries do not populate the human-readable name fields', () => {
+            const sfsm = new Sfsm();
+            sfsm.loadFA(turnstileCompactFa);
+
+            sfsm.receiveSignal('coin');   // I -> Unlocked
+            sfsm.receiveSignal('push');   // Unlocked -> Locked, fires lock
+
+            const log = sfsm.getLog();
+            expect(log).toHaveLength(2);
+
+            // Compact format carries no metadata, so all name fields are
+            // undefined — even though the FA does fire a command.
+            const pushEntry = log[1];
+            expect(pushEntry.command).toBe('lock');
+            expect(pushEntry.stateName).toBeUndefined();
+            expect(pushEntry.signalName).toBeUndefined();
+            expect(pushEntry.newStateName).toBeUndefined();
+            expect(pushEntry.commandName).toBeUndefined();
+            expect(pushEntry.receiver).toBeUndefined();
+        });
+
+        test('first log entry has correct stack and signal after start', () => {
+            const sfsm = new Sfsm();
+            sfsm.loadFA(turnstileCompactFa);
+
+            sfsm.receiveSignal('coin');
+            const log = sfsm.getLog();
+            expect(log[0].signal).toBe('coin');
+            expect(log[0].stack).toEqual(['Turnstile']);
+            expect(log[0].state).toBe('I');
+            expect(log[0].newState).toBe('Unlocked');
+            expect(log[0].rule).toBe('2.1');
         });
     });
 });
