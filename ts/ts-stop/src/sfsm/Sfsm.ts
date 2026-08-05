@@ -233,7 +233,7 @@ export class Sfsm implements ISignalReceiver {
         };
         this.log.push(logEntry);
 
-        // Rule 3: new state is itself a sub-FA — push it
+        // Rule 4: new state is itself a sub-FA — push it
         const headFa = this.resolver!.get(this.stack[frameIndex].faName);
         if (headFa.subFaNames.has(toState)) {
             this.stack.push({ faName: toState, currentState: this.resolver!.get(toState).entryState });
@@ -241,13 +241,13 @@ export class Sfsm implements ISignalReceiver {
             return;
         }
 
-        // Rule 4: new state is an exit state
+        // Rule 5: new state is an exit state
         if (this.isExitState(toState)) {
             if (this.stack.length === 1) {
-                // Rule 4.1 — root FA resets to I
+                // Rule 5.1 — root FA resets to I
                 this.stack[0].currentState = this.resolver!.get(this.stack[0].faName).entryState;
             } else {
-                // Rule 4.2 — pop current FA, forward signal to new head
+                // Rule 5.2 — pop current FA, forward signal to new head
                 this.stack.pop();
                 this.applySignal(signal, data);
             }

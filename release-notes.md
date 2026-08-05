@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.6.1 build 92
+test: ts-stop — Rewrote Sfsm.log.test.ts and Sfsm.test.ts to use embedded SFSM definitions (extended FaNode format with states/signals/commands/ts) instead of external simulators and ControllerHub. Tests now exercise the SFSM engine in isolation: logging, single-FA transitions, exit states, stacked FAs (push/pop), bubble-up, missing-transition/missing-data policies, signal re-entrancy, and $-suffix data forwarding. 34 tests in these two files, 192 tests total passing.
+
 ## Version: 3.6.0 build 91
 feat: ts-stop + .github/skills — Extended stop-autonomous-sfsm-tester skill with Step 2 (Validate SFSM JSON with validate-fa.js) and Step 3 (Test use cases with run-fa.js). Updated extract-fa-from-draft.js to strip FA name prefixes from state names, producing bare state names compatible with the SFSM engine. Created test infrastructure: signal files, commands.json, and run-tests.sh for use cases 0 and 1. Test results: use case 0 (System initialization) passed, use case 1 (Happy path with coin and change) failed due to exit-state signal forwarding design issue (Rule 10) — the SFSM engine forwards the original signal when a sub-FA exits, but the draft expects the command's output signal to drive the next transition. Documented common issues and quality criteria in the skill.
 
