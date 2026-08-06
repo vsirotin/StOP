@@ -6,6 +6,7 @@ metadata:
   version: "1.0"
 ---
 
+
 # User Story Writer
 
 This skill produces a concise, professional user story that is understandable by humans and AI coding agents alike.

@@ -14,7 +14,14 @@ This skill produces a complete SFSM model — a structure model (`*-structure.js
 
 ## Prerequisites
 
-A finished user story (written with the [stop-user-story-writer](../stop-user-story-writer/SKILL.md) skill or equivalent) and a finished use-case document (written with the [stop-use-case-writer](../stop-use-case-writer/SKILL.md) skill or equivalent) must exist before this skill is applied. If either is missing, stop and ask the user to provide or create them first.
+User should provide the pathes for:
+- the user story file (e.g., `turnstile-user-story.md`)
+- the use-case file (e.g., `turnstile-use-cases.md`)
+- directory for output files (e.g., `data/`)
+- directory with SFSM-tutorials (e.g., `ts/ts-stop/tutorials/`)
+- directory with SFSM_SDK scripts (e.g., `ts/ts-stop/scripts/`)
+
+When these informations not provided, request them from the user before proceeding.
 
 ---
 
@@ -48,7 +55,7 @@ data/
 
 ### `<project>-structure.json`
 
-A JSON file describing the component hierarchy, component types, events, and commands.
+A JSON file describing the component hierarchy, component types, events, and commands in structure like:
 
 ```json
 {
@@ -302,6 +309,14 @@ For example: if "Banknote Component" and "Coin Component" both report success to
 
 This rule prevents signal explosion and keeps the model clean by merging equivalent paths at each hierarchy level.
 
+### SFSM Conventions
+
+Please hold in mind the following implicite conventions when generating transitions:
+1. By default system is initialisated. It means: if use case with number 0 exists, it will be always processed before each other use case, if not - root FA by start is in initial state ("I" or "*.I").
+2. By push some sub-FA in stack it have always initial state.
+3. Own steps in each use cases have number like "n.m", e.g. "2.3", where "2" is a number of this use case. When in you see a step with other prefix-number, it means, that this step belongs to some other use case and should be not processed by processing of current use case. 
+
+
 ### Step 1.2: Structure Extraction
 
 #### Goal
@@ -348,7 +363,7 @@ Validate the complete SFSM model (structure + behavior) using the `validate-whol
 #### Tool
 
 ```bash
-node ts/ts-stop/scripts/validate-whole-sfsm.js <structure.json> <behavior.json> <output-report.json>
+node scripts/validate-whole-sfsm.js <structure.json> <behavior.json> <output-report.json>
 ```
 
 The script:
@@ -397,7 +412,7 @@ Test the current use case by running the SFSM through its signal sequence using 
    ```
 3. Run the test:
    ```bash
-   node ts/ts-stop/scripts/run-fa.js <behavior.json> signals.txt output-trace.txt commands.json
+   node scripts/run-fa.js <behavior.json> signals.txt output-trace.txt commands.json
    ```
 4. Inspect the output trace for correctness.
 
@@ -426,7 +441,7 @@ Generate a UML state diagram from the current behavior JSON using `json-to-drawi
 #### Tool
 
 ```bash
-node ts/ts-stop/scripts/json-to-drawio.js <behavior.json> <project>-model.drawio
+node scripts/json-to-drawio.js <behavior.json> <project>-model.drawio
 ```
 
 The generated `.drawio` file can be opened in draw.io for visual inspection.
@@ -487,12 +502,3 @@ For each use case N in the use-case document:
 - The `transitions.md` file uses `//` for comments and `//-- Rule X` for annotations.
 - Signal files use `#` for comments, one signal per line.
 - Log entries use `##` headings with **timestamp including seconds** (ISO 8601: `YYYY-MM-DDTHH:MM:SS`) and event description.
-
----
-
-## Reference Examples
-
-The turnstile example files in the `TMP/` directory show the expected formats:
-- `TMP/turnstile-structure.json` — Structure JSON draft
-- `TMP/structure-dir.md` — Directory structure and new transformation rules
-- `TMP/uc-0-transformation.md` — Example transitions for use case 0

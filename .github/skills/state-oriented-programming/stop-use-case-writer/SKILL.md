@@ -14,7 +14,14 @@ This skill produces a complete, traceable use-case document derived from an exis
 
 ## Prerequisites
 
-A finished user story (written with the `user-story-writer` skill or equivalent) must exist before this skill is applied. If no user story is available, stop and ask the user to provide or create one first.
+## Prerequisites
+
+User should provide the pathes for:
+- the user story file (e.g., `turnstile-user-story.md`)
+- directory for output files (e.g., `data/`)
+- directory with SFSM-tutorials (e.g., `ts/ts-stop/tutorials/`)
+
+When these informations not provided, request them from the user before proceeding.
 
 ---
 
@@ -176,7 +183,7 @@ Apply corrections and produce the final version.
 
 ---
 
-When using action verbs, try to follow the [Action Vocabulary](../user-story-writer/action-vocabulary.md) whenever possible. Use unlisted verbs only when no entry fits.
+When using action verbs, try to follow the [Action Vocabulary](../stop-user-story-writer/action-vocabulary.md) whenever possible. Use unlisted verbs only when no entry fits.
 ---
 
 ## Reference Examples
