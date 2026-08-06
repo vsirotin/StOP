@@ -1,0 +1,185 @@
+{
+  "valid": true,
+  "errorCount": 0,
+  "warningCount": 31,
+  "errors": [],
+  "warnings": [
+    {
+      "phase": "FA validation",
+      "rule": 6,
+      "message": "Signal \"Coin Slot>Coin Inserted\" is used by multiple FAs: [Turnstile, Payment Component, Coin Component]."
+    },
+    {
+      "phase": "FA validation",
+      "rule": 6,
+      "message": "Signal \"Payment Component>PaymentFinalized\" is used by multiple FAs: [Turnstile, Payment Component]."
+    },
+    {
+      "phase": "FA validation",
+      "rule": 6,
+      "message": "Signal \"Form Checker>PaymentFinalized\" is used by multiple FAs: [Payment Component, Coin Component]."
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Service Component\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Service Component"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Service Button\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Service Button"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Coin Slot\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Coin Slot"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Coin Receiver\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Coin Receiver"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Weight Checker\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Weight Checker"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Form Checker\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Form Checker"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Banknote Component\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Banknote Component"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Banknote Slot\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Banknote Slot"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Banknote Receiver\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Banknote Receiver"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Banknote Checker\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Banknote Checker"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Change Dispenser\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Change Dispenser"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Tresor\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Tresor"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Passage Component\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Passage Component"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Locking Mechanism\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Locking Mechanism"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Push Sensor\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Push Sensor"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Timer for Unlocked State\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Timer for Unlocked State"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Artifact Box Component\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Artifact Box Component"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Artifact Box\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Artifact Box"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Timer for Artifact-Box\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Timer for Artifact-Box"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Indicator Component\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Indicator Component"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Light Indicator\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Light Indicator"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M2",
+      "message": "Component \"Sound Indicator\" in structure.json has no corresponding FA in behavior.json.",
+      "faName": "Sound Indicator"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M3",
+      "message": "Signal \"Payment Component>PaymentFinalized\" in behavior.json is not documented in structure.json."
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M3",
+      "message": "Signal \"Push Sensor>Passage\" in behavior.json is not documented in structure.json."
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M3",
+      "message": "Signal \"Form Checker>PaymentFinalized\" in behavior.json is not documented in structure.json."
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M3",
+      "message": "Signal \"Change Dispenser>ChangeDone\" in behavior.json is not documented in structure.json."
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M3",
+      "message": "Signal \"Form Checker>FormValidChangeNeeded\" in behavior.json is not documented in structure.json."
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M3",
+      "message": "Signal \"Weight Checker>WeightOK\" in behavior.json is not documented in structure.json."
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "Weight Checker.checkWeight": "Weight Checker>WeightOK",
+  "Form Checker.checkForm": "Form Checker>FormValidChangeNeeded",
+  "Change Dispenser.dispenseChange": "Change Dispenser>ChangeDone",
+  "Form Checker.finalizePayment": "Form Checker>PaymentFinalized",
+  "Payment Component.paymentFinalized": "Payment Component>PaymentFinalized"
+}
