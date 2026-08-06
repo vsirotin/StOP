@@ -3,7 +3,7 @@ name: stop-sfsm-modeller
 description: Interactive SFSM Modeller according StOP (State-oriented Programming paradigm). Transforms an existing user story and use cases into a structure model (*-structure.json) and a behavior model (*-behavior.json), validates them, tests them autonomously, and generates visualizations. Use when a user asks to model, create, or generate an SFSM from existing use cases and a user story.
 metadata:
   author: vsirotin
-  version: "0.1"
+  version: "0.2"
 ---
 
 # SFSM Modeller
@@ -128,7 +128,7 @@ A JSON file describing the component hierarchy, component types, events, and com
 
 ### `<project>-behavior.json`
 
-A JSON file in compact SFSM format — a `Record<string, Transition[]>` where each key is an FA name and each value is a list of transitions:
+A JSON file in compact SFSM format — a `Record<string, Transition[]>` where each key is an FA name and each value is a list of transitions. **Transitions within each FA group must be ordered by from-state name** (alphabetically, with entry state `I` first).
 
 ```json
 {
@@ -148,21 +148,23 @@ A JSON file in compact SFSM format — a `Record<string, Transition[]>` where ea
 
 **Command naming:** `<Component>.<commandName>` (e.g., `"Weight Checker.checkWeight"`, `"Locking Mechanism.unlock"`).
 
+**Transition ordering:** Within each FA group, transitions are sorted by from-state name. The entry state `I` comes first, followed by other states in alphabetical order. This ensures consistent, readable output regardless of the order in which use cases are processed.
+
 ### `<project>-log.md`
 
-A markdown log file tracking all processing activities:
+A markdown log file tracking all processing activities. Each entry includes a **timestamp with seconds** in ISO 8601 format:
 
 ```markdown
 # SFSM Modelling Log
 
-## <date> — Use case 0: System initialization
+## 2026-08-06T15:10:52 — Use case 0: System initialization
 - Started processing use case 0
 - Transformation completed: 2 transitions generated
 - Validation completed: 0 errors, 0 warnings (report: validation-report-01.json)
 - Test completed: PASS (final state: Locked)
 - Visualization generated: <project>-model.drawio
 
-## <date> — Use case 1: Happy path with coin and change
+## 2026-08-06T15:12:30 — Use case 1: Happy path with coin and change
 - Started processing use case 1
 - Transformation completed: 15 transitions generated
 - Validation completed: 0 errors, 2 warnings (report: validation-report-01.json)
@@ -330,7 +332,8 @@ Extend `<project>-behavior.json` with the transitions generated for the current 
 4. Merge with existing transitions in `<project>-behavior.json`:
    - If a transition already exists (same from-state + signal), skip it.
    - If a transition is new, add it to the appropriate FA group.
-5. Write the updated behavior JSON.
+5. **Sort transitions within each FA group by from-state name**: entry state `I` first, then other states in alphabetical order. This ensures consistent, readable output regardless of the order in which use cases are processed.
+6. Write the updated behavior JSON.
 
 ---
 
@@ -365,11 +368,13 @@ Write the validation report to `validation/validation-report-<NN>.json` in the u
 - Re-run validation after each fix, incrementing the report number (02, 03, ...).
 - If the agent cannot solve the problem after 3 attempts, it should break and report the state to the user.
 
+**Rule 12 exception for non-last use cases:** Validation error Rule 12 ("transition target does not exist as a state or sub-FA") can be ignored when the current use case is **not the last** use case in the use-case document. This is because the missing state may be defined in a later use case that has not yet been processed. The agent should note the Rule 12 warning in the log but continue processing. Only on the **last** use case must all Rule 12 errors be resolved.
+
 #### Quality Criteria
 
 | Criterion | Check |
 |---|---|
-| **No FA validation errors** | The behavior JSON passes `FaValidator` with 0 errors. |
+| **No FA validation errors** | The behavior JSON passes `FaValidator` with 0 errors. Exception: Rule 12 errors may be ignored for non-last use cases (see Error Handling above). |
 | **FA-name mapping** | Every FA name in behavior.json has a corresponding component key in structure.json. |
 | **Signal mapping** | Every signal in behavior.json is documented in structure.json (warning if not). |
 | **Command mapping** | Every command in behavior.json is documented in structure.json (warning if not). |
@@ -434,10 +439,10 @@ Visualization is performed only when the use case processing completes without e
 
 ## Logging
 
-After each significant event (start of use case processing, completion of validation, completion of test, completion of visualization), add a new entry to `<project>-log.md`:
+After each significant event (start of use case processing, completion of validation, completion of test, completion of visualization), add a new entry to `<project>-log.md`. Each entry must include a **timestamp with seconds** in ISO 8601 format (e.g., `2026-08-06T15:10:52`):
 
 ```markdown
-## <date-time> — <event description>
+## <YYYY-MM-DDTHH:MM:SS> — <event description>
 - Use case: <N>: <title>
 - Details: <what happened>
 - Result: <pass/fail/notes>
@@ -455,18 +460,18 @@ For each use case N in the use-case document:
   1. Transformation
      1.1 Process transitions → write transitions.md
      1.2 Extend structure.json with new events/commands/components
-     1.3 Extend behavior.json with new transitions
+     1.3 Extend behavior.json with new transitions (sorted by from-state name)
 
   2. Evaluation
      2.1 Validate → write validation-report-01.json
-         If errors: retry from 1.1 (up to 3 attempts)
+         If errors (except Rule 12 for non-last use cases): retry from 1.1 (up to 3 attempts)
      2.2 Test → write signals.txt, commands.json, output-trace.txt
          If errors: retry from 1.1 (up to 3 attempts)
 
   3. Visualization (only if 2.1 and 2.2 pass)
      Generate <project>-model.drawio
 
-  4. Log all activities in <project>-log.md
+  4. Log all activities in <project>-log.md (with timestamp including seconds)
 ```
 
 ---
@@ -478,9 +483,10 @@ For each use case N in the use-case document:
 - Signal names use `<Component>><SignalDescription>` format.
 - Command names use `<Component>.<commandName>` format.
 - JSON files use 2-space indentation.
+- **Transitions within each FA group in behavior.json are sorted by from-state name** (entry state `I` first, then alphabetical).
 - The `transitions.md` file uses `//` for comments and `//-- Rule X` for annotations.
 - Signal files use `#` for comments, one signal per line.
-- Log entries use `##` headings with date-time and event description.
+- Log entries use `##` headings with **timestamp including seconds** (ISO 8601: `YYYY-MM-DDTHH:MM:SS`) and event description.
 
 ---
 

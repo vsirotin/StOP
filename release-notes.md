@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.7.1 build 96
+doc: .github/skills — Improved stop-sfsm-modeller skill: (1) Rule 12 validation errors can be ignored for non-last use cases since missing states may appear in later use cases, (2) log entries now require timestamps with seconds in ISO 8601 format, (3) transitions within each FA group in behavior.json must be sorted by from-state name (entry state I first, then alphabetical).
+
 ## Version: 3.7.0 build 95
 feat: ts-stop + .github/skills — Restructured development process: merged steps 3 (SFSM draft) and 4 (Autonomous SFSM test) into single step 3 (SFSM modeling). Created stop-sfsm-modeller skill that combines structure modeling and behavior modeling with incremental use-case processing, validation, testing, and visualization. Added validate-whole-sfsm.js script for two-phase validation. Added 3 new transformation rules (Rule 7-9). Updated 05-development-process.md with new 5-step process.
 

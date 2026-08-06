@@ -1,0 +1,15 @@
+{
+  "valid": false,
+  "errorCount": 1,
+  "warningCount": 0,
+  "errors": [
+    {
+      "phase": "FA validation",
+      "rule": 12,
+      "message": "FA \"Turnstile\": transition target \"Locked\" does not exist as a state or sub-FA.",
+      "faName": "Turnstile",
+      "transition": "[I, Service Button>Pressed, Locked]"
+    }
+  ],
+  "warnings": []
+}
