@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.7.0 build 95
+feat: ts-stop + .github/skills — Restructured development process: merged steps 3 (SFSM draft) and 4 (Autonomous SFSM test) into single step 3 (SFSM modeling). Created stop-sfsm-modeller skill that combines structure modeling and behavior modeling with incremental use-case processing, validation, testing, and visualization. Added validate-whole-sfsm.js script for two-phase validation. Added 3 new transformation rules (Rule 7-9). Updated 05-development-process.md with new 5-step process.
+
 ## Version: 3.6.1 build 94
 test: ts-stop — Added "repeated deep push/pop cycles" test to Sfsm.test.ts (extended format) and Sfsm.compact.test.ts (compact format). Uses a 3-level FA hierarchy (A → B → C) and runs a 6-step deep cycle 3 times: push B, push C, pop C, re-push C (must reset to I), pop C, pop B. Verifies that sub-FAs always re-enter at their entry state I when pushed again after being popped, and that the log signal pattern is identical across cycles (deterministic repetition). 249 tests total passing.
 
