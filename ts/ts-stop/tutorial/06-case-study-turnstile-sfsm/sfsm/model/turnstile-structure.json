@@ -36,7 +36,17 @@
                     "components": [
                       {
                         "Coin Slot": {
-                          "type": "sender"
+                          "type": "sender",
+                          "events": [
+                            {
+                              "coin_inserted": {
+                                "description": "Triggered when a user inserts a coin into the coin slot.",
+                                "signals": [
+                                  { "Coin Slot>Coin Inserted": { "description": "Coin inserted signal" } }
+                                ]
+                              }
+                            }
+                          ]
                         }
                       },
                       {

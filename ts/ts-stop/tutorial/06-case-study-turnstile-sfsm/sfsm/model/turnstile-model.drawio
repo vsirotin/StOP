@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="Electron">
+  <diagram id="sfsm-diagram" name="Page-1">
+    <mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="init-Turnstile" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#000000;sfsmRole=initial;sfsmFa=Turnstile;" vertex="1" parent="container-Turnstile">
+          <mxGeometry x="66" y="12" width="20" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="state-Turnstile-Locked" value="Locked" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;sfsmRole=state;sfsmFa=Turnstile;sfsmKey=Locked;" vertex="1" parent="container-Turnstile">
+          <mxGeometry x="16" y="72" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="state-Turnstile-Payment Component" value="Payment Component" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8E8E8;strokeColor=#999999;strokeWidth=2;sfsmRole=subfa;sfsmFa=Turnstile;sfsmKey=Payment Component;" vertex="1" parent="container-Turnstile">
+          <mxGeometry x="46" y="182" width="100" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="state-Turnstile-Unlocked" value="Unlocked" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;sfsmRole=state;sfsmFa=Turnstile;sfsmKey=Unlocked;" vertex="1" parent="container-Turnstile">
+          <mxGeometry x="16" y="302" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="container-Turnstile" value="Turnstile" style="swimlane;whiteSpace=wrap;html=1;startSize=35;fontStyle=1;rounded=1;sfsmRole=facontainer;sfsmFa=Turnstile;" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="280" height="442" as="geometry"/>
+        </mxCell>
+        <mxCell id="init-Payment Component" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#000000;sfsmRole=initial;sfsmFa=Payment Component;" vertex="1" parent="container-Payment Component">
+          <mxGeometry x="62" y="12" width="20" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="state-Payment Component-Coin Component" value="Coin Component" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8E8E8;strokeColor=#999999;strokeWidth=2;sfsmRole=subfa;sfsmFa=Payment Component;sfsmKey=Coin Component;" vertex="1" parent="container-Payment Component">
+          <mxGeometry x="22" y="72" width="100" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="state-Payment Component-Finalizing" value="Finalizing" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;sfsmRole=state;sfsmFa=Payment Component;sfsmKey=Finalizing;" vertex="1" parent="container-Payment Component">
+          <mxGeometry x="12" y="172" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="state-Payment Component-E_PaymentFinalized" value="E_PaymentFinalized" style="ellipse;whiteSpace=wrap;html=1;strokeWidth=3;fillColor=#FFFFFF;sfsmRole=exit;sfsmFa=Payment Component;sfsmKey=E_PaymentFinalized;" vertex="1" parent="container-Payment Component">
+          <mxGeometry x="37" y="262" width="70" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="container-Payment Component" value="Payment Component" style="swimlane;whiteSpace=wrap;html=1;startSize=35;fontStyle=1;rounded=1;sfsmRole=facontainer;sfsmFa=Payment Component;" vertex="1" parent="1">
+          <mxGeometry x="20" y="492" width="280" height="402" as="geometry"/>
+        </mxCell>
+        <mxCell id="init-Coin Component" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#000000;sfsmRole=initial;sfsmFa=Coin Component;" vertex="1" parent="container-Coin Component">
+          <mxGeometry x="62" y="12" width="20" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="state-Coin Component-Weight Checking" value="Weight Checking" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;sfsmRole=state;sfsmFa=Coin Component;sfsmKey=Weight Checking;" vertex="1" parent="container-Coin Component">
+          <mxGeometry x="12" y="72" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="state-Coin Component-Change Processing" value="Change Processing" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;sfsmRole=state;sfsmFa=Coin Component;sfsmKey=Change Processing;" vertex="1" parent="container-Coin Component">
+          <mxGeometry x="12" y="252" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="state-Coin Component-Finalizing" value="Finalizing" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;sfsmRole=state;sfsmFa=Coin Component;sfsmKey=Finalizing;" vertex="1" parent="container-Coin Component">
+          <mxGeometry x="12" y="342" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="state-Coin Component-E_PaymentFinalized" value="E_PaymentFinalized" style="ellipse;whiteSpace=wrap;html=1;strokeWidth=3;fillColor=#FFFFFF;sfsmRole=exit;sfsmFa=Coin Component;sfsmKey=E_PaymentFinalized;" vertex="1" parent="container-Coin Component">
+          <mxGeometry x="37" y="432" width="70" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="state-Coin Component-Form Checking" value="Form Checking" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;sfsmRole=state;sfsmFa=Coin Component;sfsmKey=Form Checking;" vertex="1" parent="container-Coin Component">
+          <mxGeometry x="12" y="162" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="container-Coin Component" value="Coin Component" style="swimlane;whiteSpace=wrap;html=1;startSize=35;fontStyle=1;rounded=1;sfsmRole=facontainer;sfsmFa=Coin Component;" vertex="1" parent="1">
+          <mxGeometry x="20" y="924" width="280" height="572" as="geometry"/>
+        </mxCell>
+        <mxCell id="tr-Turnstile-0" value="Service Button&gt;Pressed" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;sfsmRole=transition;sfsmFa=Turnstile;sfsmSignal=Service Button>Pressed;sfsmCommand=;" edge="1" parent="1" source="init-Turnstile" target="state-Turnstile-Locked">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="tr-Turnstile-1" value="Coin Slot&gt;Coin Inserted" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;sfsmRole=transition;sfsmFa=Turnstile;sfsmSignal=Coin Slot>Coin Inserted;sfsmCommand=;" edge="1" parent="1" source="state-Turnstile-Locked" target="state-Turnstile-Payment Component">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="tr-Turnstile-2" value="Payment Component&gt;PaymentFinalized" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;sfsmRole=transition;sfsmFa=Turnstile;sfsmSignal=Payment Component>PaymentFinalized;sfsmCommand=;" edge="1" parent="1" source="state-Turnstile-Payment Component" target="state-Turnstile-Unlocked">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="tr-Turnstile-3" value="Push Sensor&gt;Passage" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;sfsmRole=transition;sfsmFa=Turnstile;sfsmSignal=Push Sensor>Passage;sfsmCommand=;" edge="1" parent="1" source="state-Turnstile-Unlocked" target="state-Turnstile-Locked">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="tr-Payment Component-0" value="Coin Slot&gt;Coin Inserted" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;sfsmRole=transition;sfsmFa=Payment Component;sfsmSignal=Coin Slot>Coin Inserted;sfsmCommand=;" edge="1" parent="1" source="init-Payment Component" target="state-Payment Component-Coin Component">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="tr-Payment Component-1" value="Form Checker&gt;PaymentFinalized / Finalizing:Payment Component.paymentFinalized" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;sfsmRole=transition;sfsmFa=Payment Component;sfsmSignal=Form Checker>PaymentFinalized;sfsmCommand=Payment Component.paymentFinalized;" edge="1" parent="1" source="state-Payment Component-Coin Component" target="state-Payment Component-Finalizing">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="tr-Payment Component-2" value="Payment Component&gt;PaymentFinalized" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;sfsmRole=transition;sfsmFa=Payment Component;sfsmSignal=Payment Component>PaymentFinalized;sfsmCommand=;" edge="1" parent="1" source="state-Payment Component-Finalizing" target="state-Payment Component-E_PaymentFinalized">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="tr-Coin Component-0" value="Coin Slot&gt;Coin Inserted / Weight Checking:Weight Checker.checkWeight" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;sfsmRole=transition;sfsmFa=Coin Component;sfsmSignal=Coin Slot>Coin Inserted;sfsmCommand=Weight Checker.checkWeight;" edge="1" parent="1" source="init-Coin Component" target="state-Coin Component-Weight Checking">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="tr-Coin Component-1" value="Change Dispenser&gt;ChangeDone / Finalizing:Form Checker.finalizePayment" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;sfsmRole=transition;sfsmFa=Coin Component;sfsmSignal=Change Dispenser>ChangeDone;sfsmCommand=Form Checker.finalizePayment;" edge="1" parent="1" source="state-Coin Component-Change Processing" target="state-Coin Component-Finalizing">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="tr-Coin Component-2" value="Form Checker&gt;PaymentFinalized" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;sfsmRole=transition;sfsmFa=Coin Component;sfsmSignal=Form Checker>PaymentFinalized;sfsmCommand=;" edge="1" parent="1" source="state-Coin Component-Finalizing" target="state-Coin Component-E_PaymentFinalized">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="tr-Coin Component-3" value="Form Checker&gt;FormValidChangeNeeded / Change Processing:Change Dispenser.dispenseChange" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;sfsmRole=transition;sfsmFa=Coin Component;sfsmSignal=Form Checker>FormValidChangeNeeded;sfsmCommand=Change Dispenser.dispenseChange;" edge="1" parent="1" source="state-Coin Component-Form Checking" target="state-Coin Component-Change Processing">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="tr-Coin Component-4" value="Weight Checker&gt;WeightOK / Form Checking:Form Checker.checkForm" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;sfsmRole=transition;sfsmFa=Coin Component;sfsmSignal=Weight Checker>WeightOK;sfsmCommand=Form Checker.checkForm;" edge="1" parent="1" source="state-Coin Component-Weight Checking" target="state-Coin Component-Form Checking">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
