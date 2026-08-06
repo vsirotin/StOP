@@ -1,6 +1,0 @@
-# Signals for use case 1: Happy path with coin and change
-# External events only — internal command results are handled by commands.json
-# Drives: I → Locked → (payment processing) → Unlocked → Locked
-Service Component>Service Button pressed
-Coin Slot>Coin Inserted
-Push Sensor>Passage

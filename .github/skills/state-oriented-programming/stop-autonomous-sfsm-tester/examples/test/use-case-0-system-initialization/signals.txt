@@ -1,3 +1,0 @@
-# Signals for use case 0: System initialization
-# Drives: I → Locked
-Service Component>Service Button pressed

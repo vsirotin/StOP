@@ -1,5 +1,0 @@
-I, Service Component>Service Button pressed, Locked
-Locked, Coin Slot>Coin Inserted, Payment Component
-I, Coin Slot>Coin Inserted, Coin Component
-I, Coin Slot>Coin Inserted, Weight Checker
-I, Coin Slot>Coin Inserted, E_Weight_Checked, Weight Checker.checkWeight
