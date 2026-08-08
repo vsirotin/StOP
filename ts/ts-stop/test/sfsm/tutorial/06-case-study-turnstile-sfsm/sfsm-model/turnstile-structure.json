@@ -1,0 +1,135 @@
+{
+  "components": [
+    {
+      "Turnstile": {
+        "type": "transceiver",
+        "components": [
+          {
+            "User Interaction": {
+              "type": "transceiver",
+              "components": [
+                {
+                  "Coin Slot": {
+                    "type": "sender",
+                    "events": [
+                      {
+                        "coin_inserted": {
+                          "description": "User inserts a coin into the coin slot.",
+                          "signals": [
+                            { "Coin Slot>Coin inserted": { "description": "Signal sent when a coin is inserted." } }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "Banknote Slot": {
+                    "type": "sender",
+                    "events": [
+                      {
+                        "banknote_inserted": {
+                          "description": "User inserts a banknote into the banknote slot.",
+                          "signals": [
+                            { "Banknote Slot>Banknote inserted": { "description": "Signal sent when a banknote is inserted." } }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "Artifact Box": {
+                    "type": "transceiver"
+                  }
+                },
+                {
+                  "Light Indicator": {
+                    "type": "receiver"
+                  }
+                },
+                {
+                  "Service Button": {
+                    "type": "sender",
+                    "events": [
+                      {
+                        "service_button_pressed": {
+                          "description": "Service worker presses the service button (startup or post-maintenance restart).",
+                          "signals": [
+                            { "Service Button>Service button pressed": { "description": "Signal sent when the service button is pressed." } }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "Coin Processing": {
+              "type": "transceiver",
+              "components": [
+                { "Coin Receiver": { "type": "transceiver" } },
+                { "Weight Checker": { "type": "transceiver" } },
+                { "Form Checker": { "type": "transceiver" } }
+              ]
+            }
+          },
+          {
+            "Banknote Processing": {
+              "type": "transceiver",
+              "components": [
+                { "Banknote Receiver": { "type": "transceiver" } },
+                { "Banknote Checker": { "type": "transceiver" } }
+              ]
+            }
+          },
+          {
+            "Payment and Storage": {
+              "type": "transceiver",
+              "components": [
+                { "Change Dispenser": { "type": "transceiver" } },
+                { "Tresor": { "type": "receiver" } }
+              ]
+            }
+          },
+          {
+            "Access Control": {
+              "type": "transceiver",
+              "components": [
+                { "Locking Mechanism": { "type": "receiver" } },
+                { "Push Sensor": { "type": "sender" } }
+              ]
+            }
+          },
+          {
+            "Timing and Notifications": {
+              "type": "transceiver",
+              "components": [
+                { "Timer for Artifact Box": { "type": "transceiver" } },
+                { "Timer for Unlocked State": { "type": "transceiver" } },
+                { "Sound Indicator": { "type": "receiver" } }
+              ]
+            }
+          },
+          {
+            "Technical Sensor": {
+              "type": "sender",
+              "events": [
+                {
+                  "hardware_fault_detected": {
+                    "description": "Technical sensor detects an internal hardware fault (from user-instructions.md).",
+                    "signals": [
+                      { "Technical Sensor>Hardware fault detected": { "description": "Signal sent when a hardware fault is detected." } }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

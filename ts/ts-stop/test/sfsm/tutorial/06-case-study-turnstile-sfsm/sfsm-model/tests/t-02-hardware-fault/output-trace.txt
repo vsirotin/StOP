@@ -1,0 +1,2 @@
+I, Service Button>Service button pressed, Locked
+Locked, Technical Sensor>Hardware fault detected, Service State

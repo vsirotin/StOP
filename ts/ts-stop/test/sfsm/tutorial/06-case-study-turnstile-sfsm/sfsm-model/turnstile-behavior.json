@@ -1,0 +1,8 @@
+{
+  "Turnstile": [
+    ["I",      "Service Button>Service button pressed",        "Locked"],
+    ["Locked", "Coin Slot>Coin inserted",                      "Weight Check"],
+    ["Locked", "Banknote Slot>Banknote inserted",              "Banknote Check"],
+    ["Locked", "Technical Sensor>Hardware fault detected",     "Service State"]
+  ]
+}

@@ -1,0 +1,4 @@
+# Test: System initialization → Locked
+# Covers: UC-10 path "From Locked" first step; UC-01, UC-02, UC-03, UC-04, UC-05, UC-06, UC-07, UC-08, UC-09, UC-11 start
+
+Service Button>Service button pressed
