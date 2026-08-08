@@ -12,7 +12,35 @@ This skill produces a complete SFSM model — a structure model (`*-structure.js
 
 ---
 
-## Prerequisites
+## Processing Steps
+
+1. 
+
+## Complete Workflow per Use Case
+
+```
+For each use case N in the use-case document:
+
+  0. Read <project>-user-instructions.md if it exists.
+
+  1. Transformation
+     1.1 Process transitions → write transitions.md
+     1.2 Extend structure.json with new events/commands/components
+     1.3 Extend behavior.json with new transitions (sorted by from-state name)
+
+  2. Evaluation
+     2.1 Validate → write validation-report-01.json
+         If errors (except Rule 12 for non-last use cases): retry from 1.1 (up to 3 attempts)
+     2.2 Test → write signals.txt, commands.json, output-trace.txt
+         If errors: retry from 1.1 (up to 3 attempts)
+
+  3. Visualization (only if 2.1 and 2.2 pass)
+     Generate <project>-model.drawio
+
+  4. Log all activities in <project>-log.md (with timestamp including seconds)
+```
+
+## Input
 
 User should provide the pathes for:
 - the user story file (e.g., `turnstile-user-story.md`)

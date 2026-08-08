@@ -12,8 +12,9 @@ The AI-supported skills are listed in the last column.
 |--|--|--|--|--|
 |1|User Story Definition|Creating of User Story inclusive structure description|*-user-story.md|stop-user-story-writer|
 |2|Use Case Definition|Creating of Use Case according special rules and format|*-use-cases.md|stop-use-case-writer|
-|3|SFSM modeling|Transformation of Use Cases in a structure- and behaviour models|*-structure.json, *-behavior.json and other data|stop-sfsm-modeller|
-|4|Simulation|Development of simulators and testing of all use cases|simulator and runner code|stop-simulation-developer|
-|5|Production|Production code development|production code|stop-production-developer|
+|3|SFSM structure modeling|Transformation of User Story and Use Cases in a structure-model|*-structure.json|stop-sfsm-structure-modeller|
+|4|SFSM behavior modeling|Transformation of Use Cases and structure-model in behaviour model|*-behavior.json|stop-sfsm-behavior-modeller|
+|5|Simulation|Development of simulators and testing of all use cases|simulator and runner code|stop-simulation-developer|
+|6|Production|Production code development|production code|stop-production-developer|
 
 When on some step some defect will be detected, the process can be repeated from the step where the defect was developed.
