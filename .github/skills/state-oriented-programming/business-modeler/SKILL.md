@@ -31,8 +31,10 @@ The output directory contains the following files:
 
 Step 1: Creation of business-use-cases.md
 Step 2: Creation of swimlanes.md
-Step 3: Creation of state-machine.md (top levels)
-Step 4: Extend the state machine in state-machine.md with sub-states
+Step 3: Creation of state-machine.md (initial draft with main states)
+Step 4: Finalize state-machine.md by expanding composite states into sub-states
+
+> **Important:** Steps 3 and 4 both write to the same file `state-machine.md`. The final document must contain exactly **one** list of all states and **one** state machine definition. Step 3 produces an initial draft; Step 4 rewrites it in place to produce the complete, unified version.
 
 ## Workflow details
 
@@ -145,99 +147,158 @@ Check if:
 
 When the quality check is passed, proceed to Step 3. Otherwise, ask the user to clarify the swimlane definitions and repeat Step 2.
 
-### Step 3: Creation of state-machine.md (top levels)
+### Step 3: Creation of state-machine.md (initial draft)
 
 #### Action
-Use the information from paragraph `Behavioral Overview` in the `user story` and the swimlanes defined in Step 2 to identify and define the top-level states of the system according to BPMN standard.
+Use the information from paragraph `Behavioral Overview` in the `user story` and the swimlanes defined in Step 2 to identify and define the main states of the system according to BPMN standard. This draft will be rewritten in Step 4, so keep composite states as single entries for now.
 
 #### Output Format
 
-By writing of result into file `state-machine.md` use the following format like:
+Write the result into file `state-machine.md` using the following format:
 
 ```markdown
 # State Machine <system name>
 
-## 1. Top-level States
+## 1. States
 
-- <top-level state 1> - <description of the top-level state 1>
-- <top-level state 2> - <description of the top-level state 2>
+- <state 1> - <description of the state>
+- <state 2> - <description of the state>
 - ...
 
-## 2. Events, that trigger transitions between top-level states
+## 2. Events
 
-- <event 1> - <description of the event 1>
-- <event 2> - <description of the event 2>
+- <event 1> - <description of the event>
+- <event 2> - <description of the event>
 - ...
 
-## State machine (textual representation)
+## 3. State machine (textual representation)
 
-STATE <top-level state 1> 
-    ON <event 1> -> <top-level state 2>
-    <event 2> and <event 3> -> <top-level state 3>
+STATE <state 1>
+    ON <event 1> -> <state 2>
+    ON <event 2> AND <event 3> -> <state 3>
     ...
 
 ```
 
-For example, for the turnstile user story, some top-level states could be defined as follows:
+For example, for the turnstile user story, the initial draft could look like:
 
 ```markdown
 # State Machine Turnstile
 
-## 1. Top-level States
+## 1. States
 - Locked - The turnstile is locked and does not allow passage.
+- Payment Processing - A payment artifact is being validated.
 - Unlocked - The turnstile is unlocked and allows passage.
-...
+- Service State - The turnstile is out of service awaiting maintenance.
 
-## 2. Events, that trigger transitions between top-level states
-- Coin inserted - A valid coin is inserted into the coin slot.
-- Banknote inserted - A valid banknote is inserted into the banknote slot.
+## 2. Events
+- Coin inserted - The user inserts a coin into the coin slot.
+- Banknote inserted - The user inserts a banknote into the banknote slot.
+- Payment accepted - The artifact is valid; change dispensed if needed.
+- Payment rejected - The artifact is invalid and has been returned.
+- Insufficient change - Valid payment but change unavailable.
+- User passed through - Push sensor detected passage.
+- Hardware fault detected - An internal hardware fault occurred.
+- Service button pressed - Service worker pressed the service button.
 
-## State machine (textual representation)
+## 3. State machine (textual representation)
 STATE Locked
-    ON Coin inserted -> Payment processing
-    ON Banknote inserted -> Payment processing
-    ON Hardware fault detected -> ServiceState
-STATE Payment processing
-    ON CoinValid AND ChangeNeeded AND ChangeAvailable -> Unlocked
-    ON CoinValid AND ChangeNeeded AND ChangeNotAvailable -> ServiceState
-    ON CoinValid AND ChangeNotNeeded -> Unlocked
-    ON BanknoteValid AND ChangeNeeded AND ChangeAvailable -> Unlocked
-    ...
-...
+    ON Coin inserted -> Payment Processing
+    ON Banknote inserted -> Payment Processing
+    ON Hardware fault detected -> Service State
+STATE Payment Processing
+    ON Payment accepted -> Unlocked
+    ON Payment rejected -> Locked
+    ON Insufficient change -> Service State
+    ON Hardware fault detected -> Service State
+STATE Unlocked
+    ON User passed through -> Locked
+    ON Unlocked state timeout -> Locked
+    ON Hardware fault detected -> Service State
+STATE Service State
+    ON Service button pressed -> Locked
 ```
 
-### Step 4: Extend the state machine in state-machine.md with sub-states
+#### Quality check (Step 3)
+1. An **initial state** is identified (the state the system is in before any external event occurs).
+2. Every state listed in **section 1** has a corresponding `STATE` block in **section 3**, and vice versa.
+3. Every `STATE` block has **at least one outgoing transition** (no unintentional dead ends).
+4. Every state except the initial state has **at least one incoming transition** (no unreachable states).
+5. Every behavior described in `Behavioral Overview` of the user story is traceable to **at least one path** through the state machine.
+
+When the quality check passes, proceed to Step 4. Otherwise fix the draft and re-check.
+
+### Step 4: Finalize state-machine.md by expanding composite states
 
 #### Action
-Use the information from paragraph `Behavioral Overview` in the `user story`, the swimlanes defined in Step 2, and state-machine, defined in Step 3 to identify and define the sub-states of the system according to BPMN standard.
+Rewrite `state-machine.md` to expand every composite state into its sub-states. The result is a **single, unified document** — do **not** add new sections or separate headings for sub-states. Instead, update sections `1. States`, `2. Events`, and `3. State machine (textual representation)` in place so they each contain all states and all events together.
 
-Analyze each event in the state machine and decide if it is an atomic or a composite with internal behaviour. If it is a composite event, define its sub-states and events that trigger transitions between it and parent state.
+**How to identify and expand a composite state:**
 
-The main criteria for defining sub-states: Is this event produces by only one object from paragraph `Structure Overview` in the `user story`? If yes, then it is atomic. If no, then it is composite.
+For each transition in the state machine, examine its trigger signal:
+- If the signal is generated by a **single** object from `Structure Overview` → the transition is **atomic**. Keep it as-is.
+- If the signal is the **end result of a chain of objects** (each object receives a signal, processes it, and passes a new signal to the next) → the signal is **composite**. The state that contains this transition must be replaced by a sub-state hierarchy.
 
-For example an event `Coin inserted` is produced by the only object `coin-receiver`. The object `coin-slot`is a candiate, but it is passive.
+**How to replace a composite transition:**
+1. Remove the composite transition from the parent state.
+2. Create one sub-state per object in the chain.
+3. Wire sub-states with the intermediate signals between objects.
+4. The parent state's incoming event becomes the first sub-state's entry event.
+5. The composite signal becomes the exit event of the last sub-state (now atomic).
 
-Otherwise, an event `CoinValid` is produced by many objects: `coin-receiver`, `weight-checker`, `form-checker`. So it is composite and should be replaced with some sub-state. This sub state can have a name `Coin validation` and it can have sub-states `Weight check`, `Form check`. It will have as input parent't input `Coin inserted` and as output parent't output `CoinValid` or `CoinInvalid`.
+For example: in state `Payment Processing`, the transition `ON CoinValid → Unlocked` is triggered by a composite signal — it requires `weight-checker` to signal `form-checker`, which then signals the outcome. Replace `Payment Processing` with sub-states `Weight Check → Form Check`, where each sub-state is entered and exited by the single object responsible for it. In contrast, the transition `ON Coin inserted` is triggered by `coin-receiver` alone (the coin slot is passive) — it is atomic and stays unchanged.
 
-So the state machine will will be after this extension:
+Apply this analysis recursively to all transitions. If you are unsure whether a signal is composite, ask the user before proceeding.
+
+**Stopping criterion:** Stop expanding a state when every transition leaving it is triggered by a signal generated by a single object from `Structure Overview`. At that point the state is atomic and no further decomposition is needed.
+
+After expansion, the updated sections `1. States` and `3. State machine (textual representation)` in `state-machine.md` should list **all** states flat (main states and sub-states alike) with no separate sub-sections per state. For example:
 
 ```markdown
-## State machine (textual representation)
+## 1. States
+- Locked - The turnstile is locked and does not allow passage.
+- Payment Processing - A payment artifact is being validated.
+- Coin Validation - The inserted coin is being checked for weight and form.
+- Weight Check - The coin weight is being validated by the weight-checker.
+- Form Check - The coin form is being validated by the form-checker.
+- ...
+- Unlocked - The turnstile is unlocked and allows passage.
+- Service State - The turnstile is out of service awaiting maintenance.
+
+## 3. State machine (textual representation)
 STATE Locked
-    ON Coin inserted -> Payment processing
-    ON Banknote inserted -> Payment processing
-    ON Hardware fault detected -> ServiceState
-STATE Payment processing
-    ON Coin inserted -> Coin validation
-    ON CoinValid AND ChangeNeeded AND ChangeAvailable -> Unlocked
-
-STATE Coin validation
-    ON Coin inserted -> Weight check
+    ON Coin inserted -> Payment Processing
+    ON Banknote inserted -> Payment Processing
+    ON Hardware fault detected -> Service State
+STATE Payment Processing
+    ON Coin inserted -> Coin Validation
+    ON Banknote inserted -> Banknote Validation
+STATE Coin Validation
+    ON Coin inserted -> Weight Check
+STATE Weight Check
+    ON Weight valid -> Form Check
+    ON Weight invalid -> Coin Return
+STATE Form Check
+    ON Form valid AND change needed AND change available -> Change Dispensing
+    ON Form valid AND no change needed -> Unlocked
+    ON Form valid AND change not available -> Service State
+    ON Form invalid -> Coin Return
 ...
-
+STATE Unlocked
+    ON User passed through -> Locked
+    ON Unlocked state timeout -> Locked
+STATE Service State
+    ON Service button pressed -> Locked
 ```
 
-You should try to define recursively sub-states for all composite events in the state machine. If you are not sure about some event, ask the user to clarify it.
+#### Quality check
+1. The file contains exactly one `## 1. States` section and one `## 3. State machine (textual representation)` section.
+2. Every state listed in section 1 has a corresponding `STATE` block in section 3.
+3. Every event listed in section 2 appears in at least one `ON` transition.
+4. Every `STATE` block's target states exist in section 1.
+5. All behaviors described in `Behavioral Overview` of the user story are reachable from the initial state.
+
+When the quality check passes, the skill is complete.
 
 
 

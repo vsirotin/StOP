@@ -4,25 +4,40 @@ Base user story: [Turnstile: User Story](../sfsm/turnstile-user-story.md)
 
 ---
 
-## 1. Top-level States
+## 1. States
 
-- **Locked** — The turnstile is locked; the rotating arm cannot be pushed. The light indicator shows red. The system is ready to accept a coin or banknote.
-- **Payment Processing** — A coin or banknote has been inserted and is being validated. The outcome determines whether the turnstile unlocks or remains locked (returning the artifact).
-- **Unlocked** — Payment was accepted; the rotating arm is unlocked and the light indicator shows green. The system waits for the user to pass through or for the unlocked-state timer to expire.
-- **Service State** — The turnstile is out of service due to insufficient change, an un-retrieved artifact, or a hardware fault. The light indicator shows red and the sound indicator emits a warning. Only a service worker can restart the system.
+- **Locked** — The turnstile is locked; the rotating arm cannot be pushed. Light indicator shows red. Awaiting a coin or banknote.
+- **Weight Check** — The weight-checker is validating the weight of the inserted coin.
+- **Form Check** — The form-checker is validating the form of the coin and deciding whether change is needed.
+- **Banknote Check** — The banknote-checker is validating the inserted banknote and deciding whether change is needed.
+- **Change Dispensing** — The change dispenser is dispensing the required change into the artifact-box.
+- **Artifact Return** — An invalid or unprocessable artifact has been placed in the artifact-box; the artifact-box timer is running.
+- **Artifact Retrieval Wait** — The system is waiting for the user to retrieve the artifact from the artifact-box.
+- **Unlocked** — Payment accepted; the rotating arm is unlocked, light indicator shows green. Awaiting passage or timeout.
+- **Service State** — The turnstile is out of service. Light indicator shows red; sound indicator emits a warning. Only a service worker can restart the system.
 
 ---
 
-## 2. Events that trigger transitions between top-level states
+## 2. Events
 
-- **Coin inserted** — The user inserts a coin into the coin slot.
-- **Banknote inserted** — The user inserts a banknote into the banknote slot.
-- **Payment accepted** — The inserted artifact is valid; change has been dispensed (if needed) or no change was required.
-- **Payment rejected** — The inserted artifact is invalid (bad weight, bad form, or invalid banknote) and has been returned to the artifact-box.
-- **Insufficient change** — A valid payment was received but the change dispenser cannot provide the required change.
+- **Coin inserted** — The user inserts a coin; the coin-receiver receives it.
+- **Banknote inserted** — The user inserts a banknote; the banknote-receiver receives it.
+- **Weight valid** — The weight-checker confirms the coin weight is acceptable.
+- **Weight invalid** — The weight-checker rejects the coin due to incorrect weight.
+- **Form valid, change needed, change available** — The form-checker confirms the coin; the change dispenser has sufficient funds.
+- **Form valid, no change needed** — The form-checker confirms the coin; no change is required.
+- **Form valid, change not available** — The form-checker confirms the coin; the change dispenser cannot provide the required change.
+- **Form invalid** — The form-checker rejects the coin.
+- **Banknote valid, change needed, change available** — The banknote-checker confirms the banknote; sufficient change is available.
+- **Banknote valid, no change needed** — The banknote-checker confirms the banknote; no change is required.
+- **Banknote valid, change not available** — The banknote-checker confirms the banknote; change is unavailable.
+- **Banknote invalid** — The banknote-checker rejects the banknote.
+- **Change dispensed** — The change dispenser has placed change in the artifact-box; payment is complete.
+- **Artifact placed in artifact-box** — The rejected artifact has been placed in the artifact-box and the timer has started.
+- **Artifact retrieved** — The user has taken the artifact from the artifact-box.
+- **Artifact retrieval timeout** — The artifact-box timer expired; the artifact was not retrieved in time.
 - **User passed through** — The push sensor detected that the user pushed through the rotating arm.
-- **Unlocked state timeout** — The timer for the unlocked state expired before the user passed through.
-- **Artifact retrieval timeout** — The timer for the artifact-box expired; the returned artifact was not retrieved by the user.
+- **Unlocked state timeout** — The unlocked-state timer expired before the user passed through.
 - **Hardware fault detected** — The turnstile detected an internal hardware fault.
 - **Service button pressed** — The service worker pressed the service button after completing maintenance.
 
@@ -30,119 +45,43 @@ Base user story: [Turnstile: User Story](../sfsm/turnstile-user-story.md)
 
 ## 3. State machine (textual representation)
 
-### Top-level transitions
-
 ```
 STATE Locked
-    ON Coin inserted       -> Payment Processing
-    ON Banknote inserted   -> Payment Processing
-    ON Hardware fault detected -> Service State
-
-STATE Payment Processing
-    ON Payment accepted    -> Unlocked
-    ON Payment rejected    -> Locked
-    ON Insufficient change -> Service State
-    ON Hardware fault detected -> Service State
-
-STATE Unlocked
-    ON User passed through  -> Locked
-    ON Unlocked state timeout -> Locked
-    ON Hardware fault detected -> Service State
-
-STATE Service State
-    ON Service button pressed -> Locked
-```
-
----
-
-### Sub-states of Payment Processing
-
-The **Payment Processing** state is a composite state. Its internal behaviour depends on whether a coin or a banknote was inserted.
-
-#### Payment Processing → Coin Validation
-
-Coin validation involves two sequential checks (weight, then form), each performed by a separate object, making it a composite sub-state.
-
-```
-STATE Coin Validation
-    ON Coin inserted        -> Weight Check
+    ON Coin inserted                                          -> Weight Check
+    ON Banknote inserted                                      -> Banknote Check
+    ON Hardware fault detected                                -> Service State
 
 STATE Weight Check
-    ON Weight valid         -> Form Check
-    ON Weight invalid       -> Coin Return
+    ON Weight valid                                           -> Form Check
+    ON Weight invalid                                         -> Artifact Return
 
 STATE Form Check
-    ON Form valid AND change needed AND change available  -> Change Dispensing (coin)
-    ON Form valid AND change not needed                  -> Payment Accepted (coin)
-    ON Form valid AND change needed AND change not available -> Insufficient Change
-    ON Form invalid         -> Coin Return
-
-STATE Change Dispensing (coin)
-    ON Change dispensed     -> Payment Accepted (coin)
-
-STATE Coin Return
-    ON Coin placed in artifact-box -> Artifact Retrieval Wait (coin)
-
-STATE Artifact Retrieval Wait (coin)
-    ON Artifact retrieved   -> [back to Locked]
-    ON Artifact retrieval timeout -> Service State
-
-STATE Payment Accepted (coin)
-    ON Coin stored in tresor -> [signal to Unlocked]
-```
-
-#### Payment Processing → Banknote Validation
-
-Banknote validation is performed by a single object (banknote-checker) but produces multiple outcomes, so it is modelled as a simple sub-state with branching.
-
-```
-STATE Banknote Validation
-    ON Banknote inserted    -> Banknote Check
+    ON Form valid AND change needed AND change available      -> Change Dispensing
+    ON Form valid AND no change needed                        -> Unlocked
+    ON Form valid AND change not available                    -> Service State
+    ON Form invalid                                           -> Artifact Return
 
 STATE Banknote Check
-    ON Banknote valid AND change needed AND change available  -> Change Dispensing (banknote)
-    ON Banknote valid AND change not needed                  -> Payment Accepted (banknote)
-    ON Banknote valid AND change needed AND change not available -> Insufficient Change
-    ON Banknote invalid     -> Banknote Return
+    ON Banknote valid AND change needed AND change available  -> Change Dispensing
+    ON Banknote valid AND no change needed                    -> Unlocked
+    ON Banknote valid AND change not available                -> Service State
+    ON Banknote invalid                                       -> Artifact Return
 
-STATE Change Dispensing (banknote)
-    ON Change dispensed     -> Payment Accepted (banknote)
+STATE Change Dispensing
+    ON Change dispensed                                       -> Unlocked
 
-STATE Banknote Return
-    ON Banknote placed in artifact-box -> Artifact Retrieval Wait (banknote)
+STATE Artifact Return
+    ON Artifact placed in artifact-box                        -> Artifact Retrieval Wait
 
-STATE Artifact Retrieval Wait (banknote)
-    ON Artifact retrieved   -> [back to Locked]
-    ON Artifact retrieval timeout -> Service State
+STATE Artifact Retrieval Wait
+    ON Artifact retrieved                                     -> Locked
+    ON Artifact retrieval timeout                             -> Service State
 
-STATE Payment Accepted (banknote)
-    ON Banknote stored in tresor -> [signal to Unlocked]
-```
-
----
-
-### Sub-states of Unlocked
-
-The **Unlocked** state has two exit conditions that are supervised concurrently: user passage (push sensor) and the unlocked-state timer.
-
-```
 STATE Unlocked
-    ENTER -> start Timer for unlocked state
-             set Light indicator to green
-    ON User passed through          -> lock arm, set Light indicator to red -> Locked
-    ON Unlocked state timeout       -> lock arm, set Light indicator to red -> Locked
-    ON Hardware fault detected      -> Service State
-```
+    ON User passed through                                    -> Locked
+    ON Unlocked state timeout                                 -> Locked
+    ON Hardware fault detected                                -> Service State
 
----
-
-### Sub-states of Service State
-
-The **Service State** is a simple waiting state. Entry always activates the sound indicator and ensures the light indicator is red.
-
-```
 STATE Service State
-    ENTER -> set Light indicator to red
-             activate Sound indicator (warning)
-    ON Service button pressed -> set Light indicator to red -> Locked
+    ON Service button pressed                                 -> Locked
 ```
