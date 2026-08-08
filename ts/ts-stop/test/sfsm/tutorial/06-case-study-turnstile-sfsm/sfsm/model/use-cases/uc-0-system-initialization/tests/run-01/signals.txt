@@ -1,3 +1,0 @@
-# Signals for use case 0: System initialization
-# The service worker presses the service button.
-Service Button>Pressed
