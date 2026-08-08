@@ -22,9 +22,10 @@ When this information is not provided, request it from the user before proceedin
 The output directory contains the following files:
 
 ```
-- business-use-cases.md  # Use cases definition according to BPMN standard.
-- swimlanes.md  # Swimlane definitions according to BPMN standard.
-- state-machine.md  # State machine definition according to BPMN standard.
+- business-use-cases.md       # Use cases definition according to BPMN standard.
+- swimlanes.md                # Swimlane definitions according to BPMN standard.
+- state-machine.md            # State machine definition according to BPMN standard.
+- business-use-cases-trace.md # Traceability: one signal→state path per use case entry point.
 ```
 
 ## Workflow overview
@@ -33,6 +34,7 @@ Step 1: Creation of business-use-cases.md
 Step 2: Creation of swimlanes.md
 Step 3: Creation of state-machine.md (initial draft with main states)
 Step 4: Finalize state-machine.md by expanding composite states into sub-states
+Step 5: Creation of business-use-cases-trace.md
 
 > **Important:** Steps 3 and 4 both write to the same file `state-machine.md`. The final document must contain exactly **one** list of all states and **one** state machine definition. Step 3 produces an initial draft; Step 4 rewrites it in place to produce the complete, unified version.
 
@@ -296,7 +298,56 @@ STATE Service State
 2. Every state listed in section 1 has a corresponding `STATE` block in section 3.
 3. Every event listed in section 2 appears in at least one `ON` transition.
 4. Every `STATE` block's target states exist in section 1.
-5. All behaviors described in `Behavioral Overview` of the user story are reachable from the initial state.
+
+When the quality check passes, proceed to Step 5.
+
+---
+
+### Step 5: Creation of business-use-cases-trace.md
+
+#### Action
+For each use case in `business-use-cases.md`, trace every distinct entry point through the state machine as an alternating `State --[Signal]--> State` path and write the result into `business-use-cases-trace.md`.
+
+**Rules:**
+1. **Every entry point:** If a use case can be triggered by different initial signals or reached from different starting states, produce one separate path per entry point.
+2. **No shortcuts:** Use only states and signals that exist in `state-machine.md`. Every `--[Signal]-->` must correspond to a defined `ON` transition in the state machine.
+3. **Start from the initial state** unless the use case explicitly describes a scenario that begins from a different state (e.g., a hardware fault occurring while the turnstile is `Unlocked`).
+
+#### Output Format
+
+Write the result into file `business-use-cases-trace.md` using the following format:
+
+```markdown
+# Business Use Cases — Traceability
+
+This file traces each use case from business-use-cases.md as a path through the
+state machine defined in state-machine.md.
+
+---
+
+## UC-<number>: <use case name>
+
+[Path label, e.g. "Via coin payment:" — only when multiple paths exist]
+
+```
+<State>
+  --[Signal]-->
+<State>
+  --[Signal]-->
+<State>
+```
+```
+
+#### Failure handling
+If a use case cannot be traced because the state machine is missing a required state or transition:
+1. Update `state-machine.md` to add the missing element.
+2. Re-run the Step 4 quality check.
+3. Repeat at most **3 times** across all use cases. If gaps remain after 3 rounds, present the unresolved use cases to the user with a summary of what is missing and ask whether to proceed or abort.
+
+#### Quality check
+1. Every use case in `business-use-cases.md` has at least one path in `business-use-cases-trace.md`.
+2. Every state and signal in every path exists in `state-machine.md`.
+3. Each path forms a valid walk through the state machine: each `--[Signal]-->` is a defined `ON` transition from the preceding state.
 
 When the quality check passes, the skill is complete.
 
