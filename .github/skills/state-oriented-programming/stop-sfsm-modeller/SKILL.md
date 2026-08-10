@@ -160,14 +160,15 @@ For each STATE block in state-machine.md, process transitions one by one:
 7. **Check test coverage** and run tests (Step 3).
 8. Move to the next transition.
 
-### Step 2: Validation (after each transition)
+### Step 2: Validation
+
+Validation should be run after processing of each FA in 
 
 ```bash
 node <scripts-dir>/validate-whole-sfsm.js <structure.json> <behavior.json> <report.json>
 ```
 
 - If Phase 1 errors (FA validation): fix the transition, retry (max 3 attempts). If unresolved, raise with user.
-- Phase 1 Rule 12 warnings about missing target states are expected and can be ignored until all transitions are processed.
 - Phase 2 errors (signal/command not in structure): update structure.json and revalidate.
 
 ### Step 3: Test coverage (after each transition)

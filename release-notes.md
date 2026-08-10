@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.9.0 build 98
+feat: Rule 12 by FaValidator deactivated.
+
 ## Version: 3.8.0 build 97
 feat: .github/skills/business-modeler — Added Step 5 (business-use-cases-trace.md): per-UC signal→state traceability with all-entry-point coverage, no-shortcut rule, 3-round failure recovery, and quality check. Updated business model output for turnstile tutorial.
 
