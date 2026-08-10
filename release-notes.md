@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.9.1 build 99
+doc: Skill stop-sfsm-modeller — Updated transformation process.
+
 ## Version: 3.9.0 build 98
 feat: Rule 12 by FaValidator deactivated.
 
