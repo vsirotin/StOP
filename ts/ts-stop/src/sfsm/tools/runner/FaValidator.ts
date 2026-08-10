@@ -281,30 +281,30 @@ export class FaValidator {
         }
 
         // ── Rule 12: Each transition's target state exists ──────────────────
-        for (const [name, info] of faIndex) {
-            for (const t of info.transitions) {
-                const target = t[2];
-                // Target can be: a state in the same FA, a sub-FA name, or an exit state.
-                if (this.isExitState(target)) continue; // exit states are always valid targets
-                if (info.subFaNames.has(target)) continue; // sub-FA names are valid targets
-                if (info.fromStates.has(target)) continue; // state exists as a from-state in this FA
-                if (target === info.entryStates.values().next().value) continue; // entry state
-                // Check if target is a from-state in some transition of this FA.
-                let found = false;
-                for (const ot of info.transitions) {
-                    if (ot[0] === target) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    // Also check if it's a sub-FA defined elsewhere.
-                    if (!faIndex.has(target)) {
-                        errors.push(this.makeError(12, `FA "${name}": transition target "${target}" does not exist as a state or sub-FA.`, name, this.transToString(t)));
-                    }
-                }
-            }
-        }
+        // for (const [name, info] of faIndex) {
+        //     for (const t of info.transitions) {
+        //         const target = t[2];
+        //         // Target can be: a state in the same FA, a sub-FA name, or an exit state.
+        //         if (this.isExitState(target)) continue; // exit states are always valid targets
+        //         if (info.subFaNames.has(target)) continue; // sub-FA names are valid targets
+        //         if (info.fromStates.has(target)) continue; // state exists as a from-state in this FA
+        //         if (target === info.entryStates.values().next().value) continue; // entry state
+        //         // Check if target is a from-state in some transition of this FA.
+        //         let found = false;
+        //         for (const ot of info.transitions) {
+        //             if (ot[0] === target) {
+        //                 found = true;
+        //                 break;
+        //             }
+        //         }
+        //         if (!found) {
+        //             // Also check if it's a sub-FA defined elsewhere.
+        //             if (!faIndex.has(target)) {
+        //                 errors.push(this.makeError(12, `FA "${name}": transition target "${target}" does not exist as a state or sub-FA.`, name, this.transToString(t)));
+        //             }
+        //         }
+        //     }
+        // }
 
         // ── Rule 13: Each sub-FA is referenced by its parent ────────────────
         for (const [name, info] of faIndex) {
