@@ -220,3 +220,64 @@ One transition now covers "enter maintenance mode" from every current and future
 A runnable version of this example is available as a unit test: [1-3-2-joker-state.test.ts](../../ts-stop/test/sfsm/tutorial/1-3-2-joker-state.test.ts).
 
 In the [next chapter](./02-stacked-finite-state-machine.md) we will see how to combine multiple FAs into a hierarchy, and how the `Sfsm` engine processes signals through that hierarchy.
+
+## 1.4 Senders, receivers and commands
+
+An FA defines the pure behaviour of a system, but says nothing about what supports that behaviour. Who sends signals to the FA? How does the external world react when the FA changes state?
+
+The StOP approach makes minimal assumptions about these surrounding objects. It assumes that some objects (**senders**) send signals to the FA, and that some objects (**receivers**) react to state changes by performing actions. An object that is both a sender and a receiver is called a **transceiver**.
+
+External senders and receivers can be connected to the FA through a special API described in the next chapter.
+
+For simulation and rapid prototyping, the StOP library provides a simple declarative JSON format for defining senders, receivers, and commands that wire external objects to the FA.
+
+Let us extend the turnstile example. To make the simulation more realistic, we model the object that sends the `"start"` signal. Assume it is a button that, when pressed, sends `"start"` to the FA. We define it as a sender:
+
+```json
+{
+  "StartButton": {
+    "signals": ["start"]
+  }
+}
+```
+
+Now consider the transition:
+
+```json
+["locked", "coin", "unlocked"]
+```
+
+What happens when the inserted coin is not valid? We need a coin validator object that inspects the coin and sends either `"validCoin"` or `"invalidCoin"` back to the FA. This validator is defined as a receiver with a **command** — an action the FA invokes when it enters a specific state:
+
+```json
+{
+  "CoinValidator": {
+    "commands": {
+      "validateCoin": {
+        "signals": ["validCoin", "invalidCoin"]
+      }
+    }
+  }
+}
+```
+
+A command is triggered by appending its name as the fourth element of a transition. When the FA fires that transition, it invokes the command; the command then sends one of its declared result signals back into the FA. The original `"coin"` transition is therefore split into an intermediate validation state plus the two outcome transitions:
+
+```json
+{
+  "Turnstile": [
+    ["I",          "start",       "locked"],
+    ["locked",     "coin",        "validation", "validateCoin"],
+    ["validation", "validCoin",   "unlocked"],
+    ["validation", "invalidCoin", "locked"],
+    ["unlocked",   "push",        "locked"],
+    ["*",          "service",     "maintenance"]
+  ]
+}
+```
+
+Each command is executed at the end of transition processing and may use information from the current state and the incoming signal.
+
+
+
+
