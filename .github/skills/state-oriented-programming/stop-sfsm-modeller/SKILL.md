@@ -1,18 +1,22 @@
 ---
 name: stop-sfsm-modeller
-description: SFSM Modeller from Business Model. Transforms business model artifacts (state-machine.md, swimlanes.md, business-use-cases-trace.md) into an executable SFSM (structure.json + behavior.json). Processes the state machine transition-by-transition, validates and tests after each transition, and derives test cases from the traceability document.
+description: Transforms business model artifacts (state-machine.md, swimlanes.md, business-use-cases-trace.md) into SFSM-model (Stacked Finite State Machine) sfsm.ext.json, validates and tests created result model.
 metadata:
   author: vsirotin
-  version: "0.1"
+  version: "0.3"
 ---
 
 # SFSM Modeller from Business Model
 
-This skill produces a complete SFSM model — `structure.json` and `behavior.json` — derived from the business model artifacts produced by the `business-modeler` skill.
+## 1. Introduction
 
----
+Creation of Business model from User Story enables rapid prototyping of the system behavior. The business model is a set of artifacts that describe the system behavior in terms of states, transitions, signals and components. The SFSM Modeller transforms these artifacts into a Stacked Finite State Machine (SFSM), that can be used as "behaviour core" in production. 
 
-## Input
+To fulfill realistic requirements of production, the SFSM-Model in the rule should be extended (comparing with Business Model) with some technical details, it can have some other structure (hierarchy of objects). 
+
+SFSM-Modeller should not only generate a new model, but validate and test it.
+
+## 2. Input
 
 User should provide:
 - `business-model/` directory path containing:
@@ -25,15 +29,14 @@ User should provide:
 
 ---
 
-## Output Directory Structure
+## 3. Output Directory Structure
 
 ```
 sfsm-model/
-├── structure.json       # Component hierarchy with types, events, commands
-├── behavior.json        # FA transitions (compact format for SFSM engine)
-├── transformation-log.md          # Processing log (timestamp per transition)
-├── transformation-trace.md        # Transition-by-transition trace with rules applied
-├── user-instructions.md           # (input, read-only)
+├── sfsm.ext.json           # FAs with component hierarchy, events, commands, signals and transitions
+├── transformation-trace.md # Transition-by-transition trace with rules applied
+├── processing.log.md       # Processing log (timestamp per transition)
+├── user-instructions.md    # Additional user input (read-only).
 └── tests/
     └── t-<NN>-<description>/
         ├── signals.txt            # Input signals for this test
@@ -44,57 +47,245 @@ sfsm-model/
 
 ---
 
-## Output File Formats
+## 4. File Format of `sfsm.ext.json`
 
-### `behavior.json`
-
-Compact SFSM format — `Record<string, Transition[]>` where each key is an FA name and each value is a list of transitions:
+Result of the transformation is a JSON file with the structure like:
 
 ```json
 {
-  "Turnstile": [
-    ["I", "Service Button>Service button pressed", "Locked"],
-    ["Locked", "Coin Slot>Coin inserted", "Weight Check"]
+  "components": [ 
+    "Turnstile": {
+      "ts": [
+        ["I", "Service Button>Service button pressed", "Locked"],
+        ["Locked", "Coin Slot>Coin inserted", "Weight-checker.weightCheck"]
+        ...
+      ]
+      "components": [   
+        "Payment component": {
+          "components": [
+            "Coin processing component": {
+              "components": [     
+                "Coin Receiver": {
+                  "events": [
+                    {
+                      "coin_inserted": {
+                        "description": "User inserts a coin.",
+                        "signals": [
+                          { "Coin Receiver>Coin inserted": }
+                        ]
+                      }
+                      ...
+                    }
+                  ]
+                }
+              ]                
+            }   ^
+          ]
+        }      
+      ]
+    }
   ]
 }
 ```
 
-Conventions:
-- Entry state: `"I"`. Exit states: `"E_<Description>"`. Regular states: exact names from state-machine.md.
-- Signal format: `<Sender Component>><business signal name>` (sender derived via B-Rule-02 or B-Rule-05).
-- Transitions sorted per FA by from-state: `I` first, then alphabetical.
+The "..." means, that the structure can be extended with more components, events, signals, transitions, etc. The structure is hierarchical and can have multiple levels of components.
 
-### `structure.json`
+---
 
-Component hierarchy derived from `swimlanes.md`:
+## 5. Workflow Overview
+
+Processing of the business model into SFSM-model is done in steps:
+
+Step 1: Creation of initial structure. (Will be done once per project.)
+Step 2: Transformation of FA from `business-model/state-machine.md`. (Will be done for each FA.)
+Step 2.1  Transformation of each transition in the FA. (Will be done for each transition.)
+Step 2.2 Validation of the FA. (Will be done for each FA.)
+Step 2.3 Test coverage of the FA. (Will be done for tests, that are fully covered with already processed transitions from `business-model/business-use-cases-trace.md`).
+Step 3a. Completion of transformation (after successful processing of all FAs in `business-model/state-machine.md`).
+Step 3b. Failure handling (if any validation or test fails).
+
+
+
+## 6. Workflow steps descriptions
+
+### Step 1: Creation of initial structure
+
+In the rule, the Business Model has a flat structure of components (see paragraph "3. State machine (textual representation)" in `business-model/state-machine.md`). In the SFSM-Model the structure can be hierarchical. 
+New structure or its main elements can be set by the user as a draft of `sfsm.ext.json` or in `user-instructions.md`. You must create the initial structure from these two sources (when the user provides one of them) and `business-model/state-machine.md`. 
+
+The challenge is to find the right mapping between the flat structure of the business model and the hierarchical structure of the SFSM-model. 
+
+Result of this step is a draft of `sfsm.ext.json` with the initial structure and empty behavior (no transitions yet). Use as example structure from paragraph "File Format of `sfsm.ext.json`" above.
+
+If you see some problems by processing of this step, you can stop and ask the user for clarification. You can also create an issue in `sfsm-model/issues/issue-NN.md` and stop processing.
+
+### Step 2: Transformation of FA from `business-model/state-machine.md`
+
+This step should be processed in loop for each FA in `business-model/state-machine.md`. Each FA is defined by a STATE block with its transitions.
+
+In the rule you should find the state in your draft of `sfsm.ext.json` corresponding to the state in paragraph "3. State machine (textual representation)" in `business-model/state-machine.md` and process all transitions in this block one by one.
+
+In some situation the user can provide an initial transition in `user-instructions.md` for root component. In this case you should add this transition to the behavior of the root component in `sfsm.ext.json` before processing of the first FA. This action should be logged in `processing.log.md`.
+
+#### Step 2.1 Transformation of each transition in the FA
+
+Now you should process each transition in the current FA one by one. For each transition you should make an entry in the file `processing.log.md` with the current timestamp, as explained below.
+
+Assume, that state machine in `business-model/state-machine.md` has among others the following states and transitions (only fragments are shown):
+
+```
+STATE Locked
+    ON Coin inserted                                          -> Weight Check
+    ON Banknote inserted                                      -> Banknote Check
+    ON Hardware fault detected                                -> Service State
+
+STATE Weight Check
+    ON Weight valid                                           -> Form Check
+    ON Weight invalid                                         -> Artifact Return
+
+STATE Form Check
+    ON Form valid AND change needed AND change available      -> Change Dispensing
+    ON Form valid AND no change needed                        -> Unlocked
+    ON Form valid AND change not available                    -> Service State
+    ON Form invalid                                           -> Artifact Return
+```    
+and the user provides the following system structure in `user-instructions.md` (only fragments are shown):
+
+```
+Turnstile
+  Payment component
+    Coin processing component
+      Coin Slot
+      Coin Receiver
+      Weight-checker
+      Form-checker
+    Banknote processing component
+      Banknote receiver
+      Banknote-checker
+      ...
+```
+and after insertion of initial transition on previous step we have in draft of `sfsm.ext.json` the following structure (only fragments are shown):
+
+```
 
 ```json
 {
-  "components": [
-    {
-      "Turnstile": {
-        "type": "transceiver",
-        "components": [
-          {
-            "User Interaction": {
-              "type": "transceiver",
-              "components": [
-                {
-                  "Coin Slot": {
-                    "type": "sender",
-                    "events": [
-                      {
-                        "coin_inserted": {
-                          "description": "User inserts a coin.",
-                          "signals": [
-                            { "Coin Slot>Coin inserted": { "description": "Coin inserted signal." } }
-                          ]
-                        }
-                      }
-                    ]
-                  }
+  "components": [ 
+    "Turnstile": {
+      "ts": [
+        ["I", "Service Button>Service button pressed", "Locked"],
+        ...
+      ]
+    }
+  ]
+}
+```
+
+By processing you retrieve the current stack of states (remember the paragraph "3.1 How stacked states are processed" in tutorial `03-advanced-themes.md`).
+
+In our situation the current stack of states is `["Turnstile:Locked"]`, where "Turnstile" is a FA and "Locked" is a state in this FA.
+
+Transitopn from 'business-model/state-machine.md' is `ON Coin inserted -> Weight Check`. 
+
+In Business Model we have events. They should be mapped to signals in SFSM-model. 
+Nameconvention for signals is `<Sender>><signal name>`. 
+
+Which object can be the sender?
+
+Analysis of structure in draft of `sfsm.ext.json` shows, that the only object that can be the sender for signal like "Coin inserted" is the "Coin Slot" or "Coin Receiver". Our chouce is "Coin Receiver" because it seems it is active component and their name better match to decribed action "Coin inserted".
+
+The name convention for signals is `<Sender>><signal name>`. So the signal name in SFSM-model is `Coin Receiver>Coin inserted`.
+
+Which object can process this signal, also - to be its receiver? Analysis of structure in draft of `sfsm.ext.json` (derived from 'user-instructions.md`) shows, that the only object that can be the receiver for signal like "Coin inserted" is the "Weight-checker" because it name match for this task.
+
+To process it, the component "Weight-checker" should have an explicit state, because after completion of processing some signal should be sent. Proposed name can be "Weight-checker: Weight Checking".
+
+The name convention for commands is `<Receiver>.<command name>`. So the command name in SFSM-model is `Weight-checker.weightCheck`. For command name we can use the same name as for the target state in transition. By command name camel case but with lower case first letter is used.
+
+As result, inserted transition will be:
+```
+["Locked", "Coin Receiver>Coin inserted", "Weight-checker.weightCheck"]
+```
+As consequence of this transition
+1. the current stack of states will be `["Turnstile:Locked", "Weight-checker:Weight Checking"]`.
+2. In the `sfsm.ext.json` the transition will be added to the behavior of the "Turnstile" component.
+3. In the `sfsm.ext.json` the event will be added to the "Coin Receiver" component, like:
+
+```json
+"Coin Receiver": {
+    "events": [
+      {
+        "coin_inserted": {
+          "description": "User inserts a coin.",
+          "signals": [
+            { "Coin Receiver>Coin inserted": }
+          ]
+        }
+        ...
+      }
+    ]
+  }
+```
+
+4. In the `sfsm.ext.json` the command will be added to the "Weight-checker" component, like:
+
+```json
+"Weight-checker": {
+    "commands": [
+      {
+        "weightCheck": {
+          "description": "Weight-checker checks the weight of the inserted coin.",
+          "signals": [
+            { "Weight-checker>Change needed": 
+              "parameters": { 
+                "change": {
+                  "type": "number"
                 }
-              ]
+              }
+            }
+          ]
+        }
+        ...
+      }
+    ]
+  }
+```
+5. In the `sfsm.ext.json` transitions will be added to the behavior of the "Weight-checker" component, like:
+
+```json
+"Weight-checker": {
+    "ts": [
+      ["Weight Checking", "Weight-checker>Change needed", "E_Check_OK"]
+      ...
+    ]
+}
+```
+
+Is there any transition in Business Model, that is can be mapped to our last transition in SFSM-model? Yes, it is `ON Weight valid -> Form Check`.
+
+Acoording of concespt of SFSM,  the siblings in component hierarchy can not communicate directly. So the "Weight-checker" component should send a signal to its parent component "Coin processing component" and this parent component should send a signal to its sibling "Form-checker" component. Because sibling "don't know" about each other, the parent component should have a state, that will be used to send a signal to its sibling. Proposed name can be "Coin processing component: Form Checking". 
+The Form-checker component should check the valid form and bu susses confirm, that validation is needed. Proposed name can be "Form-checker: Form Checking".
+
+As result, inserted transition will be:
+```
+["Weight-checker:Weight Checking", "Weight-checker>Weight valid", "Coin processing component: Form Checking"]
+```
+As consequence of this transition
+1. the current stack of states will be `["Turnstile:Locked", "Weight-checker:Weight Checking", "Coin processing component: Form Checking"]`.
+2. In the `sfsm.ext.json` the transition will be added to the behavior of the "Weight-checker" component.
+3. In the `sfsm.ext.json` the command will be added to the "Coin processing component" component, that create a signal to child component "Form-checker", like:
+```json
+"Coin processing component": {
+  "commands": [
+    {
+      "checkForm": {
+        "description": "Sends a signal to the Form-checker component to check for form validity and confirm change.",
+        "signals": [
+          { "Form-checker>Form Checking": 
+            "parameters": { 
+              "change": {
+                "type": "number"
+              }
             }
           }
         ]
@@ -104,96 +295,46 @@ Component hierarchy derived from `swimlanes.md`:
 }
 ```
 
-Component types:
-- `sender` — slot, sensor, button: generates signals from external events.
-- `receiver` — mechanism, indicator: receives signals, performs actions.
-- `transceiver` — checker, receiver, timer, group: both sends and receives.
+You should add short explanation of your decision in `transformation-trace.md` for each transition, like:
 
----
+```
+<timestamp> Transition: ON Coin inserted -> Weight Check
+Transition: ON Coin inserted -> Weight Check
+- Current state: Locked
+- Signal sender: Coin Receiver 
+- Signal: Coin Receiver>Coin inserted
+- Signal receiver: Weight-checker
+- Command: Weight-checker.weightCheck
+- Resulting transition in sfsm.ext.json: ["Locked", "Coin Receiver>Coin inserted", "Weight-checker.weightCheck"]
+<timestamp> Transition: ON Weight valid -> Form Check
+...
 
-## Transformation Rules
+### Step 2.2 Validation of the FA.
 
-**B-Rule-01 — Initialization from user-instructions:**
-If `user-instructions.md` defines the startup sequence, create an `I → <initial-state>` transition. Signal and sender are derived from user-instructions, not from state-machine.md.
-
-**B-Rule-02 — Signal sender from swimlanes:**
-For each business model signal (e.g., "Coin inserted"), find the sender by looking at `swimlanes.md`. The physical object that generates the signal (slot, sensor, button) in the relevant swimlane is the sender. Signal format: `<Sender>><business signal name>`.
-
-**B-Rule-03 — State mapping:**
-`STATE <name>` in state-machine.md → state `<name>` in the FA in behavior.json. State names are used exactly as written in state-machine.md.
-
-**B-Rule-04 — Transition mapping:**
-`ON <signal> -> <target>` in state-machine.md → `["<current-state>", "<Sender>><signal>", "<target>"]` in behavior.json.
-
-**B-Rule-05 — Sender from user-instructions:**
-If the signal sender cannot be found in swimlanes.md, look in `user-instructions.md`. If still not found, ask the user before proceeding.
-
-**B-Rule-06 — Structure update:**
-When a new sender or signal is identified (B-Rule-02 or B-Rule-05), add the corresponding event and signal entry to structure.json if not already present.
-
----
-
-## Workflow
-
-### Step 0: Initialization
-
-1. Read `user-instructions.md` if present.
-2. Create initial `structure.json` from `swimlanes.md`:
-   - One root component = system name.
-   - One group per swimlane, nested under root.
-   - All objects from each swimlane nested under their group.
-   - Assign initial type hypothesis (sender / receiver / transceiver) per component.
-3. Add any components mentioned in `user-instructions.md` that are not in swimlanes.
-4. Create empty `behavior.json` (`{}`).
-5. Create `transformation-log.md` and `transformation-trace.md`.
-6. Apply B-Rule-01: create initialization transition, add to behavior.json and structure.json.
-7. Validate and test (see Steps 2–3 below).
-
-### Step 1: Per-transition processing
-
-For each STATE block in state-machine.md, process transitions one by one:
-
-1. **Log** the current STATE and transition line in `transformation-log.md`.
-2. **Identify signal sender** using B-Rule-02 or B-Rule-05.
-3. **Write to transformation-trace.md**: the source line, rules applied, signal derivation, and resulting transition.
-4. **Add transition** to `behavior.json` (B-Rule-04). Re-sort FA group by from-state.
-5. **Update structure.json** if the sender or signal is new (B-Rule-06).
-6. **Validate** (Step 2).
-7. **Check test coverage** and run tests (Step 3).
-8. Move to the next transition.
-
-### Step 2: Validation
-
-Validation should be run after processing of each FA in `business-model/state-machine.md`.
+Validation should be run after completing of processing of each FA in `business-model/state-machine.md`.
 
 ```bash
-node <scripts-dir>/validate-whole-sfsm.js <structure.json> <behavior.json> <report.json>
+node <scripts-dir>/validate-ext-sfsm.js <sfsm.ext.json> <report.json>
 ```
 
-- If Phase 1 errors (FA validation): fix the transition, retry (max 3 attempts). If unresolved, raise with user.
-- Phase 2 errors (signal/command not in structure): update structure.json and revalidate.
+- If you see errors, retry (max 3 attempts). If unresolved, raise with user.
 
-### Step 3: Test coverage 
+### Step 2.3: Test coverage 
 
 Test should be run after processing of each FA in `business-model/state-machine.md` when:
 - This test is not already processed/completed earlier, and
-- The FA in `sfsm-model/behavior.json` already contains all states and signals (or their mapped values) from the corresponding test in `/business-model/business-use-cases-trace.md`. 
+- The FA in `sfsm.ext.json` already contains all states and signals (or their mapped values) from the corresponding test in `/business-model/business-use-cases-trace.md`.
 
 1. Scan `business-use-cases-trace.md`. A path is **fully runnable** when every signal in it is already defined in behavior.json.
 2. For each fully runnable path:
    - Create (or extend) `tests/t-<NN>-<description>/signals.txt` with the signal sequence.
-   - Run: `node <scripts-dir>/run-fa.js <behavior.json> signals.txt output-trace.txt`
+   - extract the compact version of SFSM model from `sfsm.ext.json` into `tests/t-<NN>-<description>/sfsm.json` (using `scripts/extract-sfsm.js`).
+   - Run: `node <scripts-dir>/run-fa.js <sfsm.json> signals.txt output-trace.txt`
 
    Review the output trace. Test passes when:
    - The final state matches the last state in the trace path.
-   - The output trace in file `sfsm-model/tests/<use-cas-name>/output-trace.txt` matches the expected state sequence from `business-use-cases-trace.md`.
+   - The output trace in file `tests/t-<use-cas-name>/output-trace.txt` matches the expected state sequence from `business-use-cases-trace.md`.
 
 
    - If not → investigate and fix before proceeding. If you don't see a solution or after 3 attempts no solution found, generate an issue in `sfsm-model/issues/issue-NN.md` and stop processing.
 
----
-
-## Failure handling
-
-- Validation errors (not Rule 12): fix the current transition, re-validate. Maximum 3 retries per transition. If still failing, stop and raise with user.
-- Test failures: fix the model, re-test. Maximum 3 retries. If still failing, stop and raise with user.
