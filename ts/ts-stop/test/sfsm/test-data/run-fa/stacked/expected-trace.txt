@@ -1,7 +1,7 @@
-I, start, locked
-locked, coin, CheckCoin
-I, coin, checking-weight, check-weight
-checking-weight, weight-ok, checking-form, check-form
-checking-form, coin-ok, E_OK
-CheckCoin, coin-ok, unlocked, unlock
-unlocked, push, locked
+Turnstile:I, start, Turnstile:locked
+Turnstile:locked, coin, Turnstile:CheckCoin
+CheckCoin:I, coin, CheckCoin:checking-weight, check-weight
+CheckCoin:checking-weight, weight-ok, CheckCoin:checking-form, check-form
+CheckCoin:checking-form, coin-ok, CheckCoin:E_OK
+Turnstile:CheckCoin, coin-ok, Turnstile:unlocked, unlock
+Turnstile:unlocked, push, Turnstile:locked

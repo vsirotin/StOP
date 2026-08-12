@@ -1,3 +1,3 @@
-I, start, locked
-locked, coin, unlocked
-unlocked, push, locked
+Turnstile:I, start, Turnstile:locked
+Turnstile:locked, coin, Turnstile:unlocked
+Turnstile:unlocked, push, Turnstile:locked

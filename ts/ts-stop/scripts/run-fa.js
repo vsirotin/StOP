@@ -10,9 +10,12 @@
  * JSON file, feeds a list of signals into it, and writes a human-readable trace
  * of the transitions that fired — one line per transition:
  *
- *     from-state, signal, to-state, command
+ *     FA:from-state, signal, FA:to-state, command
  *
- * (the `, command` part is omitted when the transition has no command).
+ * where `FA` is the name of the head FA on the stack (the innermost active FA).
+ * When the from- and to-states belong to the same FA, the FA name appears
+ * once before the from-state. The `, command` part is omitted when the
+ * transition has no command.
  *
  * Usage:
  *   node run-fa.js <fa.json> <signals.txt> <output.txt> [commands.json]
@@ -120,6 +123,35 @@ if (commandsFile) {
 
 // ── Run the FA ──────────────────────────────────────────────────────────────
 
+/**
+ * Format the Sfsm log as a human-readable, line-by-line trace.
+ *
+ * Each line has the form:
+ *
+ *     FA:from-state, signal, FA:to-state, command
+ *
+ * where the FA name is the head of the stack (the innermost active FA),
+ * and the `, command` part is omitted when the transition carried no command.
+ * When the from- and to-states belong to the same FA, the FA name is shown
+ * once before the from-state; otherwise both are shown.
+ */
+function formatTraceWithFaNames(entries) {
+    return entries
+        .map((entry) => {
+            const fromFa = entry.stack.length > 0
+                ? entry.stack[entry.stack.length - 1]
+                : '';
+            const toFa = entry.newStack.length > 0
+                ? entry.newStack[entry.newStack.length - 1]
+                : '';
+            const from = fromFa ? `${fromFa}:${entry.state}` : entry.state;
+            const to = toFa ? `${toFa}:${entry.newState}` : entry.newState;
+            const base = `${from}, ${entry.signal}, ${to}`;
+            return entry.command ? `${base}, ${entry.command}` : base;
+        })
+        .join('\n');
+}
+
 const sfsm = new Sfsm();
 sfsm.loadFA(faDefinition);
 
@@ -128,19 +160,17 @@ if (interpreter) {
     runner.setCommandInterpreter(interpreter);
 }
 
+const logStart = sfsm.getLog().length;
+
 let trace;
 try {
-    trace = runner.run();
+    runner.run();
+    trace = formatTraceWithFaNames(sfsm.getLog().slice(logStart));
 } catch (err) {
     console.error(`Error: FA execution failed: ${err.message}`);
     // Still write whatever trace was produced before the error, so the user
     // can inspect the partial run.
-    trace = sfsm.getLog()
-        .map((entry) => {
-            const base = `${entry.state}, ${entry.signal}, ${entry.newState}`;
-            return entry.command ? `${base}, ${entry.command}` : base;
-        })
-        .join('\n');
+    trace = formatTraceWithFaNames(sfsm.getLog().slice(logStart));
     if (trace) {
         fs.mkdirSync(path.dirname(outputFile), { recursive: true });
         fs.writeFileSync(outputFile, `${trace}\n`, 'utf-8');

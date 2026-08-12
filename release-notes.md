@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.11.1 build 103
+feat: ts-stop — Updated run-fa.js to show the FA name before each state in the trace output (e.g. "Turnstile:I, start, Turnstile:locked" instead of "I, start, locked"). The FA name is the head of the SFSM stack (the innermost active FA), making it easy to see which FA owns each transition in stacked SFSMs. Updated expected-trace.txt test fixtures and inline assertions in run-fa.test.ts. Library FaRunner.formatTrace() unchanged (existing FaRunner/FaRunnerStacked tests unaffected). 248 tests passing.
+
 ## Version: 3.11.0 build 102
 feat: ts-stop + .github/skills — Improved stop-sfsm-modeller skill and tooling: (1) standardized fully-qualified command names in both behavior and structure (Weight-checker.weightCheck); (2) added sub-FA push/pop design-pattern section with a step-by-step stack table; (3) documented that the components-tree format is skill-specific and not interchangeable with the library's extended FaNode format; (4) added gen-commands.js script that auto-generates commands.json from the model + an outcomes selection file, eliminating hand-written command mappings; (5) added --suppress flag to validate-ext-sfsm.js for expected partial-model warnings (Rule 6, Rule 10); (6) clarified signal mapping (business events vs. SFSM signals) in Step 2.3. Removed compare-trace.js (automated trace comparison was too brittle for naming differences). Updated sfsm.ext.json, start-test.sh, package.json. 248 tests passing.
 

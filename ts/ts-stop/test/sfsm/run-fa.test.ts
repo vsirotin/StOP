@@ -14,7 +14,7 @@ import * as os from "os";
 //      blank lines are ignored).
 //   3. Optionally loads a command→signal mapping from a JSON file.
 //   4. Runs the FA through the signals and writes the transition trace to an
-//      output file (one line per transition: "from, signal, to, command").
+//      output file (one line per transition: "FA:from, signal, FA:to, command").
 //
 // Two scenarios are tested, mirroring the FaRunner unit tests:
 //
@@ -97,7 +97,7 @@ describe("run-fa CLI", () => {
             expect(exitCode).toBe(0);
             const result = fs.readFileSync(outputFile, "utf-8");
             expect(result).not.toContain("STALE");
-            expect(result).toContain("I, start, locked");
+            expect(result).toContain("Turnstile:I, start, Turnstile:locked");
         });
     });
 

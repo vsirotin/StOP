@@ -119,7 +119,7 @@ Each component may contain:
 - `ts` — the list of transitions for this component's FA (compact format: `[from, signal, to]` or `[from, signal, to, command]`).
 - `components` — an array of child component objects (each a single-key wrapper, as above).
 - `events` — an array of event objects for sender components. Each event has a `description` and a `signals` array (the signals it emits into the SFSM).
-- `commands` — an array of command objects for receiver/transceiver components. Each command has a `description`, a `signals` array (the result signals it may produce), and optional `parameters`.
+- `commands` — an array of command objects for receiver/transceiver components. Each command has a `description`, a `signals` array (the result signals it may produce), and optional `parameters`. Some command can provide 0, 1 or more signals (e.g. by validation).
 
 The `...` placeholders in examples mean "the structure can be extended with more components, events, signals, and transitions."
 
