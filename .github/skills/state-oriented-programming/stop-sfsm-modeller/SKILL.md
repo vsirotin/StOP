@@ -342,15 +342,11 @@ According to the SFSM concept, siblings in the component hierarchy cannot commun
 
 Run validation after completing the processing of each FA in `business-model/state-machine.md`.
 
-> **Note (planned tooling):** The intended validator for the combined `sfsm.ext.json` format is `validate-ext-sfsm.js`, which is planned but not yet implemented. Until it exists, split `sfsm.ext.json` into a `structure.json` (the `components` tree with events/commands) and a `behavior.json` (the compact `ts` transitions per FA) and run the existing two-phase validator:
-> ```bash
-> node <scripts-dir>/validate-whole-sfsm.js <structure.json> <behavior.json> <report.json>
-> ```
-
-Command (once `validate-ext-sfsm.js` is available):
 ```bash
 node <scripts-dir>/validate-ext-sfsm.js <sfsm.ext.json> <report.json>
 ```
+
+The validator performs two phases: (1) it extracts the compact FA from the `components` tree and runs `FaValidator` on it, and (2) it cross-checks that every signal and command referenced in the behavior is documented in the structure (events/commands), and vice versa.
 
 - If you see errors, retry (max 3 attempts). If the errors remain unresolved, raise the issue with the user.
 
@@ -363,15 +359,12 @@ Run tests after processing each FA in `state-machine.md` when both of the follow
 1. Scan `business-use-cases-trace.md`. A path is **fully runnable** when every signal in it is already defined in `sfsm.ext.json`.
 2. For each fully runnable path:
    - Create (or extend) `tests/t-<NN>-<description>/signals.txt` with the signal sequence.
-   - Extract the compact version of the SFSM model from `sfsm.ext.json` into `tests/t-<NN>-<description>/sfsm.json`.
-
-   > **Note (planned tooling):** The intended extraction command is `extract-sfsm.js`, which is planned but not yet implemented. Until it exists, use the existing extended→compact reducer:
-   > ```bash
-   > node <scripts-dir>/reduce-fa.js <sfsm.ext.json>   # writes <sfsm.ext.json>-compact.json
-   > ```
-   > Then copy/rename the result to `tests/t-<NN>-<description>/sfsm.json`. *(TODO: a dedicated `extract-sfsm.js` wrapper should be created to perform this in one step.)*
-
-   - Run: `node <scripts-dir>/run-fa.js <sfsm.json> signals.txt output-trace.txt`
+   - Extract the compact version of the SFSM model from `sfsm.ext.json` into `tests/t-<NN>-<description>/sfsm.json`:
+     ```bash
+     node <scripts-dir>/extract-sfsm.js <sfsm.ext.json> tests/t-<NN>-<description>/sfsm.json
+     ```
+   - Create `tests/t-<NN>-<description>/commands.json` mapping each command name to the result signal expected for this use case.
+   - Run: `node <scripts-dir>/run-fa.js <sfsm.json> signals.txt output-trace.txt commands.json`
 
    Review the output trace. A test **passes** when:
    - The final state matches the last state in the trace path.

@@ -1,0 +1,12 @@
+I, Service Button>Service button pressed, Locked
+Locked, Coin Receiver>Coin inserted, Weight-checker, Weight-checker.weightCheck
+I, Coin Receiver>Coin inserted, Weight Checking
+Weight Checking, Weight-checker>Weight valid, E_Weight_OK
+Weight-checker, Weight-checker>Weight valid, Form-checker, Form-checker.checkForm
+I, Weight-checker>Weight valid, Form Checking
+Form Checking, Form-checker>Form valid, change needed, change available, E_Form_OK
+Form-checker, Form-checker>Form valid, change needed, change available, Change-dispenser, Change-dispenser.dispenseChange
+I, Form-checker>Form valid, change needed, change available, Dispensing
+Dispensing, Change-dispenser>Change dispensed, E_Change_OK
+Change-dispenser, Change-dispenser>Change dispensed, Unlocked
+Unlocked, Push sensor>User passed through, Locked

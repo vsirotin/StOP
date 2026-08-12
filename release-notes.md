@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.10.0 build 101
+feat: ts-stop + .github/skills — Applied the stop-sfsm-modeller skill to the turnstile case study: created sfsm.ext.json (extended SFSM model with component hierarchy, events, commands, and transitions for UC-01). Created two new CLI scripts: extract-sfsm.js (extracts compact FA from the components-tree sfsm.ext.json format) and validate-ext-sfsm.js (validates the extended SFSM model: FA validation + structure-behavior cross-check). Registered both in package.json (bin and scripts). Successfully tested UC-01 (Coin Payment, change dispensed): 4 FAs, 16 transitions, final state Locked, trace matches expected flow. Removed TODO/planned-tooling notes from SKILL.md Steps 2.2 and 2.3, replaced with the actual implemented commands. 248 tests passing.
+
 ## Version: 3.9.2 build 100
 doc: .github/skills — Rewrote stop-sfsm-modeller/SKILL.md for grammar, professional wording, and clarity for humans and AI-agents. Fixed JSON syntax errors in the sfsm.ext.json format example (wrapper-object convention, valid brackets/commas, complete key-value pairs). Clarified the transformation workflow (Steps 1, 2, 2.1–2.3, 3a, 3b), the event→signal and command naming conventions, and the cross-component (sibling) communication pattern via the parent. Noted validate-ext-sfsm.js and extract-sfsm.js as planned tooling with interim workarounds (validate-whole-sfsm.js and reduce-fa.js). Standardized on American English spelling.
 

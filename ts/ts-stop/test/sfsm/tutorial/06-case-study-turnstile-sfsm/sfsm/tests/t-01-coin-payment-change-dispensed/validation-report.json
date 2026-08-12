@@ -1,0 +1,86 @@
+{
+  "valid": true,
+  "errorCount": 0,
+  "warningCount": 14,
+  "errors": [],
+  "warnings": [
+    {
+      "phase": "FA validation",
+      "rule": 6,
+      "message": "Signal \"Coin Receiver>Coin inserted\" is used by multiple FAs: [Turnstile, Weight-checker]."
+    },
+    {
+      "phase": "FA validation",
+      "rule": 6,
+      "message": "Signal \"Weight-checker>Weight valid\" is used by multiple FAs: [Turnstile, Weight-checker, Form-checker]."
+    },
+    {
+      "phase": "FA validation",
+      "rule": 6,
+      "message": "Signal \"Form-checker>Form valid, change needed, change available\" is used by multiple FAs: [Turnstile, Form-checker, Change-dispenser]."
+    },
+    {
+      "phase": "FA validation",
+      "rule": 6,
+      "message": "Signal \"Change-dispenser>Change dispensed\" is used by multiple FAs: [Turnstile, Change-dispenser]."
+    },
+    {
+      "phase": "FA validation",
+      "rule": 10,
+      "message": "FA \"Weight-checker\": transition [[Weight Checking, Weight-checker>Weight invalid, E_Weight_Rejected]] targets an exit state, but no ancestor FA handles the forwarded signal \"Weight-checker>Weight invalid\" from \"Weight-checker\".",
+      "faName": "Weight-checker",
+      "transition": "[Weight Checking, Weight-checker>Weight invalid, E_Weight_Rejected]"
+    },
+    {
+      "phase": "FA validation",
+      "rule": 10,
+      "message": "FA \"Form-checker\": transition [[Form Checking, Form-checker>Form valid, no change needed, E_Form_OK]] targets an exit state, but no ancestor FA handles the forwarded signal \"Form-checker>Form valid, no change needed\" from \"Form-checker\".",
+      "faName": "Form-checker",
+      "transition": "[Form Checking, Form-checker>Form valid, no change needed, E_Form_OK]"
+    },
+    {
+      "phase": "FA validation",
+      "rule": 10,
+      "message": "FA \"Form-checker\": transition [[Form Checking, Form-checker>Form valid, change not available, E_Form_NoChange]] targets an exit state, but no ancestor FA handles the forwarded signal \"Form-checker>Form valid, change not available\" from \"Form-checker\".",
+      "faName": "Form-checker",
+      "transition": "[Form Checking, Form-checker>Form valid, change not available, E_Form_NoChange]"
+    },
+    {
+      "phase": "FA validation",
+      "rule": 10,
+      "message": "FA \"Form-checker\": transition [[Form Checking, Form-checker>Form invalid, E_Form_Rejected]] targets an exit state, but no ancestor FA handles the forwarded signal \"Form-checker>Form invalid\" from \"Form-checker\".",
+      "faName": "Form-checker",
+      "transition": "[Form Checking, Form-checker>Form invalid, E_Form_Rejected]"
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M3",
+      "message": "Command \"Weight-checker.weightCheck\" in behavior is not documented in the structure (commands)."
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M3",
+      "message": "Command \"Form-checker.checkForm\" in behavior is not documented in the structure (commands)."
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M3",
+      "message": "Command \"Change-dispenser.dispenseChange\" in behavior is not documented in the structure (commands)."
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M5",
+      "message": "Command \"weightCheck\" in structure is not used in behavior."
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M5",
+      "message": "Command \"checkForm\" in structure is not used in behavior."
+    },
+    {
+      "phase": "Structure-behavior mapping",
+      "rule": "M5",
+      "message": "Command \"dispenseChange\" in structure is not used in behavior."
+    }
+  ]
+}

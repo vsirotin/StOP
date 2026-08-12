@@ -35,7 +35,9 @@
     "run-fa": "./scripts/run-fa.js",
     "validate-fa": "./scripts/validate-fa.js",
     "extract-fa-from-draft": "./scripts/extract-fa-from-draft.js",
-    "validate-whole-sfsm": "./scripts/validate-whole-sfsm.js"
+    "validate-whole-sfsm": "./scripts/validate-whole-sfsm.js",
+    "extract-sfsm": "./scripts/extract-sfsm.js",
+    "validate-ext-sfsm": "./scripts/validate-ext-sfsm.js"
   },
   "scripts": {
     "build": "npm run build:cjs && npm run build:esm",
@@ -53,7 +55,9 @@
     "run-fa": "node scripts/run-fa.js",
     "validate-fa": "node scripts/validate-fa.js",
     "extract-fa-from-draft": "node scripts/extract-fa-from-draft.js",
-    "validate-whole-sfsm": "node scripts/validate-whole-sfsm.js"
+    "validate-whole-sfsm": "node scripts/validate-whole-sfsm.js",
+    "extract-sfsm": "node scripts/extract-sfsm.js",
+    "validate-ext-sfsm": "node scripts/validate-ext-sfsm.js"
   },
   "keywords": [
     "typescript",
