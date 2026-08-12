@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.9.2 build 100
+doc: .github/skills — Rewrote stop-sfsm-modeller/SKILL.md for grammar, professional wording, and clarity for humans and AI-agents. Fixed JSON syntax errors in the sfsm.ext.json format example (wrapper-object convention, valid brackets/commas, complete key-value pairs). Clarified the transformation workflow (Steps 1, 2, 2.1–2.3, 3a, 3b), the event→signal and command naming conventions, and the cross-component (sibling) communication pattern via the parent. Noted validate-ext-sfsm.js and extract-sfsm.js as planned tooling with interim workarounds (validate-whole-sfsm.js and reduce-fa.js). Standardized on American English spelling.
+
 ## Version: 3.9.1 build 99
 doc: Skill stop-sfsm-modeller — Updated transformation process.
 

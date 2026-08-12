@@ -7,3 +7,7 @@ Before understanding any task that makes essential changes to code, documentatio
 ## Post-Task Checklist
 
 After every task that makes essential changes to code, documentation, scripts, or configuration files, I MUST execute the post-task checklist defined in `.github/skills/post-task/SKILL.md` before reporting completion (calling attempt_completion).
+
+## Temporal files
+If I need to create temporal files, I MUST create them in the `TMP/cline` directory. If I need to create temporal files in other directories, I MUST ask for permission from the workspace owner. 
+After the task is completed, I MUST delete all temporal files created in the `TMP/cline` directory. If I have created temporal files in other directories, I MUST ask for permission from the workspace owner to delete them.
