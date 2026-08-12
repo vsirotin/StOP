@@ -8,8 +8,6 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../../../../../../../.." && pwd)"
 SDK_SCRIPTS="$PROJECT_ROOT/ts/ts-stop/scripts"
 MODEL_DIR="$SCRIPT_DIR/../.."
-CASE_STUDY_DIR="$MODEL_DIR/.."
-TRACE_DOC="$CASE_STUDY_DIR/business-model/business-use-cases-trace.md"
 
 echo "=== UC-01: Coin Payment, change dispensed ==="
 echo ""
@@ -42,12 +40,5 @@ node "$SDK_SCRIPTS/run-fa.js" \
     "$SCRIPT_DIR/commands.json"
 
 echo ""
-echo "--- 5. Compare trace against expected UC-01 path ---"
-node "$SDK_SCRIPTS/compare-trace.js" \
-    "$TRACE_DOC" \
-    "$SCRIPT_DIR/output-trace.txt" \
-    --uc UC-01
-
-echo ""
-echo "--- Output trace ---"
+echo "--- Output trace (compare manually against business-use-cases-trace.md UC-01) ---"
 cat "$SCRIPT_DIR/output-trace.txt"

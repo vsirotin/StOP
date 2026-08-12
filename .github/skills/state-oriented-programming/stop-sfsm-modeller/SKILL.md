@@ -87,7 +87,7 @@ The transformation result is a single JSON file that combines the **component st
                         "Weight-checker": {
                           "commands": [
                             {
-                              "weightCheck": {
+                              "Weight-checker.weightCheck": {
                                 "description": "Checks the weight of the inserted coin.",
                                 "signals": [
                                   { "Weight-checker>Weight valid": {} },
@@ -122,6 +122,8 @@ Each component may contain:
 - `commands` — an array of command objects for receiver/transceiver components. Each command has a `description`, a `signals` array (the result signals it may produce), and optional `parameters`.
 
 The `...` placeholders in examples mean "the structure can be extended with more components, events, signals, and transitions."
+
+> **Relationship to the library's extended format:** This `components`-tree format is **specific to this skill**. It is *not* the same as the library's native extended `FaNode` format (which nests sub-FAs under `states`, not `components`). The two are not interchangeable: the library's `reduceFA()` function does **not** work on this format. Use the skill's `extract-sfsm.js` script (Step 2.3) to convert `sfsm.ext.json` into the compact format that the `Sfsm` engine consumes. This format was chosen for human readability — the `components` array makes the hierarchy explicit and keeps each component's events, commands, and transitions grouped together.
 
 ---
 
@@ -286,6 +288,52 @@ The first business-model transition to process is `ON Coin inserted -> Weight Ch
 }
 ```
 
+**When to model a business-model state as a sub-FA.** The decision above — turning "Weight Check" into a `Weight-checker` sub-FA rather than a plain state — follows a general rule:
+
+| Business-model state | Model as | Reason |
+|---|---|---|
+| A state where a component performs work (validation, checking, dispensing) | **Sub-FA** for that component | The component has its own entry/exit lifecycle and emits a result signal via a command |
+| A state that is merely a wait or flag (Locked, Unlocked, Service State) | **Plain state** in the parent FA | No component performs work; the state just waits for the next external signal |
+
+**Sub-FA push/pop lifecycle.** When a parent transition targets a sub-FA name (e.g. `Weight-checker`), the SFSM engine:
+
+1. **Pushes** the sub-FA onto the stack (its active state becomes the entry state `I`).
+2. **Forwards** the triggering signal into the sub-FA.
+3. The sub-FA's entry transition (from `I`) matches the forwarded signal and moves to a working state (e.g. `Weight Checking`).
+4. The sub-FA's command is invoked; its result signal is queued and processed by the sub-FA.
+5. The sub-FA reaches an **exit state** (`E_...`).
+6. The engine **pops** the sub-FA and **forwards** the triggering signal to the parent.
+7. The parent has a transition from the sub-FA name (e.g. `["Weight-checker", "Weight-checker>Weight valid", ...]`) that matches and advances the parent.
+
+The table below shows this lifecycle for the UC-01 flow (the stack at each step):
+
+```
+Step  Signal                                    Stack (bottom → head)           Root state
+────  ─────────────────────────────────────────  ──────────────────────────────  ──────────
+ 0    (initial)                                 [Turnstile:I]                   I
+ 1    Service Button>Service button pressed     [Turnstile:Locked]              Locked
+ 2    Coin Receiver>Coin inserted               [Turnstile:Locked,              Locked
+                                               Weight-checker:I]              (push)
+ 3    (forwarded: Coin Receiver>Coin inserted)  [Turnstile:Locked,              Locked
+                                               Weight-checker:Weight Checking]
+ 4    Weight-checker>Weight valid (from cmd)    [Turnstile:Locked,              Locked
+                                               Weight-checker:E_Weight_OK]    (pop→5)
+ 5    (forwarded: Weight-checker>Weight valid)  [Turnstile:Locked,              Locked
+                                               Form-checker:I]                (push)
+ 6    (forwarded: Weight-checker>Weight valid)  [Turnstile:Locked,              Locked
+                                               Form-checker:Form Checking]
+ 7    Form-checker>Form valid... (from cmd)     [Turnstile:Locked,              Locked
+                                               Form-checker:E_Form_OK]        (pop→8)
+ 8    (forwarded: Form valid...)                [Turnstile:Locked,              Locked
+                                               Change-dispenser:I]            (push)
+ 9    (forwarded: Form valid...)                [Turnstile:Locked,              Locked
+                                               Change-dispenser:Dispensing]
+10    Change-dispenser>Change dispensed (cmd)   [Turnstile:Locked,              Locked
+                                               Change-dispenser:E_Change_OK]  (pop→11)
+11    (forwarded: Change dispensed)             [Turnstile:Unlocked]            Unlocked
+12    Push sensor>User passed through           [Turnstile:Locked]              Locked
+```
+
 **Cross-component communication (siblings).** Is there a business-model transition that maps to the last SFSM transition? Yes: `ON Weight valid -> Form Check`.
 
 According to the SFSM concept, siblings in the component hierarchy cannot communicate directly. So the `Weight-checker` component must send a signal to its parent (`Coin processing component`), and the parent must then forward a signal to its sibling, the `Form-checker` component. Because siblings "do not know" about each other, the parent component needs a state that is used to send the signal to the sibling. A proposed name is `Coin processing component: Form Checking`. The `Form-checker` component, in turn, needs its own state to check the form and confirm whether validation succeeded. A proposed name is `Form-checker: Form Checking`.
@@ -343,10 +391,16 @@ According to the SFSM concept, siblings in the component hierarchy cannot commun
 Run validation after completing the processing of each FA in `business-model/state-machine.md`.
 
 ```bash
-node <scripts-dir>/validate-ext-sfsm.js <sfsm.ext.json> <report.json>
+node <scripts-dir>/validate-ext-sfsm.js <sfsm.ext.json> <report.json> [--suppress 6,10]
 ```
 
 The validator performs two phases: (1) it extracts the compact FA from the `components` tree and runs `FaValidator` on it, and (2) it cross-checks that every signal and command referenced in the behavior is documented in the structure (events/commands), and vice versa.
+
+**Suppressing expected warnings.** When the model is partial (not all use cases processed yet), two kinds of warnings are expected and can be suppressed with `--suppress`:
+- **Rule 6** (duplicate signals across FAs): inherent to the SFSM push/pop design — the same signal is used in both parent and child.
+- **Rule 10** (exit-state signal not handled by ancestor): expected for exit paths of use cases not yet modeled.
+
+Example: `--suppress 6,10` suppresses both. You may also suppress structure-behavior mapping rules (e.g. `M3`, `M5`).
 
 - If you see errors, retry (max 3 attempts). If the errors remain unresolved, raise the issue with the user.
 
@@ -356,19 +410,26 @@ Run tests after processing each FA in `state-machine.md` when both of the follow
 - The test has not already been processed/completed earlier, and
 - The FA in `sfsm.ext.json` already contains all states and signals (or their mapped values) from the corresponding test in `business-model/business-use-cases-trace.md`.
 
-1. Scan `business-use-cases-trace.md`. A path is **fully runnable** when every signal in it is already defined in `sfsm.ext.json`.
+**Signal mapping.** The business-use-cases-trace uses *business events* (e.g. "Coin inserted", "Weight valid"), while the SFSM model uses *mapped signals* (e.g. "Coin Receiver>Coin inserted", "Weight-checker>Weight valid"). To check runnability, map each business event to its SFSM signal using the `<Sender>><signal>` convention. Maintain this mapping as you process transitions in Step 2.1 (it is part of the transformation-trace).
+
+1. Scan `business-use-cases-trace.md`. A path is **fully runnable** when every business event in it has a mapped signal already defined in `sfsm.ext.json`.
 2. For each fully runnable path:
-   - Create (or extend) `tests/t-<NN>-<description>/signals.txt` with the signal sequence.
+   - Create (or extend) `tests/t-<NN>-<description>/signals.txt` with the external signals (the mapped signal names, one per line; lines starting with `#` are comments).
    - Extract the compact version of the SFSM model from `sfsm.ext.json` into `tests/t-<NN>-<description>/sfsm.json`:
      ```bash
      node <scripts-dir>/extract-sfsm.js <sfsm.ext.json> tests/t-<NN>-<description>/sfsm.json
      ```
-   - Create `tests/t-<NN>-<description>/commands.json` mapping each command name to the result signal expected for this use case.
+   - Create `tests/t-<NN>-<description>/outcomes.json` — a JSON object mapping each fully-qualified command name to the result signal selected for this use case (e.g. `{ "Weight-checker.weightCheck": "Weight-checker>Weight valid" }`). The selected signal must be among the command's declared signals in the model.
+   - Generate `tests/t-<NN>-<description>/commands.json` from the outcomes:
+     ```bash
+     node <scripts-dir>/gen-commands.js <sfsm.ext.json> tests/t-<NN>-<description>/outcomes.json tests/t-<NN>-<description>/commands.json
+     ```
+     The script validates that every selected signal is a declared result of the command, and that every command used in the behavior is covered.
    - Run: `node <scripts-dir>/run-fa.js <sfsm.json> signals.txt output-trace.txt commands.json`
 
-   Review the output trace. A test **passes** when:
+   Review the output trace **manually** by comparing it against the expected path in `business-use-cases-trace.md`. A test **passes** when:
    - The final state matches the last state in the trace path.
-   - The output trace in `tests/t-<use-case-name>/output-trace.txt` matches the expected state sequence from `business-use-cases-trace.md`.
+   - The state sequence in the output trace follows the expected flow (accounting for sub-FA push/pop intermediate steps).
 
    - If the test does not pass → investigate and fix before proceeding. If you cannot find a solution, or after 3 attempts no solution is found, generate an issue in `sfsm-model/issues/issue-NN.md` and stop processing.
 

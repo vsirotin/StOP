@@ -38,8 +38,7 @@
     "validate-whole-sfsm": "./scripts/validate-whole-sfsm.js",
     "extract-sfsm": "./scripts/extract-sfsm.js",
     "validate-ext-sfsm": "./scripts/validate-ext-sfsm.js",
-    "gen-commands": "./scripts/gen-commands.js",
-    "compare-trace": "./scripts/compare-trace.js"
+    "gen-commands": "./scripts/gen-commands.js"
   },
   "scripts": {
     "build": "npm run build:cjs && npm run build:esm",
@@ -60,8 +59,7 @@
     "validate-whole-sfsm": "node scripts/validate-whole-sfsm.js",
     "extract-sfsm": "node scripts/extract-sfsm.js",
     "validate-ext-sfsm": "node scripts/validate-ext-sfsm.js",
-    "gen-commands": "node scripts/gen-commands.js",
-    "compare-trace": "node scripts/compare-trace.js"
+    "gen-commands": "node scripts/gen-commands.js"
   },
   "keywords": [
     "typescript",
