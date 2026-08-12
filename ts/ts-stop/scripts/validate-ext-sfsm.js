@@ -34,14 +34,32 @@ const { FaValidator } = require('../lib/sfsm');
 
 // ── Argument parsing ────────────────────────────────────────────────────────
 
-const args = process.argv.slice(2);
+const rawArgs = process.argv.slice(2);
 
-if (args.length < 1 || args.length > 2) {
-    console.error('Usage: node validate-ext-sfsm.js <sfsm.ext.json> [output-report.json]');
+// Extract --suppress flag
+let suppressRules = new Set();
+const positionalArgs = [];
+for (let i = 0; i < rawArgs.length; i++) {
+    if (rawArgs[i] === '--suppress') {
+        if (i + 1 >= rawArgs.length) {
+            console.error('Error: --suppress requires a comma-separated list of rule numbers');
+            process.exit(1);
+        }
+        for (const r of rawArgs[i + 1].split(',')) {
+            suppressRules.add(r.trim());
+        }
+        i++; // skip the value
+    } else {
+        positionalArgs.push(rawArgs[i]);
+    }
+}
+
+if (positionalArgs.length < 1 || positionalArgs.length > 2) {
+    console.error('Usage: node validate-ext-sfsm.js <sfsm.ext.json> [output-report.json] [--suppress 6,10,M3]');
     process.exit(1);
 }
 
-const [inputArg, outputArg] = args;
+const [inputArg, outputArg] = positionalArgs;
 const inputFile = path.resolve(process.cwd(), inputArg);
 const outputFile = outputArg ? path.resolve(process.cwd(), outputArg) : null;
 
@@ -234,14 +252,23 @@ for (const cmd of ctx.structureCommands) {
     }
 }
 
+// ── Apply suppression filter ────────────────────────────────────────────────
+// Remove warnings whose rule (as a string) is in the suppressRules set.
+// FA-validation rules are numbers (e.g. 6, 10); M-rules are strings (e.g. "M3").
+// Both are matched as strings: "6" matches rule 6, "M3" matches rule "M3".
+
+const filteredWarnings = warnings.filter((w) => {
+    return !suppressRules.has(String(w.rule));
+});
+
 // ── Build report ────────────────────────────────────────────────────────────
 
 const report = {
     valid: errors.length === 0,
     errorCount: errors.length,
-    warningCount: warnings.length,
+    warningCount: filteredWarnings.length,
     errors: errors,
-    warnings: warnings
+    warnings: filteredWarnings
 };
 
 const json = JSON.stringify(report, null, 2);
@@ -255,10 +282,10 @@ if (outputFile) {
 }
 
 if (errors.length > 0) {
-    console.error(`Validation FAILED: ${errors.length} error(s), ${warnings.length} warning(s).`);
+    console.error(`Validation FAILED: ${errors.length} error(s), ${filteredWarnings.length} warning(s).`);
     process.exit(1);
 } else {
-    console.log(`Validation PASSED: ${warnings.length} warning(s).`);
+    console.log(`Validation PASSED: ${filteredWarnings.length} warning(s).`);
     process.exit(0);
 }
 

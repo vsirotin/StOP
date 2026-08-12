@@ -35,7 +35,7 @@
                         "Weight-checker": {
                           "commands": [
                             {
-                              "weightCheck": {
+                              "Weight-checker.weightCheck": {
                                 "description": "Validates the physical weight of the inserted coin.",
                                 "signals": [
                                   { "Weight-checker>Weight valid": {} },
@@ -55,7 +55,7 @@
                         "Form-checker": {
                           "commands": [
                             {
-                              "checkForm": {
+                              "Form-checker.checkForm": {
                                 "description": "Validates the form (shape/denomination) of the coin and determines whether change is required.",
                                 "signals": [
                                   { "Form-checker>Form valid, change needed, change available": {} },
@@ -85,7 +85,7 @@
             "Change-dispenser": {
               "commands": [
                 {
-                  "dispenseChange": {
+                  "Change-dispenser.dispenseChange": {
                     "description": "Dispenses the required change into the artifact-box.",
                     "signals": [
                       { "Change-dispenser>Change dispensed": {} }
