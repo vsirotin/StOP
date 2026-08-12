@@ -1,5 +1,0 @@
-# Test: Hardware fault from Locked → Service State
-# Covers: UC-10 "From Locked" — first two steps
-
-Service Button>Service button pressed
-Technical Sensor>Hardware fault detected
