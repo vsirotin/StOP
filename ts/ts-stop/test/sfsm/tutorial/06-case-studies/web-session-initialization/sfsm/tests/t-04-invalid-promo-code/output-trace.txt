@@ -1,0 +1,5 @@
+Session:I, User>Page loaded, Session:Reading User Preferences, Browser local memory.readPreference
+Session:Reading User Preferences, Browser local memory>Language preference retrieved, Session:Consent Request
+Session:Consent Request, User>Consent given, Session:App-server Check, App-server.checkAvailability
+Session:App-server Check, App-server>App-server available, Session:Promo code Check, App-server.checkPromoCode
+Session:Promo code Check, App-server>Promo code invalid, Session:Purchase Proposal

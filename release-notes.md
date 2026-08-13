@@ -1,4 +1,6 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.11.4 build 106
+feat: ts-stop — Built the SFSM model for the web-session-initialization case study with the stop-sfsm-modeller skill: sfsm.ext.json (single Session FA, 17 transitions, command receivers Browser local memory / App-server / AI-provider / Live server / User), transformation-trace.md, processing.log.md, and 9 runnable use-case tests (t-01..t-09) each with start-test.sh. validate-ext-sfsm: 0 errors/0 warnings; all 9 run-fa traces matched the business-use-cases-trace paths. 248 tests passing.
 ## Version: 3.11.3 build 105
 feat: ts-stop — Built the business model for the web-session-initialization case study with the business-modeler skill: business-use-cases.md (UC-01..UC-09), swimlanes.md (User Interaction, Local Data, Backend Validation, External Integration), state-machine.md (10 states, 18 transitions), and business-use-cases-trace.md (per-UC signal→state paths). Derived from the user story; all traces validated against the state machine. 248 tests passing.
 ## Version: 3.11.2 build 104

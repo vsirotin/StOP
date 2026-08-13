@@ -1,0 +1,4 @@
+# UC-01: Complete session initialization
+# External signals only — command results via commands.json
+User>Page loaded
+User>Consent given

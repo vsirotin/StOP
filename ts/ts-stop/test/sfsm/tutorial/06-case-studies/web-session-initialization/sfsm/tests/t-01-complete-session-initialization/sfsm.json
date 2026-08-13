@@ -1,0 +1,21 @@
+{
+    "Session": [
+        ["I", "User>Page loaded", "Reading User Preferences", "Browser local memory.readPreference"],
+        ["Reading User Preferences", "Browser local memory>Language preference retrieved", "Consent Request"],
+        ["Reading User Preferences", "User>Language preference entered", "Consent Request"],
+        ["Consent Request", "User>Consent given", "App-server Check", "App-server.checkAvailability"],
+        ["Consent Request", "User>Consent declined", "Session Terminated"],
+        ["App-server Check", "App-server>App-server available", "Promo code Check", "App-server.checkPromoCode"],
+        ["App-server Check", "App-server>App-server unavailable", "Session Terminated"],
+        ["Promo code Check", "App-server>Promo code valid", "Application Data Check", "App-server.checkAppData"],
+        ["Promo code Check", "App-server>Promo code not used", "Application Data Check", "App-server.checkAppData"],
+        ["Promo code Check", "App-server>Promo code invalid", "Purchase Proposal"],
+        ["Purchase Proposal", "User>New promo code purchased", "Application Data Check", "App-server.checkAppData"],
+        ["Purchase Proposal", "User>New promo code not purchased", "Session Terminated"],
+        ["Application Data Check", "App-server>Application data available", "AI-provider Check", "AI-provider.checkAvailability"],
+        ["Application Data Check", "App-server>Application data unavailable", "Session Terminated"],
+        ["AI-provider Check", "AI-provider>AI-provider available", "Session Established"],
+        ["AI-provider Check", "AI-provider>AI-provider unavailable", "Session Terminated"],
+        ["Session Established", "User>Page reload", "Reading User Preferences", "Browser local memory.readPreference"]
+    ]
+}

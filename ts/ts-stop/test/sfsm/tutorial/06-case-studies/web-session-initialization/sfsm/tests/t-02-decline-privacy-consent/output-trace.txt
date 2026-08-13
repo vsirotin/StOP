@@ -1,0 +1,3 @@
+Session:I, User>Page loaded, Session:Reading User Preferences, Browser local memory.readPreference
+Session:Reading User Preferences, Browser local memory>Language preference retrieved, Session:Consent Request
+Session:Consent Request, User>Consent declined, Session:Session Terminated

@@ -1,0 +1,5 @@
+# UC-05: Purchase new promo code
+# External signals only — command results via commands.json
+User>Page loaded
+User>Consent given
+User>New promo code purchased

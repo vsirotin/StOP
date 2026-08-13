@@ -1,0 +1,5 @@
+# UC-06: Decline to purchase new promo code
+# External signals only — command results via commands.json
+User>Page loaded
+User>Consent given
+User>New promo code not purchased

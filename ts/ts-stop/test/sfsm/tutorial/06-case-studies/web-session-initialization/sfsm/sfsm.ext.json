@@ -1,0 +1,165 @@
+{
+  "components": [
+    {
+      "Session": {
+        "ts": [
+          ["I", "User>Page loaded", "Reading User Preferences", "Browser local memory.readPreference"],
+          ["Reading User Preferences", "Browser local memory>Language preference retrieved", "Consent Request"],
+          ["Reading User Preferences", "User>Language preference entered", "Consent Request"],
+          ["Consent Request", "User>Consent given", "App-server Check", "App-server.checkAvailability"],
+          ["Consent Request", "User>Consent declined", "Session Terminated"],
+          ["App-server Check", "App-server>App-server available", "Promo code Check", "App-server.checkPromoCode"],
+          ["App-server Check", "App-server>App-server unavailable", "Session Terminated"],
+          ["Promo code Check", "App-server>Promo code valid", "Application Data Check", "App-server.checkAppData"],
+          ["Promo code Check", "App-server>Promo code not used", "Application Data Check", "App-server.checkAppData"],
+          ["Promo code Check", "App-server>Promo code invalid", "Purchase Proposal"],
+          ["Purchase Proposal", "User>New promo code purchased", "Application Data Check", "App-server.checkAppData"],
+          ["Purchase Proposal", "User>New promo code not purchased", "Session Terminated"],
+          ["Application Data Check", "App-server>Application data available", "AI-provider Check", "AI-provider.checkAvailability"],
+          ["Application Data Check", "App-server>Application data unavailable", "Session Terminated"],
+          ["AI-provider Check", "AI-provider>AI-provider available", "Session Established"],
+          ["AI-provider Check", "AI-provider>AI-provider unavailable", "Session Terminated"],
+          ["Session Established", "User>Page reload", "Reading User Preferences", "Browser local memory.readPreference"]
+        ],
+        "components": [
+          {
+            "Web Client": {
+              "components": [
+                {
+                  "Browser local memory": {
+                    "commands": [
+                      {
+                        "Browser local memory.readPreference": {
+                          "description": "Reads the user's language preference stored in the browser local memory.",
+                          "signals": [
+                            { "Browser local memory>Language preference retrieved": {} }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "App-server": {
+              "commands": [
+                {
+                  "App-server.checkAvailability": {
+                    "description": "Validates the availability and version of the app-server.",
+                    "signals": [
+                      { "App-server>App-server available": {} },
+                      { "App-server>App-server unavailable": {} }
+                    ]
+                  }
+                },
+                {
+                  "App-server.checkPromoCode": {
+                    "description": "Validates a used promo code and its coupled amount of internal currency.",
+                    "signals": [
+                      { "App-server>Promo code valid": {} },
+                      { "App-server>Promo code not used": {} },
+                      { "App-server>Promo code invalid": {} }
+                    ]
+                  }
+                },
+                {
+                  "App-server.checkAppData": {
+                    "description": "Validates the availability of the application data used by the call.",
+                    "signals": [
+                      { "App-server>Application data available": {} },
+                      { "App-server>Application data unavailable": {} }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "AI-provider": {
+              "commands": [
+                {
+                  "AI-provider.checkAvailability": {
+                    "description": "Validates the availability of the AI-provider.",
+                    "signals": [
+                      { "AI-provider>AI-provider available": {} },
+                      { "AI-provider>AI-provider unavailable": {} }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "Live server": {
+              "description": "Supports the user's communication with the AI-provider once the session is established."
+            }
+          },
+          {
+            "User": {
+              "events": [
+                {
+                  "page_loaded": {
+                    "description": "The user loads the web application in the browser.",
+                    "signals": [
+                      { "User>Page loaded": {} }
+                    ]
+                  }
+                },
+                {
+                  "language_preference_entered": {
+                    "description": "The user enters the language preference in the web-client interface.",
+                    "signals": [
+                      { "User>Language preference entered": {} }
+                    ]
+                  }
+                },
+                {
+                  "consent_given": {
+                    "description": "The user agrees to the use of personal data for the session.",
+                    "signals": [
+                      { "User>Consent given": {} }
+                    ]
+                  }
+                },
+                {
+                  "consent_declined": {
+                    "description": "The user refuses to allow the use of personal data for the session.",
+                    "signals": [
+                      { "User>Consent declined": {} }
+                    ]
+                  }
+                },
+                {
+                  "new_promo_code_purchased": {
+                    "description": "The user buys a new promo code on the purchase page.",
+                    "signals": [
+                      { "User>New promo code purchased": {} }
+                    ]
+                  }
+                },
+                {
+                  "new_promo_code_not_purchased": {
+                    "description": "The user does not buy a new promo code.",
+                    "signals": [
+                      { "User>New promo code not purchased": {} }
+                    ]
+                  }
+                },
+                {
+                  "page_reload": {
+                    "description": "The user reloads the page; session initialization is repeated.",
+                    "signals": [
+                      { "User>Page reload": {} }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
