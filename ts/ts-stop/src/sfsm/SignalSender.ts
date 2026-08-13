@@ -2,7 +2,7 @@ import { ISignalReceiver, ISignalSender } from './interfaces';
 
 /**
  * Abstract base class for the signal-sending role of an external-world component
- * (a "Controller" in ControllerHub terminology).
+ * (a "Transceiver" in ControllerHub terminology).
  *
  * Concrete subclasses:
  *   - declare the signal names they may emit via getSignalNames()

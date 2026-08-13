@@ -19,18 +19,18 @@ Once an FA can contain other FAs, "processing a signal" needs a precise algorith
 
 The example of using the SFSM engine can be found in [Sfsm.log.test.ts](../../ts-stop/test/sfsm/Sfsm.log.test.ts).
 
-## 3.2 Signal Senders, Command Receivers, Controllers, and the Controller Hub
+## 3.2 Signal Senders, Command Receivers, Controllers, and the Transceiver Hub
 
 Everything so far has driven the `Sfsm` engine directly, by calling `receiveSignal()` from test code. In a real application, signals come from real devices — a coin slot, a push sensor, a button — and commands need to reach real devices too — a lock, a light, a dispenser. The library gives you three small building blocks to wire this up cleanly:
 
 - **`ISignalSender`** — an interface, that needs to emit signals from some object into the SFSM.
 - **`ICommandReceiver`** — an interface that needs to react to commands coming *from* the SFSM.
-- **`Controller`** — (also often named as the **Bidirectional Protocol Controller** or more simply - *Mapper*) is the class that can wire many signal senders and/or command receivers together in one unit. It is useful in special cases, when some object should play the role of both an `ISignalSender` and an `ICommandReceiver` for the SFSM.
+- **`Transceiver`** — (also often named as the **Bidirectional Protocol Transceiver** or more simply - *Mapper*) is the class that can wire many signal senders and/or command receivers together in one unit. It is useful in special cases, when some object should play the role of both an `ISignalSender` and an `ICommandReceiver` for the SFSM.
 - **`ControllerHub`** — the wiring hub that connects every signal sender and command receiver (also via controller) to one `Sfsm` instance.
 
 Then you cannot extend your class to implement `ISignalSender` or/and `ICommandReceiver`; you should implement some adapter for your class, that will implement `ISignalSender` or/and `ICommandReceiver` and will be used in `ControllerHub` to connect your class to `Sfsm`.
 
-Here is a minimal physical turnstile "gate" Controller — it plays both roles at once, exactly like the real simulators used elsewhere in this library's own test suite:
+Here is a minimal physical turnstile "gate" Transceiver — it plays both roles at once, exactly like the real simulators used elsewhere in this library's own test suite:
 
 ```typescript
 import { Sfsm, FaDefinition, SignalSender, ICommandReceiver, ControllerHub } from '@vsirotin/ts-stop/sfsm';
@@ -78,7 +78,7 @@ gate.walkThrough();
 gate.isLocked();      // true  — the SFSM sent 'GATE.lock' in response to 'push'
 ```
 
-Notice that `TurnstileGate` never touches the `Sfsm` instance directly: it only knows how to emit its own signals and react to its own commands. All the wiring — "which Controller sends which signal," "which Controller handles which command" — lives in one place, the `ControllerHub`, which also gives you `getRegisteredSignals()` / `getRegisteredCommands()` for diagnostics (e.g. to validate that every signal and command mentioned in an FA definition actually has a Controller behind it).
+Notice that `TurnstileGate` never touches the `Sfsm` instance directly: it only knows how to emit its own signals and react to its own commands. All the wiring — "which Transceiver sends which signal," "which Transceiver handles which command" — lives in one place, the `ControllerHub`, which also gives you `getRegisteredSignals()` / `getRegisteredCommands()` for diagnostics (e.g. to validate that every signal and command mentioned in an FA definition actually has a Transceiver behind it).
 
 A runnable version of this example is available as a unit test: [3-2-controllers-and-controller-hub.test.ts](../../ts-stop/test/sfsm/tutorial/3-2-controllers-and-controller-hub.test.ts).
 

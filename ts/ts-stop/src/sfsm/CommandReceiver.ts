@@ -2,7 +2,7 @@ import { ICommandReceiver } from './interfaces';
 
 /**
  * Abstract base class for the command-receiving role of an external-world component
- * (a "Controller" in ControllerHub terminology).
+ * (a "Transceiver" in ControllerHub terminology).
  *
  * Concrete subclasses declare the command names they handle via getCommandNames()
  * (read by ControllerHub for routing and diagnostics — no need to repeat the list

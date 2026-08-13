@@ -2,7 +2,7 @@ import { ICommandReceiver } from './interfaces';
 import { Sfsm } from './Sfsm';
 import { SignalSender } from './SignalSender';
 import { CommandReceiver } from './CommandReceiver';
-import { BaseController } from './base-controller';
+import { BaseTransceiver } from './base-controller';
 
 // Re-export CommandReceiver for convenience
 export { CommandReceiver };
@@ -35,7 +35,7 @@ export class ControllerHub implements ICommandReceiver {
     private signalSenders: SignalSender[] = [];
 
 
-    constructor(sfsm: Sfsm = new Sfsm(), controllers: readonly BaseController[] = []) {
+    constructor(sfsm: Sfsm = new Sfsm(), controllers: readonly BaseTransceiver[] = []) {
         for (const controller of controllers) {
         // Workflow N1 + N2: wire the SFSM as the signal target for this controller's sender.
         controller.getSignalSender()?.connectSignalTarget(sfsm);

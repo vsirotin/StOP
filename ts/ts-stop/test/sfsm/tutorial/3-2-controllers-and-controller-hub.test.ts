@@ -1,8 +1,8 @@
 import { Sfsm, FaDefinition, SignalSender, ICommandReceiver, ControllerHub } from "../../../src/sfsm";
 
 // ---------------------------------------------------------------------------
-// The TurnstileGate "Controller" from docs/Tutorial/Tutorial.md,
-// "6. Signal Senders, Command Receivers, Controllers, and the Controller Hub".
+// The TurnstileGate "Transceiver" from docs/Tutorial/Tutorial.md,
+// "6. Signal Senders, Command Receivers, Controllers, and the Transceiver Hub".
 //
 // TurnstileGate plays BOTH roles at once, as most real devices do:
 // - SignalSender: it emits "start" / "coin" / "push" into the SFSM.
@@ -62,7 +62,7 @@ function buildWiredGate(): { sfsm: Sfsm; gate: TurnstileGate } {
     return { sfsm, gate };
 }
 
-describe("Tutorial – Controllers and the Controller Hub (turnstile gate)", () => {
+describe("Tutorial – Controllers and the Transceiver Hub (turnstile gate)", () => {
     it("should start locked", () => {
         const { gate } = buildWiredGate();
         expect(gate.isLocked()).toBe(true);
