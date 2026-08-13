@@ -16,7 +16,7 @@ export interface ISignalReceiver {
 
 /**
  * Interface for external objects that send signals to the SFSM.
- * ControllerHub calls connectSignalTarget() on every registered sender during connectTo().
+ * TransceiverHub calls connectSignalTarget() on every registered sender during connectTo().
  */
 export interface ISignalSender {
     connectSignalTarget(target: ISignalReceiver): void;

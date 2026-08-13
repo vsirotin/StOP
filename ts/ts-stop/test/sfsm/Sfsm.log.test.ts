@@ -6,7 +6,7 @@ import { ICommandReceiver } from '../../src/sfsm/interfaces';
  * Sfsm logging tests.
  *
  * These tests exercise the SFSM engine's logging behaviour in isolation
- * (no ControllerHub, no external simulators): log accumulation, step
+ * (no TransceiverHub, no external simulators): log accumulation, step
  * numbering, log-entry metadata (stack/state/signal/rule/newState/command),
  * the getLog() copy-on-read guarantee, exit-state reset at root, and the
  * $-suffix data-forwarding rules for commands. The FA definitions are
@@ -17,7 +17,7 @@ import { ICommandReceiver } from '../../src/sfsm/interfaces';
 /**
  * A minimal ICommandReceiver implementation that records every command
  * received, so tests can assert on the command stream without pulling in
- * ControllerHub or any other higher-level class.
+ * TransceiverHub or any other higher-level class.
  */
 class RecordingReceiver implements ICommandReceiver {
     public calls: Array<{ command: string; data?: unknown }> = [];

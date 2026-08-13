@@ -1,4 +1,4 @@
-import { ControllerHub, ICommandReceiver, ISignalReceiver, Sfsm, SignalSender, CommandReceiver } from "../../src/sfsm";
+import { TransceiverHub, ICommandReceiver, ISignalReceiver, Sfsm, SignalSender, CommandReceiver } from "../../src/sfsm";
 
 // ---------------------------------------------------------------------------
 // Test doubles
@@ -40,10 +40,10 @@ class StubSenderAndReceiver extends SignalSender implements ICommandReceiver {
 // Tests
 // ---------------------------------------------------------------------------
 
-describe("ControllerHub – registerCommandReceiver / receiveCommand", () => {
+describe("TransceiverHub – registerCommandReceiver / receiveCommand", () => {
 
     it("test_receiveCommand_routesToRegisteredReceiver", () => {
-        const hub = new ControllerHub();
+        const hub = new TransceiverHub();
         const recv = new StubReceiver(["X.a", "X.b"]);
         hub.registerCommandReceiver(recv);
 
@@ -57,7 +57,7 @@ describe("ControllerHub – registerCommandReceiver / receiveCommand", () => {
     });
 
     it("test_receiveCommand_throwsWithDescriptiveMessageForUnknownCommand", () => {
-        const hub = new ControllerHub();
+        const hub = new TransceiverHub();
         hub.registerCommandReceiver(new StubReceiver(["X.a"]));
 
         expect(() => hub.receiveCommand("Y.z")).toThrow(
@@ -66,7 +66,7 @@ describe("ControllerHub – registerCommandReceiver / receiveCommand", () => {
     });
 
     it("test_receiveCommand_errorMessageListsRegisteredCommands", () => {
-        const hub = new ControllerHub();
+        const hub = new TransceiverHub();
         hub.registerCommandReceiver(new StubReceiver(["A.x"]));
         hub.registerCommandReceiver(new StubReceiver(["B.y"]));
 
@@ -74,7 +74,7 @@ describe("ControllerHub – registerCommandReceiver / receiveCommand", () => {
     });
 
     it("test_registerCommandReceiver_throwsOnDuplicateCommandName", () => {
-        const hub = new ControllerHub();
+        const hub = new TransceiverHub();
         hub.registerCommandReceiver(new StubReceiver(["X.a"]));
 
         expect(() => hub.registerCommandReceiver(new StubReceiver(["X.a"]))).toThrow(
@@ -83,7 +83,7 @@ describe("ControllerHub – registerCommandReceiver / receiveCommand", () => {
     });
 
     it("test_registerCommandReceiver_throwsOnDuplicateInSameCall", () => {
-        const hub = new ControllerHub();
+        const hub = new TransceiverHub();
         hub.registerCommandReceiver(new StubReceiver(["X.a"]));
 
         expect(() =>
@@ -92,14 +92,14 @@ describe("ControllerHub – registerCommandReceiver / receiveCommand", () => {
     });
 });
 
-describe("ControllerHub – registerSignalSender / connectTo", () => {
+describe("TransceiverHub – registerSignalSender / connectTo", () => {
 
     it("test_connectTo_callsConnectSignalTargetOnAllSenders", () => {
         const sfsm = new Sfsm();
         const s1 = new StubSender(["A.x"]);
         const s2 = new StubSender(["B.y"]);
 
-        new ControllerHub()
+        new TransceiverHub()
             .registerSignalSender(s1)
             .registerSignalSender(s2)
             .connectTo(sfsm);
@@ -110,7 +110,7 @@ describe("ControllerHub – registerSignalSender / connectTo", () => {
 
     it("test_connectTo_setsHubAsCommandReceiverOnSfsm", () => {
         const sfsm = new Sfsm();
-        new ControllerHub()
+        new TransceiverHub()
             .registerCommandReceiver(new StubReceiver(["X.a"]))
             .connectTo(sfsm);
 
@@ -123,16 +123,16 @@ describe("ControllerHub – registerSignalSender / connectTo", () => {
 
     it("test_connectTo_isFluentAndReturnsSameHub", () => {
         const sfsm = new Sfsm();
-        const hub = new ControllerHub();
+        const hub = new TransceiverHub();
         const result = hub.connectTo(sfsm);
         expect(result).toBe(hub);
     });
 });
 
-describe("ControllerHub – diagnostic accessors", () => {
+describe("TransceiverHub – diagnostic accessors", () => {
 
     it("test_getRegisteredCommands_returnsAllCommandNames", () => {
-        const hub = new ControllerHub();
+        const hub = new TransceiverHub();
         hub.registerCommandReceiver(new StubReceiver(["A.x", "A.y"]));
         hub.registerCommandReceiver(new StubReceiver(["B.z"]));
 
@@ -140,7 +140,7 @@ describe("ControllerHub – diagnostic accessors", () => {
     });
 
     it("test_getRegisteredSignals_returnsAllSignalNames", () => {
-        const hub = new ControllerHub();
+        const hub = new TransceiverHub();
         hub.registerSignalSender(new StubSender(["X.a", "X.b"]));
         hub.registerSignalSender(new StubSender(["Y.c"]));
 
@@ -148,21 +148,21 @@ describe("ControllerHub – diagnostic accessors", () => {
     });
 
     it("test_getRegisteredCommands_returnsEmptyWhenNoneRegistered", () => {
-        expect(new ControllerHub().getRegisteredCommands()).toEqual([]);
+        expect(new TransceiverHub().getRegisteredCommands()).toEqual([]);
     });
 
     it("test_getRegisteredSignals_returnsEmptyWhenNoneRegistered", () => {
-        expect(new ControllerHub().getRegisteredSignals()).toEqual([]);
+        expect(new TransceiverHub().getRegisteredSignals()).toEqual([]);
     });
 });
 
-describe("ControllerHub – fluent chain", () => {
+describe("TransceiverHub – fluent chain", () => {
 
     it("test_fluentChain_registerAndConnect_worksEndToEnd", () => {
         const sfsm = new Sfsm();
         const device = new StubSenderAndReceiver(["D.on", "D.off"], ["D.cmd"]);
 
-        new ControllerHub()
+        new TransceiverHub()
             .registerSignalSender(device)
             .registerCommandReceiver(device)
             .connectTo(sfsm);
@@ -171,31 +171,31 @@ describe("ControllerHub – fluent chain", () => {
         expect(device.target).toBe(sfsm);
 
         // Command routing works
-        const hub = new ControllerHub().registerCommandReceiver(device);
+        const hub = new TransceiverHub().registerCommandReceiver(device);
         hub.receiveCommand("D.cmd");
         expect(device.received).toEqual(["D.cmd"]);
     });
 
     it("test_registerCommandReceiver_isFluentAndReturnsSameHub", () => {
-        const hub = new ControllerHub();
+        const hub = new TransceiverHub();
         const result = hub.registerCommandReceiver(new StubReceiver(["A.x"]));
         expect(result).toBe(hub);
     });
 
     it("test_registerSignalSender_isFluentAndReturnsSameHub", () => {
-        const hub = new ControllerHub();
+        const hub = new TransceiverHub();
         const result = hub.registerSignalSender(new StubSender(["A.x"]));
         expect(result).toBe(hub);
     });
 });
 
-describe("ControllerHub – device implementing both roles", () => {
+describe("TransceiverHub – device implementing both roles", () => {
 
     it("test_dualRoleDevice_wireBothSidesCorrectly", () => {
         const sfsm = new Sfsm();
         const device = new StubSenderAndReceiver(["D.sig"], ["D.cmd"]);
 
-        const hub = new ControllerHub()
+        const hub = new TransceiverHub()
             .registerSignalSender(device)
             .registerCommandReceiver(device);
 

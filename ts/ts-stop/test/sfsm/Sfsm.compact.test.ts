@@ -5,7 +5,7 @@ import { ICommandReceiver } from '../../src/sfsm/interfaces';
 /**
  * Sfsm compact-format tests.
  *
- * These tests exercise the SFSM engine in isolation (no ControllerHub, no
+ * These tests exercise the SFSM engine in isolation (no TransceiverHub, no
  * external simulators) using embedded FA definitions in the compact
  * multi-FA format: `Record<string, Transition[]>`, where each FA is just a
  * list of transitions and the engine auto-detects the root FA as the one

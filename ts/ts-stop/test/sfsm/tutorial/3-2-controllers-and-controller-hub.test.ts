@@ -1,4 +1,4 @@
-import { Sfsm, FaDefinition, SignalSender, ICommandReceiver, ControllerHub } from "../../../src/sfsm";
+import { Sfsm, FaDefinition, SignalSender, ICommandReceiver, TransceiverHub } from "../../../src/sfsm";
 
 // ---------------------------------------------------------------------------
 // The TurnstileGate "Transceiver" from docs/Tutorial/Tutorial.md,
@@ -53,7 +53,7 @@ function buildWiredGate(): { sfsm: Sfsm; gate: TurnstileGate } {
     const sfsm = new Sfsm();
     const gate = new TurnstileGate();
 
-    new ControllerHub()
+    new TransceiverHub()
         .registerSignalSender(gate)
         .registerCommandReceiver(gate)
         .connectTo(sfsm);
@@ -90,7 +90,7 @@ describe("Tutorial – Controllers and the Transceiver Hub (turnstile gate)", ()
     it("should expose the wired signal and command names for diagnostics", () => {
         const sfsm = new Sfsm();
         const gate = new TurnstileGate();
-        const hub = new ControllerHub()
+        const hub = new TransceiverHub()
             .registerSignalSender(gate)
             .registerCommandReceiver(gate)
             .connectTo(sfsm);

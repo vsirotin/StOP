@@ -5,7 +5,7 @@ import { ICommandReceiver } from '../../src/sfsm/interfaces';
 /**
  * Sfsm core engine tests.
  *
- * These tests exercise the SFSM engine in isolation (no ControllerHub, no
+ * These tests exercise the SFSM engine in isolation (no TransceiverHub, no
  * external simulators) using embedded FA definitions in the extended
  * FaNode format. They cover: initialisation, single-FA transitions
  * (rule 2.1), exit states (rule 5), stacked FAs (rule 4 push/pop),
@@ -16,7 +16,7 @@ import { ICommandReceiver } from '../../src/sfsm/interfaces';
 /**
  * Minimal ICommandReceiver that records every command received.
  *
- * The SFSM engine itself does not depend on ControllerHub or any other
+ * The SFSM engine itself does not depend on TransceiverHub or any other
  * higher-level class — it only needs an object that satisfies the
  * ICommandReceiver interface. Using this lightweight recorder keeps the
  * tests focused on the engine's own behaviour.

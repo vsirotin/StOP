@@ -9,7 +9,7 @@ import { ICommandReceiver } from "../../src/sfsm/interfaces";
  * loadFAFromFile / loadFAFromURL tests.
  *
  * These tests exercise the FA-loading utilities in isolation (no
- * ControllerHub, no external simulators). The `loadFAFromFile` integration
+ * TransceiverHub, no external simulators). The `loadFAFromFile` integration
  * tests load the turnstile FA fixtures from test-data/ and verify that
  * the loaded definition can be driven through the SFSM engine with a
  * minimal RecordingReceiver. The `loadFAFromURL` tests mock `fetch` to

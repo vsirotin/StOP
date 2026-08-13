@@ -17,7 +17,7 @@ import { ICommandReceiver } from "../../src/sfsm/interfaces";
  * block verifies that a reduced (compact) FA behaves identically to its
  * extended source when loaded into the SFSM engine — using an embedded
  * extended FA and a minimal RecordingReceiver instead of external
- * simulators and ControllerHub.
+ * simulators and TransceiverHub.
  */
 
 function loadExtendedFa(): FaDefinition {

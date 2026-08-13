@@ -50,12 +50,12 @@ export class BaseTransceiver {
     this.commandReceiver = commandReceiver;
   }
 
-  /** Get the signal sender (for ControllerHub wiring) */
+  /** Get the signal sender (for TransceiverHub wiring) */
   getSignalSender(): SignalSender | null {
     return this.signalSender;
   }
 
-  /** Get the command receiver (for ControllerHub wiring) */
+  /** Get the command receiver (for TransceiverHub wiring) */
   getCommandReceiver(): CommandReceiver | null {
     return this.commandReceiver;
   }

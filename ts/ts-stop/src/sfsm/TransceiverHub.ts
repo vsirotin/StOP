@@ -2,7 +2,7 @@ import { ICommandReceiver } from './interfaces';
 import { Sfsm } from './Sfsm';
 import { SignalSender } from './SignalSender';
 import { CommandReceiver } from './CommandReceiver';
-import { BaseTransceiver } from './base-controller';
+import { BaseTransceiver } from './base-transceiver';
 
 // Re-export CommandReceiver for convenience
 export { CommandReceiver };
@@ -23,29 +23,29 @@ export { CommandReceiver };
  * SignalSender and additionally implements the CommandReceiver contract on the
  * same class, then is registered once with each method:
  *
- *   new ControllerHub()
+ *   new TransceiverHub()
  *     .registerSignalSender(turnstileService)
  *     .registerSignalSender(turnstileDevice)
  *     .registerCommandReceiver(turnstileDevice)
  *     .connectTo(sfsm);
  */
-export class ControllerHub implements ICommandReceiver {
+export class TransceiverHub implements ICommandReceiver {
 
     private commandRoutes = new Map<string, CommandReceiver>();
     private signalSenders: SignalSender[] = [];
 
 
-    constructor(sfsm: Sfsm = new Sfsm(), controllers: readonly BaseTransceiver[] = []) {
-        for (const controller of controllers) {
-        // Workflow N1 + N2: wire the SFSM as the signal target for this controller's sender.
-        controller.getSignalSender()?.connectSignalTarget(sfsm);
+    constructor(sfsm: Sfsm = new Sfsm(), transceivers: readonly BaseTransceiver[] = []) {
+        for (const transceiver of transceivers) {
+        // Workflow N1 + N2: wire the SFSM as the signal target for this transceiver's sender.
+        transceiver.getSignalSender()?.connectSignalTarget(sfsm);
 
-        // Build command routing table from this controller's CommandReceiver.
-        const cr = controller.getCommandReceiver();
+        // Build command routing table from this transceiver's CommandReceiver.
+        const cr = transceiver.getCommandReceiver();
         if (cr) {
             for (const cmd of cr.getCommandNames()) {
                 if (this.commandRoutes.has(cmd)) {
-                    throw new Error(`ControllerHub: command "${cmd}" is already registered`);
+                    throw new Error(`TransceiverHub: command "${cmd}" is already registered`);
                 }
                 this.commandRoutes.set(cmd, cr);
                 }
@@ -76,7 +76,7 @@ export class ControllerHub implements ICommandReceiver {
     registerCommandReceiver(receiver: CommandReceiver): this {
         for (const cmd of receiver.getCommandNames()) {
             if (this.commandRoutes.has(cmd)) {
-                throw new Error(`ControllerHub: command "${cmd}" is already registered`);
+                throw new Error(`TransceiverHub: command "${cmd}" is already registered`);
             }
             this.commandRoutes.set(cmd, receiver);
         }
@@ -103,7 +103,7 @@ export class ControllerHub implements ICommandReceiver {
         if (!receiver) {
             const registered = [...this.commandRoutes.keys()].join(', ');
             throw new Error(
-                `ControllerHub: no receiver registered for command "${command}". ` +
+                `TransceiverHub: no receiver registered for command "${command}". ` +
                 `Registered commands: [${registered}]`
             );
         }
