@@ -2,33 +2,20 @@
 
 ## Behavioral Overview
 
-The session initialization is a process that establishes a secure and authenticated session between a web-client (in browser), app-server and special server like live server—for support of user communication with some AI-provider. 
-
-User profile can be already saved (completely or partially) in local memory of the browser, or it can be provided by the user during the session initialization and saved there. The session initialization process includes:
-1) reading from local memory or retrieving from browser of user's human language preference, setting it for the session and saving it in local memory for future sessions;
-2) introduction of the user in his preferred human language to the General Data Protection Regulation (GDPR) and other privacy policies, and requesting his consent to the use of his personal data for the session (if it did not happen in previous sessions and was not saved in local memory);
-3) check of availability and version of app-server;
-4) check of correctness of used by call of app promo code (if it is used) and its validity for the session;
-5) check of availability of used by call application data;
-6) check of availability AI-provider server;
-7) completion of the session initialization process and transition to the next state of the session.
-
-If by step 2 the user does not give his consent to the use of his personal data for the session, the session initialization process is stopped, some static page is displayed and the session is terminated.
-
-If by step 3, 5 or 6 the check fails, the session initialization process is stopped, corresponding static page is displayed and the session is terminated.
-
-With valid promocode is coupled with some amount of internal currency (e.g. tokens). If by step 4 the check of promocode fails (false, old promocode or amount of internal currency too low), the special page with proposal to buy new promocode is displayed. 
-If user buys new promocode, this information is saved in session and in local memory of the browser for future sessions. If user does not buy new promocode, the session initialization process is stopped, corresponding static page is displayed and the session is terminated.
-If promocode is valid, the amount of internal currency is acceptable for the session, this information is saved in session.
-
-
-By each page initialization (F5 or F11) the session initialization process is repeated, but some steps can be skipped if they were already completed in previous session initialization and saved in local memory of the browser.
-
+The web-client establishes a secure, authenticated session that connects the user, operating in a browser, with an app-server and a live server, enabling the user to communicate with an AI-provider. During initialization the web-client reads the user's language preference from the browser local memory or asks the user to enter it, sets it for the current session, and saves it for future sessions. If consent was not saved in a previous session, the web-client introduces the user to the General Data Protection Regulation and the privacy policy in the user's preferred language and requests consent to use personal data; when the user declines, the web-client displays an error page and terminates the session. The web-client validates the app-server availability and version, the validity of a used promo code and its coupled amount of internal currency, the availability of the application data, and the availability of the AI-provider; when any of these checks fails, the web-client displays an error page and terminates the session. When a used promo code is invalid, expired, or coupled with an insufficient amount of internal currency, the web-client displays a purchase page proposing a new promo code; if the user buys a new promo code, the web-client saves that information in the session and in the browser local memory, otherwise it displays an error page and terminates the session. On each page reload the web-client repeats the initialization, skipping any step already completed and saved in a previous initialization, and then completes the session initialization and transitions to the next session state.
 
 ## Structure Overview
-The session initialization process consists of:
-- a web-client (in browser) with
--- UI part
--- local memory
-- app-server
-- special server.
+
+The session initialization involves a web-client with visible and hidden elements.
+
+Visible elements:
+- the web-client interface
+- the consent page
+- the purchase page
+- an error page
+
+Hidden elements:
+- the browser local memory
+- an app-server
+- a live server
+- an AI-provider

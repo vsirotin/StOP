@@ -1,4 +1,8 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.11.2 build 104
+doc: ts-stop — Aligned the web-session-initialization case study user story with the user-story-writer skill: restructured the Behavioral Overview into concise present-tense prose, added the Visible/Hidden split in the Structure Overview, standardized element naming (web-client, consent page, purchase page, error page, app-server, live server, AI-provider, browser local memory), used the Action Vocabulary (validate, read, request, save, display), and removed implementation details (F5/F11) and grammar errors. 248 tests passing.
+
+
 ## Version: 3.11.1 build 103
 feat: ts-stop — Updated run-fa.js to show the FA name before each state in the trace output (e.g. "Turnstile:I, start, Turnstile:locked" instead of "I, start, locked"). The FA name is the head of the SFSM stack (the innermost active FA), making it easy to see which FA owns each transition in stacked SFSMs. Updated expected-trace.txt test fixtures and inline assertions in run-fa.test.ts. Library FaRunner.formatTrace() unchanged (existing FaRunner/FaRunnerStacked tests unaffected). 248 tests passing.
 
