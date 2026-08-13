@@ -9,7 +9,7 @@ metadata:
 
 ## Prerequisites
 
-User should provide name of project, e.g. `turnstile`, and the paths for:
+User should provide the paths for:
 - the `user story` file (e.g., `turnstile/user-story.md`)
 - the `directory for output files` (e.g., `turnstile/business-model`)
 

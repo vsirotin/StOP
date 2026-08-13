@@ -1,4 +1,6 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.11.3 build 105
+feat: ts-stop — Built the business model for the web-session-initialization case study with the business-modeler skill: business-use-cases.md (UC-01..UC-09), swimlanes.md (User Interaction, Local Data, Backend Validation, External Integration), state-machine.md (10 states, 18 transitions), and business-use-cases-trace.md (per-UC signal→state paths). Derived from the user story; all traces validated against the state machine. 248 tests passing.
 ## Version: 3.11.2 build 104
 doc: ts-stop — Aligned the web-session-initialization case study user story with the user-story-writer skill: restructured the Behavioral Overview into concise present-tense prose, added the Visible/Hidden split in the Structure Overview, standardized element naming (web-client, consent page, purchase page, error page, app-server, live server, AI-provider, browser local memory), used the Action Vocabulary (validate, read, request, save, display), and removed implementation details (F5/F11) and grammar errors. 248 tests passing.
 
