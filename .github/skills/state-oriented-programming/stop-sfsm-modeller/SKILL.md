@@ -23,9 +23,10 @@ The user must provide:
   - `state-machine.md` — the state machine definition (states, events, and transitions).
   - `swimlanes.md` — component grouping and roles.
   - `business-use-cases-trace.md` — signal→state paths, one per use case.
-- An `sfsm-model/` directory path for output files.
+- A `sfsm-model/` directory path for output files.
 - `user-instructions.md` — optional project-specific instructions (read before processing).
 - The SFSM-SDK scripts directory (e.g., `ts/ts-stop/scripts/`).
+- The directory with SFSM tutorials (e.g. `ts/ts-stop/test/sfsm/tutorial/`).
 
 ---
 
@@ -442,3 +443,6 @@ After all FAs in `business-model/state-machine.md` have been successfully proces
 If any validation or test fails and cannot be resolved within the retry limits (3 attempts), stop processing and:
 1. Create an issue file in `sfsm-model/issues/issue-NN.md` describing the failure, the steps that led to it, and the attempted fixes.
 2. Report the issue to the user and ask how to proceed.
+
+## Example
+See the [example of SFSM modeller output](sfsm-example-one-part/) for the turnstile user story. Because a size of a complete SFSM model is large, the example shows only one part of the model. 

@@ -351,7 +351,8 @@ If a use case cannot be traced because the state machine is missing a required s
 
 When the quality check passes, the skill is complete.
 
-
+## Example
+See the [example of business modeller output](business-model-example/) for the turnstile user story. 
 
 
 
