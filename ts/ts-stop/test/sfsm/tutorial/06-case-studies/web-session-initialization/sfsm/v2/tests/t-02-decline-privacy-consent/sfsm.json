@@ -1,0 +1,25 @@
+{
+    "Session": [
+        ["I", "UI>Page loaded", "Showing User Profile Page", "UI.presentUserProfilePage"],
+        ["Showing User Profile Page", "UI>User Profile page presented", "Reading User Profile", "Browser local memory.readUserProfile"],
+        ["Reading User Profile", "Browser local memory>User Profile retrieved completely", "App-server Check", "App-server.checkAvailability"],
+        ["Reading User Profile", "Browser local memory>User Profile retrieved without consent", "Showing Consent Page", "UI.presentConsentPage"],
+        ["Showing Consent Page", "UI>Consent page presented", "Consent Request"],
+        ["Consent Request", "UI>Consent given", "App-server Check", "App-server.checkAvailability"],
+        ["Consent Request", "UI>Consent declined", "Showing Error Page", "UI.presentErrorPage"],
+        ["Showing Error Page", "UI>Error page presented", "E_Session_Terminated"],
+        ["App-server Check", "App-server>App-server available", "Promo code Check", "App-server.checkPromoCode"],
+        ["App-server Check", "App-server>App-server unavailable", "Showing Error Page", "UI.presentErrorPage"],
+        ["Promo code Check", "App-server>Promo code valid", "Application Data Check", "App-server.checkAppData"],
+        ["Promo code Check", "App-server>Promo code too small tokens", "Showing Purchase Page", "UI.presentPurchasePage"],
+        ["Promo code Check", "App-server>Promo code invalid", "Showing Purchase Page", "UI.presentPurchasePage"],
+        ["Showing Purchase Page", "UI>Purchase page presented", "Purchase Proposal"],
+        ["Purchase Proposal", "UI>New promo code purchased", "Application Data Check", "App-server.checkAppData"],
+        ["Purchase Proposal", "UI>New promo code not purchased", "Showing Error Page", "UI.presentErrorPage"],
+        ["Application Data Check", "App-server>Application data available", "AI-provider Check", "AI-provider.checkAvailability"],
+        ["Application Data Check", "App-server>Application data unavailable", "Showing Error Page", "UI.presentErrorPage"],
+        ["AI-provider Check", "AI-provider>AI-provider available", "E_Session_Established"],
+        ["AI-provider Check", "AI-provider>AI-provider unavailable", "Showing Error Page", "UI.presentErrorPage"],
+        ["*", "UI>Page reload", "Showing User Profile Page", "UI.presentUserProfilePage"]
+    ]
+}

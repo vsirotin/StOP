@@ -1,0 +1,196 @@
+{
+  "components": [
+    {
+      "Session": {
+        "ts": [
+          ["I", "UI>Page loaded", "Showing User Profile Page", "UI.presentUserProfilePage"],
+          ["Showing User Profile Page", "UI>User Profile page presented", "Reading User Profile", "Browser local memory.readUserProfile"],
+          ["Reading User Profile", "Browser local memory>User Profile retrieved completely", "App-server Check", "App-server.checkAvailability"],
+          ["Reading User Profile", "Browser local memory>User Profile retrieved without consent", "Showing Consent Page", "UI.presentConsentPage"],
+          ["Showing Consent Page", "UI>Consent page presented", "Consent Request"],
+          ["Consent Request", "UI>Consent given", "App-server Check", "App-server.checkAvailability"],
+          ["Consent Request", "UI>Consent declined", "Showing Error Page", "UI.presentErrorPage"],
+          ["Showing Error Page", "UI>Error page presented", "E_Session_Terminated"],
+          ["App-server Check", "App-server>App-server available", "Promo code Check", "App-server.checkPromoCode"],
+          ["App-server Check", "App-server>App-server unavailable", "Showing Error Page", "UI.presentErrorPage"],
+          ["Promo code Check", "App-server>Promo code valid", "Application Data Check", "App-server.checkAppData"],
+          ["Promo code Check", "App-server>Promo code too small tokens", "Showing Purchase Page", "UI.presentPurchasePage"],
+          ["Promo code Check", "App-server>Promo code invalid", "Showing Purchase Page", "UI.presentPurchasePage"],
+          ["Showing Purchase Page", "UI>Purchase page presented", "Purchase Proposal"],
+          ["Purchase Proposal", "UI>New promo code purchased", "Application Data Check", "App-server.checkAppData"],
+          ["Purchase Proposal", "UI>New promo code not purchased", "Showing Error Page", "UI.presentErrorPage"],
+          ["Application Data Check", "App-server>Application data available", "AI-provider Check", "AI-provider.checkAvailability"],
+          ["Application Data Check", "App-server>Application data unavailable", "Showing Error Page", "UI.presentErrorPage"],
+          ["AI-provider Check", "AI-provider>AI-provider available", "E_Session_Established"],
+          ["AI-provider Check", "AI-provider>AI-provider unavailable", "Showing Error Page", "UI.presentErrorPage"],
+          ["*", "UI>Page reload", "Showing User Profile Page", "UI.presentUserProfilePage"]
+        ],
+        "components": [
+          {
+            "Web Client": {
+              "components": [
+{
+                  "UI": {
+                    "events": [
+                      {
+                        "page_loaded": {
+                          "description": "The user loads the web application in the browser.",
+                          "signals": [
+                            { "UI>Page loaded": {} }
+                          ]
+                        }
+                      },
+                      {
+                        "consent_given": {
+                          "description": "The user agrees to the use of personal data for the session.",
+                          "signals": [
+                            { "UI>Consent given": {} }
+                          ]
+                        }
+                      },
+                      {
+                        "consent_declined": {
+                          "description": "The user refuses to allow the use of personal data for the session.",
+                          "signals": [
+                            { "UI>Consent declined": {} }
+                          ]
+                        }
+                      },
+                      {
+                        "new_promo_code_purchased": {
+                          "description": "The user buys a new promo code on the purchase page.",
+                          "signals": [
+                            { "UI>New promo code purchased": {} }
+                          ]
+                        }
+                      },
+                      {
+                        "new_promo_code_not_purchased": {
+                          "description": "The user does not buy a new promo code.",
+                          "signals": [
+                            { "UI>New promo code not purchased": {} }
+                          ]
+                        }
+                      },
+                      {
+                        "page_reload": {
+                          "description": "The user reloads the page; session initialization is repeated.",
+                          "signals": [
+                            { "UI>Page reload": {} }
+                          ]
+                        }
+                      }
+                    ],
+                    "commands": [
+                      {
+                        "UI.presentUserProfilePage": {
+                          "description": "Presents the page that requests the user's profile data.",
+                          "signals": [
+                            { "UI>User Profile page presented": {} }
+                          ]
+                        }
+                      },
+                      {
+                        "UI.presentConsentPage": {
+                          "description": "Presents the page that requests consent to use personal data.",
+                          "signals": [
+                            { "UI>Consent page presented": {} }
+                          ]
+                        }
+                      },
+                      {
+                        "UI.presentErrorPage": {
+                          "description": "Presents the page informing the user that the session was terminated.",
+                          "signals": [
+                            { "UI>Error page presented": {} }
+                          ]
+                        }
+                      },
+                      {
+                        "UI.presentPurchasePage": {
+                          "description": "Presents the page proposing the purchase of a new promo code.",
+                          "signals": [
+                            { "UI>Purchase page presented": {} }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+{
+                  "Browser local memory": {
+                    "commands": [
+                      {
+                        "Browser local memory.readUserProfile": {
+                          "description": "Reads the user's profile, including the language preference and the consent decision, from the browser local memory.",
+                          "signals": [
+                            { "Browser local memory>User Profile retrieved completely": {} },
+                            { "Browser local memory>User Profile retrieved without consent": {} }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "App-server": {
+              "commands": [
+                {
+                  "App-server.checkAvailability": {
+                    "description": "Validates the availability and version of the app-server.",
+                    "signals": [
+                      { "App-server>App-server available": {} },
+                      { "App-server>App-server unavailable": {} }
+                    ]
+                  }
+                },
+                {
+                  "App-server.checkPromoCode": {
+                    "description": "Validates a used promo code and its coupled amount of internal currency.",
+                    "signals": [
+                      { "App-server>Promo code valid": {} },
+                      { "App-server>Promo code too small tokens": {} },
+                      { "App-server>Promo code invalid": {} }
+                    ]
+                  }
+                },
+                {
+                  "App-server.checkAppData": {
+                    "description": "Validates the availability of the application data used by the call.",
+                    "signals": [
+                      { "App-server>Application data available": {} },
+                      { "App-server>Application data unavailable": {} }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+{
+            "AI-provider": {
+              "commands": [
+                {
+                  "AI-provider.checkAvailability": {
+                    "description": "Validates the availability of the AI-provider.",
+                    "signals": [
+                      { "AI-provider>AI-provider available": {} },
+                      { "AI-provider>AI-provider unavailable": {} }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "Live server": {
+              "description": "Supports the user's communication with the AI-provider once the session is established."
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

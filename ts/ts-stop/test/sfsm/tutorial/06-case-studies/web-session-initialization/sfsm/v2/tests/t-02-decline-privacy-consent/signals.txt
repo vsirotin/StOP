@@ -1,0 +1,4 @@
+# UC-02: Decline privacy consent
+# External signals only — command results via commands.json
+UI>Page loaded
+UI>Consent declined
