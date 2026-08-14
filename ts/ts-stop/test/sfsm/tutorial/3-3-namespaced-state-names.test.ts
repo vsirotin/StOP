@@ -13,15 +13,15 @@ import { Sfsm, FaDefinition } from "../../../src/sfsm";
 const namespacedTurnstileFa: FaDefinition = {
     TS: [
         ["TS.I", "TS>start", "TS.L"],
-        ["TS.L", "TS.coin", "CC"],
-        ["CC", "CC.ok", "TS.U"],
-        ["CC", "CC.bad", "TS.L"],
-        ["TS.U", "TS.push", "TS.L"]
+        ["TS.L", "TS>coin", "CC"],
+        ["CC", "CC>ok", "TS.U"],
+        ["CC", "CC>bad", "TS.L"],
+        ["TS.U", "TS>push", "TS.L"]
     ],
     CC: [
-        ["CC.I", "TS.coin", "CC.checking"],
-        ["CC.checking", "CC.ok", "CC.E_ok"],
-        ["CC.checking", "CC.bad", "CC.E_bad"]
+        ["CC.I", "TS>coin", "CC.checking"],
+        ["CC.checking", "CC>ok", "CC.E_ok"],
+        ["CC.checking", "CC>bad", "CC.E_bad"]
     ]
 };
 
@@ -47,8 +47,8 @@ describe("Tutorial – Name conventions (namespaced entry/exit state names)", ()
     it("should push CC on a coin and auto-detect its namespaced entry state 'CC.I'", () => {
         const sfsm = buildSfsm();
         sfsm.receiveSignal("TS>start");
-        sfsm.receiveSignal("TS.coin");
-        // CC.I"s own transition is triggered directly by the forwarded "TS.coin"
+        sfsm.receiveSignal("TS>coin");
+        // CC.I"s own transition is triggered directly by the forwarded "TS>coin"
         // signal, so CC lands straight on "CC.checking" instead of staying on "CC.I".
         expect(sfsm.getCurrentStack()).toEqual(["TS", "CC"]);
         expect(sfsm.getHeadState()).toBe("CC.checking");
@@ -57,20 +57,20 @@ describe("Tutorial – Name conventions (namespaced entry/exit state names)", ()
     it("should recognise 'CC.E_ok' as an exit ('.E_' form), pop CC, and unlock", () => {
         const sfsm = buildSfsm();
         sfsm.receiveSignal("TS>start");
-        sfsm.receiveSignal("TS.coin");
-        sfsm.receiveSignal("CC.ok");
+        sfsm.receiveSignal("TS>coin");
+        sfsm.receiveSignal("CC>ok");
         expect(sfsm.getCurrentStack()).toEqual(["TS"]);
         expect(sfsm.getHeadState()).toBe("TS.U");
 
-        sfsm.receiveSignal("TS.push");
+        sfsm.receiveSignal("TS>push");
         expect(sfsm.getHeadState()).toBe("TS.L");
     });
 
     it("should recognise 'CC.E_bad' as an exit, pop CC, and stay locked", () => {
         const sfsm = buildSfsm();
         sfsm.receiveSignal("TS>start");
-        sfsm.receiveSignal("TS.coin");
-        sfsm.receiveSignal("CC.bad");
+        sfsm.receiveSignal("TS>coin");
+        sfsm.receiveSignal("CC>bad");
         expect(sfsm.getCurrentStack()).toEqual(["TS"]);
         expect(sfsm.getHeadState()).toBe("TS.L");
     });
