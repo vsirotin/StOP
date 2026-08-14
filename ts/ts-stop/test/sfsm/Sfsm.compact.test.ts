@@ -1,6 +1,7 @@
 import { Sfsm } from '../../src/sfsm/Sfsm';
 import { FaDefinition, Transition } from '../../src/sfsm/types';
 import { ICommandReceiver } from '../../src/sfsm/interfaces';
+import { RecordingReceiver } from './RecordingReceiver';
 
 /**
  * Sfsm compact-format tests.
@@ -17,20 +18,6 @@ import { ICommandReceiver } from '../../src/sfsm/interfaces';
  * explicitly in the "log metadata" tests below.
  */
 
-/**
- * Minimal ICommandReceiver that records every command received.
- */
-class RecordingReceiver implements ICommandReceiver {
-    public calls: Array<{ command: string; data?: unknown }> = [];
-
-    receiveCommand(command: string, data?: unknown): void {
-        this.calls.push({ command, data });
-    }
-
-    reset(): void {
-        this.calls = [];
-    }
-}
 
 /**
  * Embedded compact turnstile FA (single FA, no sub-FAs).

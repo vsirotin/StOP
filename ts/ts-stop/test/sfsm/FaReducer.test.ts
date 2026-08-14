@@ -4,6 +4,7 @@ import { FaDefinition, FaNode, Transition } from "../../src/sfsm/types";
 import { reduceFA } from "../../src/sfsm";
 import { Sfsm } from "../../src/sfsm/Sfsm";
 import { ICommandReceiver } from "../../src/sfsm/interfaces";
+import { RecordingReceiver } from "./RecordingReceiver";
 
 /**
  * reduceFA tests.
@@ -30,20 +31,6 @@ function loadCompactFa(): FaDefinition {
     return JSON.parse(fs.readFileSync(p, "utf-8")) as FaDefinition;
 }
 
-/**
- * Minimal ICommandReceiver that records every command received.
- */
-class RecordingReceiver implements ICommandReceiver {
-    public calls: Array<{ command: string; data?: unknown }> = [];
-
-    receiveCommand(command: string, data?: unknown): void {
-        this.calls.push({ command, data });
-    }
-
-    reset(): void {
-        this.calls = [];
-    }
-}
 
 // ---------------------------------------------------------------------------
 // reduceFA – output shape

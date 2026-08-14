@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.11.5 build 107
+refactor: ts-stop — Refactored TransceiverHub to use the ITransceiver interface instead of the concrete CommandReceiver and SignalSender classes. This allows any class implementing ITransceiver to be used, improving flexibility and decoupling. Updated registerCommandReceiver() to accept ICommandReceiver instead of CommandReceiver. Updated constructor to wire signal senders and command receivers from ITransceiver instances. All existing tests passing.
+
 ## Version: 3.11.4 build 106
 feat: ts-stop — Built the SFSM model for the web-session-initialization case study with the stop-sfsm-modeller skill: sfsm.ext.json (single Session FA, 17 transitions, command receivers Browser local memory / App-server / AI-provider / Live server / User), transformation-trace.md, processing.log.md, and 9 runnable use-case tests (t-01..t-09) each with start-test.sh. validate-ext-sfsm: 0 errors/0 warnings; all 9 run-fa traces matched the business-use-cases-trace paths. 248 tests passing.
 ## Version: 3.11.3 build 105

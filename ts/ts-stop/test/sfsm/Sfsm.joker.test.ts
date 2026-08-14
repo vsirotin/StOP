@@ -57,7 +57,8 @@ describe("SFSM – Joker signal (default '*')", () => {
         };
         const sfsm = new Sfsm();
         sfsm.setCommandReceiver({
-            receiveCommand: (command, data) => received.push({ command, data })
+            receiveCommand: (command, data) => received.push({ command, data }),
+            getCommandNames: () => [] //Not used in this test 
         });
         sfsm.loadFA(fa);
         sfsm.receiveSignal("start");

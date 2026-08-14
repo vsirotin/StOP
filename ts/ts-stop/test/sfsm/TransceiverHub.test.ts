@@ -1,39 +1,52 @@
-import { TransceiverHub, ICommandReceiver, ISignalReceiver, Sfsm, SignalSender, CommandReceiver } from "../../src/sfsm";
+import { TransceiverHub, ICommandReceiver, ISignalReceiver, ITransceiver, Sfsm, ISignalSender } from "../../src/sfsm";
 
 // ---------------------------------------------------------------------------
 // Test doubles
 // ---------------------------------------------------------------------------
 
-class StubReceiver extends CommandReceiver {
+class StubReceiver implements ICommandReceiver {
     received: Array<{ command: string; data: unknown }> = [];
-    constructor(private readonly commands: string[]) { super(); }
+    constructor(private readonly commands: string[]) { }
     getCommandNames(): readonly string[] { return this.commands; }
     receiveCommand(command: string, data?: unknown): void {
         this.received.push({ command, data });
     }
-}
 
-class StubSender extends SignalSender {
-    target: ISignalReceiver | null = null;
-    constructor(private readonly signals: string[]) { super(); }
-    getSignalNames(): readonly string[] { return this.signals; }
-    override connectSignalTarget(t: ISignalReceiver): void {
-        this.target = t;
-        super.connectSignalTarget(t);
+     receiveSignal(signal: string, data?: unknown): void {
+        // Not used in this test
     }
 }
 
-class StubSenderAndReceiver extends SignalSender implements ICommandReceiver {
+class StubSender implements ISignalSender {
+    target: ISignalReceiver | null = null;
+    constructor(private readonly signals: string[]) { }
+    getSignalNames(): readonly string[] { return this.signals; }
+    connectSignalTarget(t: ISignalReceiver): void {
+        this.target = t;
+    }
+    sendSignal(name: string, data?: unknown): void {
+        //Not used in this test
+    }
+}
+
+class MockTransceiver implements ITransceiver {
     target: ISignalReceiver | null = null;
     received: string[] = [];
-    constructor(private readonly signals: string[], private readonly commands: string[]) { super(); }
+    constructor(private readonly signals: string[], private readonly commands: string[]) { }
     getSignalNames(): readonly string[] { return this.signals; }
     getCommandNames(): readonly string[] { return this.commands; }
-    override connectSignalTarget(t: ISignalReceiver): void {
+    connectSignalTarget(t: ISignalReceiver): void {
         this.target = t;
-        super.connectSignalTarget(t);
     }
-    receiveCommand(command: string): void { this.received.push(command); }
+    receiveCommand(command: string, data?: unknown): void { this.received.push(command); }
+
+    sendSignal(name: string, data?: unknown): void {
+        // Not used in this test
+    }
+
+    receiveSignal(signal: string, data?: unknown): void {
+        // Not used in this test
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -160,7 +173,7 @@ describe("TransceiverHub – fluent chain", () => {
 
     it("test_fluentChain_registerAndConnect_worksEndToEnd", () => {
         const sfsm = new Sfsm();
-        const device = new StubSenderAndReceiver(["D.on", "D.off"], ["D.cmd"]);
+        const device = new MockTransceiver(["D.on", "D.off"], ["D.cmd"]);
 
         new TransceiverHub()
             .registerSignalSender(device)
@@ -193,7 +206,7 @@ describe("TransceiverHub – device implementing both roles", () => {
 
     it("test_dualRoleDevice_wireBothSidesCorrectly", () => {
         const sfsm = new Sfsm();
-        const device = new StubSenderAndReceiver(["D.sig"], ["D.cmd"]);
+        const device = new MockTransceiver(["D.sig"], ["D.cmd"]);
 
         const hub = new TransceiverHub()
             .registerSignalSender(device)

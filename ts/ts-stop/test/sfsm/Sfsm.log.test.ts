@@ -1,7 +1,7 @@
 import { Sfsm } from '../../src/sfsm/Sfsm';
 import { FaDefinition, FaNode, LogEntry } from '../../src/sfsm/types';
 import { ICommandReceiver } from '../../src/sfsm/interfaces';
-
+import { RecordingReceiver } from './RecordingReceiver';
 /**
  * Sfsm logging tests.
  *
@@ -14,22 +14,6 @@ import { ICommandReceiver } from '../../src/sfsm/interfaces';
  * log entries carry human-readable names alongside the raw identifiers.
  */
 
-/**
- * A minimal ICommandReceiver implementation that records every command
- * received, so tests can assert on the command stream without pulling in
- * TransceiverHub or any other higher-level class.
- */
-class RecordingReceiver implements ICommandReceiver {
-    public calls: Array<{ command: string; data?: unknown }> = [];
-
-    receiveCommand(command: string, data?: unknown): void {
-        this.calls.push({ command, data });
-    }
-
-    reset(): void {
-        this.calls = [];
-    }
-}
 
 /**
  * Embedded SFSM definitions used across the log tests.

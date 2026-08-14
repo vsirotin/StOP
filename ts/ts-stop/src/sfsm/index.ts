@@ -1,8 +1,5 @@
-export { ICommandReceiver, ISignalReceiver, ISignalSender } from './interfaces';
+export { ICommandReceiver, ISignalReceiver, ISignalSender, ITransceiver } from './interfaces';
 export { TransceiverHub } from './TransceiverHub';
-export { BaseTransceiver as BaseTransceiver } from './base-transceiver';
-export { SignalSender } from './SignalSender';
-export { CommandReceiver } from './CommandReceiver';
 export { FaDefinition, FaNode, FaUpdate, Transition, SfsmOptions, LogEntry, MissingDataPolicy, MissingTransitionPolicy } from './types';
 export { FaResolver, ResolvedFa } from './tools/FaResolver';
 export { Sfsm } from './Sfsm';

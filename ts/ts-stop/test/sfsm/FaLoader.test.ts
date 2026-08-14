@@ -3,7 +3,7 @@ import * as fs from "fs";
 import { loadFAFromFile, loadFAFromURL } from "../../src/sfsm";
 import { Sfsm } from "../../src/sfsm/Sfsm";
 import { FaDefinition } from "../../src/sfsm/types";
-import { ICommandReceiver } from "../../src/sfsm/interfaces";
+import { RecordingReceiver } from "./RecordingReceiver";
 
 /**
  * loadFAFromFile / loadFAFromURL tests.
@@ -18,21 +18,6 @@ import { ICommandReceiver } from "../../src/sfsm/interfaces";
 
 const extendedPath = path.resolve(__dirname, "test-data/turnstile-fa.json");
 const compactPath  = path.resolve(__dirname, "test-data/turnstile-fa-compact.json");
-
-/**
- * Minimal ICommandReceiver that records every command received.
- */
-class RecordingReceiver implements ICommandReceiver {
-    public calls: Array<{ command: string; data?: unknown }> = [];
-
-    receiveCommand(command: string, data?: unknown): void {
-        this.calls.push({ command, data });
-    }
-
-    reset(): void {
-        this.calls = [];
-    }
-}
 
 // ---------------------------------------------------------------------------
 // loadFAFromFile – return value

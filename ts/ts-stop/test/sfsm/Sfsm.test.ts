@@ -1,6 +1,7 @@
 import { Sfsm } from '../../src/sfsm/Sfsm';
 import { FaDefinition } from '../../src/sfsm/types';
 import { ICommandReceiver } from '../../src/sfsm/interfaces';
+import { RecordingReceiver } from './RecordingReceiver';
 
 /**
  * Sfsm core engine tests.
@@ -13,25 +14,6 @@ import { ICommandReceiver } from '../../src/sfsm/interfaces';
  * signal re-entrancy, $-suffix data forwarding, and stack inspection.
  */
 
-/**
- * Minimal ICommandReceiver that records every command received.
- *
- * The SFSM engine itself does not depend on TransceiverHub or any other
- * higher-level class — it only needs an object that satisfies the
- * ICommandReceiver interface. Using this lightweight recorder keeps the
- * tests focused on the engine's own behaviour.
- */
-class RecordingReceiver implements ICommandReceiver {
-    public calls: Array<{ command: string; data?: unknown }> = [];
-
-    receiveCommand(command: string, data?: unknown): void {
-        this.calls.push({ command, data });
-    }
-
-    reset(): void {
-        this.calls = [];
-    }
-}
 
 /**
  * Embedded SFSM definitions used across the core engine tests.

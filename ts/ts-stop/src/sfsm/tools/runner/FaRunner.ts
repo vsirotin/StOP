@@ -40,9 +40,10 @@ import { CommandInterpreter } from './CommandInterpreter';
  * ## Design note: composition over implementation
  *
  * `FaRunner` does **not** implement `ICommandReceiver` itself. Instead it owns
- * a tiny internal object that does. This keeps the runner's public API clean
- * (only `run()` and `setCommandInterpreter()` are exposed) while still giving
- * the Sfsm a proper `ICommandReceiver` to call back.
+ * a tiny internal class (`CommandReceiver`) that does. This keeps the runner's
+ * public API clean (only `run()` and `setCommandInterpreter()` are exposed)
+ * while still giving the Sfsm a proper `ICommandReceiver` (including the
+ * `getCommandNames()` contract) to call back.
  *
  * ## Example
  *
@@ -68,9 +69,10 @@ export class FaRunner {
     /**
      * Internal command receiver registered on the Sfsm.
      *
-     * It is a plain object literal whose `receiveCommand` delegates to the
-     * runner's private `handleCommand`. By composing instead of implementing
-     * the interface on `FaRunner` itself, we avoid leaking `receiveCommand`
+     * It is a dedicated internal class (`CommandReceiver`) that implements
+     * `ICommandReceiver` and delegates `receiveCommand` to the runner's private
+     * `handleCommand`. By composing instead of implementing the interface on
+     * `FaRunner` itself, we avoid leaking `receiveCommand` / `getCommandNames`
      * into the runner's public API.
      */
     private readonly commandReceiver: ICommandReceiver;
@@ -88,12 +90,8 @@ export class FaRunner {
         this.sfsm = sfsm;
         this.signals = [...signals];
 
-        // Compose a minimal ICommandReceiver that forwards to our handler.
-        this.commandReceiver = {
-            receiveCommand: (command: string, data?: unknown) => {
-                this.handleCommand(command, data);
-            }
-        };
+        // Compose an internal ICommandReceiver that forwards to our handler.
+        this.commandReceiver = new FaRunner.CommandReceiver(this);
 
         // Register on the Sfsm so transitions with commands call us back.
         this.sfsm.setCommandReceiver(this.commandReceiver);
@@ -177,6 +175,33 @@ export class FaRunner {
         this.signalIndex++;
         this.sfsm.receiveSignal(signal, data);
     }
+
+    /**
+     * Internal `ICommandReceiver` used to close the command loop.
+     *
+     * This is a private static nested class that fully implements the
+     * `ICommandReceiver` contract. Its only public surface is the two members
+     * the interface requires; everything else about the runner stays private.
+     *
+     * - `getCommandNames()` returns an empty list because the runner can react
+     *   to *any* command the FA emits — it does not restrict itself to a fixed
+     *   set of names.
+     * - `receiveCommand()` forwards straight to the owning runner's private
+     *   `handleCommand`, which decides between interpreting the command or
+     *   consuming the next pre-scripted signal.
+     */
+    private static CommandReceiver = class CommandReceiver implements ICommandReceiver {
+
+        constructor(private readonly owner: FaRunner) {}
+
+        getCommandNames(): readonly string[] {
+            return [];
+        }
+
+        receiveCommand(command: string, data?: unknown): void {
+            this.owner.handleCommand(command, data);
+        }
+    };
 }
 
 /**
