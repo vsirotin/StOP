@@ -71,8 +71,7 @@ class TurnstileGate implements ITransceiver {
     }
 }
 
-const sfsm = new Sfsm();
-sfsm.loadFA(turnstileFa);
+const sfsm = new Sfsm(turnstileFa);
 
 const gate = new TurnstileGate();
 

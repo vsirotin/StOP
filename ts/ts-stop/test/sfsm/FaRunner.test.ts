@@ -84,8 +84,7 @@ describe("FaRunner – basic turnstile (no jokers, no commands)", () => {
 
     it("should drive the FA through start → coin → push and end in 'locked'", () => {
         // Every FA starts in the reserved entry state "I" (see tutorial §2).
-        const sfsm = new Sfsm();
-        sfsm.loadFA(turnstileFa);
+        const sfsm = new Sfsm(turnstileFa);
         expect(sfsm.getHeadState()).toBe("I");
 
         // FaRunner auto-registers its internal command receiver on the Sfsm.
@@ -107,8 +106,7 @@ describe("FaRunner – basic turnstile (no jokers, no commands)", () => {
     });
 
     it("should produce an empty trace when no signals are provided", () => {
-        const sfsm = new Sfsm();
-        sfsm.loadFA(turnstileFa);
+        const sfsm = new Sfsm(turnstileFa);
 
         const runner = new FaRunner(sfsm, []);
         const trace = runner.run();
@@ -128,8 +126,7 @@ describe("FaRunner – joker-signal turnstile (power failure)", () => {
     it("should reach 'off' when an unexpected signal arrives while locked", () => {
         // The joker-signal transition ["locked", "*", "off"] catches any signal
         // that isn't the explicit "coin" — here "powerFailure".
-        const sfsm = new Sfsm();
-        sfsm.loadFA(turnstileWithJokerSignalFa);
+        const sfsm = new Sfsm(turnstileWithJokerSignalFa);
 
         const runner = new FaRunner(sfsm, ["start", "powerFailure"]);
         runner.run();
@@ -138,8 +135,7 @@ describe("FaRunner – joker-signal turnstile (power failure)", () => {
     });
 
     it("should reach 'off' when an unexpected signal arrives while unlocked", () => {
-        const sfsm = new Sfsm();
-        sfsm.loadFA(turnstileWithJokerSignalFa);
+        const sfsm = new Sfsm(turnstileWithJokerSignalFa);
 
         const runner = new FaRunner(sfsm, ["start", "coin", "sensorGlitch"]);
         runner.run();
@@ -148,8 +144,7 @@ describe("FaRunner – joker-signal turnstile (power failure)", () => {
     });
 
     it("should still behave normally for known signals (coin, push)", () => {
-        const sfsm = new Sfsm();
-        sfsm.loadFA(turnstileWithJokerSignalFa);
+        const sfsm = new Sfsm(turnstileWithJokerSignalFa);
 
         const runner = new FaRunner(sfsm, ["start", "coin", "push"]);
         runner.run();
@@ -168,8 +163,7 @@ describe("FaRunner – joker-state turnstile (maintenance mode)", () => {
     it("should reach 'maintenance' from 'locked' via the service signal", () => {
         // The joker-state transition ["*", "service", "maintenance"] matches
         // "service" regardless of the current state.
-        const sfsm = new Sfsm();
-        sfsm.loadFA(turnstileWithJokerStateFa);
+        const sfsm = new Sfsm(turnstileWithJokerStateFa);
 
         const runner = new FaRunner(sfsm, ["start", "service"]);
         runner.run();
@@ -178,8 +172,7 @@ describe("FaRunner – joker-state turnstile (maintenance mode)", () => {
     });
 
     it("should reach 'maintenance' from 'unlocked' just as easily", () => {
-        const sfsm = new Sfsm();
-        sfsm.loadFA(turnstileWithJokerStateFa);
+        const sfsm = new Sfsm(turnstileWithJokerStateFa);
 
         const runner = new FaRunner(sfsm, ["start", "coin", "service"]);
         runner.run();
@@ -252,8 +245,7 @@ describe("FaRunner – command loop with a command-emitting turnstile", () => {
     // -------------------------------------------------------------------------
 
     it("without interpreter: commands consume the next signal from the list", () => {
-        const sfsm = new Sfsm();
-        sfsm.loadFA(turnstileWithCommandsFa);
+        const sfsm = new Sfsm(turnstileWithCommandsFa);
 
         // The list contains all three signals. "coin" is sent by run(), but
         // "push" is consumed by the "unlock" command's handler, not by run().
@@ -273,8 +265,7 @@ describe("FaRunner – command loop with a command-emitting turnstile", () => {
     });
 
     it("without interpreter: should throw when a command arrives but the list is exhausted", () => {
-        const sfsm = new Sfsm();
-        sfsm.loadFA(turnstileWithCommandsFa);
+        const sfsm = new Sfsm(turnstileWithCommandsFa);
 
         // Only "start" and "coin" are provided. The "unlock" command emitted
         // by the "coin" transition tries to consume the next signal, but the
@@ -293,8 +284,7 @@ describe("FaRunner – command loop with a command-emitting turnstile", () => {
     // -------------------------------------------------------------------------
 
     it("with interpreter: the FA self-drives via command→signal translation", () => {
-        const sfsm = new Sfsm();
-        sfsm.loadFA(turnstileWithCommandsFa);
+        const sfsm = new Sfsm(turnstileWithCommandsFa);
 
         // Only "start" and "coin" are needed — the "push" signal is generated
         // by the interpreter translating the "unlock" command.
@@ -317,8 +307,7 @@ describe("FaRunner – command loop with a command-emitting turnstile", () => {
     });
 
     it("with interpreter: should throw for an unmapped command", () => {
-        const sfsm = new Sfsm();
-        sfsm.loadFA(turnstileWithCommandsFa);
+        const sfsm = new Sfsm(turnstileWithCommandsFa);
 
         // The interpreter maps nothing — the "unlock" command is unmapped.
         const runner = new FaRunner(sfsm, ["start", "coin"]);

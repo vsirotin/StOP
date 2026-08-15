@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.11.6 build 108
+refactor: ts-stop - Signature of Sfsm conctructor changed.
+
 ## Version: 3.11.5 build 107
 refactor: ts-stop — Refactored TransceiverHub to use the ITransceiver interface instead of the concrete CommandReceiver and SignalSender classes. This allows any class implementing ITransceiver to be used, improving flexibility and decoupling. Updated registerCommandReceiver() to accept ICommandReceiver instead of CommandReceiver. Updated constructor to wire signal senders and command receivers from ITransceiver instances. All existing tests passing.
 feat: ts-stop — Created SFSM model v2 for the web-session-initialization case study by applying tuning-promt.md: renamed User->UI (under Web Client), readPreference->readUserProfile, split profile retrieval into complete/without-consent, removed language-preference-entered transition, added UI presentation commands (user-profile/consent/purchase/error pages), replaced "Promo code not used" with "Promo code too small tokens", renamed terminal states to E_Session_Established/E_Session_Terminated, made page reload a joker transition. Added v2/transformation-trace.md, processing.log.md, rewritten tuning-promt.md, and 9 tests (t-01..t-09). validate-ext-sfsm --suppress 10: 0 errors/0 warnings; all run-fa traces matched expected paths.

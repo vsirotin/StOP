@@ -78,8 +78,7 @@ Here is how the stacked FA is loaded and driven:
 ```typescript
 import { Sfsm, FaDefinition } from '@vsirotin/ts-stop/sfsm';
 
-const sfsm = new Sfsm();
-sfsm.loadFA(turnstileWithCheckCoinFa as FaDefinition);
+const sfsm = new Sfsm(turnstileWithCheckCoinFa);
 
 sfsm.getHeadState();          // 'I'           (root entry state)
 sfsm.getCurrentStack();       // ['Turnstile']

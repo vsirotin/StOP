@@ -27,33 +27,28 @@ const turnstileTransitions = typedTransitions<TurnstileState, TurnstileSignal>([
 
 const turnstileFa: FaDefinition = { Turnstile: turnstileTransitions };
 
-function buildSfsm(): Sfsm {
-    const sfsm = new Sfsm();
-    sfsm.loadFA(turnstileFa);
-    return sfsm;
-}
 
 describe("Tutorial – A type-safe alternative (turnstile)", () => {
     it("should start in the reserved state 'I' before the start signal", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(turnstileFa);;
         expect(sfsm.getHeadState()).toBe("I");
     });
 
     it("should move to 'locked' after the start signal", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(turnstileFa);;
         sfsm.receiveSignal("start");
         expect(sfsm.getHeadState()).toBe("locked");
     });
 
     it("should unlock after a coin signal", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(turnstileFa);;
         sfsm.receiveSignal("start");
         sfsm.receiveSignal("coin");
         expect(sfsm.getHeadState()).toBe("unlocked");
     });
 
     it("should lock again after a push signal", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(turnstileFa);;
         sfsm.receiveSignal("start");
         sfsm.receiveSignal("coin");
         sfsm.receiveSignal("push");

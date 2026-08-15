@@ -16,15 +16,10 @@ const turnstileWithJokerSignalFa: FaDefinition = {
     ]
 };
 
-function buildSfsm(): Sfsm {
-    const sfsm = new Sfsm();
-    sfsm.loadFA(turnstileWithJokerSignalFa);
-    return sfsm;
-}
 
 describe("Tutorial – Joker signal (turnstile power failure)", () => {
     it("should behave exactly as the plain turnstile for known signals", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(turnstileWithJokerSignalFa);;
         sfsm.receiveSignal("start");
         expect(sfsm.getHeadState()).toBe("locked");
 
@@ -36,14 +31,14 @@ describe("Tutorial – Joker signal (turnstile power failure)", () => {
     });
 
     it("should fall back to 'off' when an unexpected signal arrives while locked", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(turnstileWithJokerSignalFa);;
         sfsm.receiveSignal("start");
         sfsm.receiveSignal("powerFailure");
         expect(sfsm.getHeadState()).toBe("off");
     });
 
     it("should fall back to 'off' when an unexpected signal arrives while unlocked", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(turnstileWithJokerSignalFa);;
         sfsm.receiveSignal("start");
         sfsm.receiveSignal("coin");
         sfsm.receiveSignal("sensorGlitch");

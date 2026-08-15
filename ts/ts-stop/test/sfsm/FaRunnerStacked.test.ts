@@ -104,8 +104,7 @@ describe("FaRunner – stacked turnstile: happy path (coin accepted)", () => {
     // -------------------------------------------------------------------------
 
     it("without interpreter: should unlock after weight + form checks pass", () => {
-        const sfsm = new Sfsm();
-        sfsm.loadFA(turnstileWithCheckCoinFa);
+        const sfsm = new Sfsm(turnstileWithCheckCoinFa);
 
         // The full signal sequence:
         //   "start"      → sent by run()
@@ -155,8 +154,7 @@ describe("FaRunner – stacked turnstile: happy path (coin accepted)", () => {
     // -------------------------------------------------------------------------
 
     it("with interpreter: the stacked FA self-drives to locked", () => {
-        const sfsm = new Sfsm();
-        sfsm.loadFA(turnstileWithCheckCoinFa);
+        const sfsm = new Sfsm(turnstileWithCheckCoinFa);
 
         const runner = new FaRunner(sfsm, ["start", "coin"]);
         runner.setCommandInterpreter(new CommandInterpreter({
@@ -194,8 +192,7 @@ describe("FaRunner – stacked turnstile: happy path (coin accepted)", () => {
         // Importantly, the Sfsm updates the state to "unlocked" BEFORE
         // dispatching the command, so the head state is already "unlocked"
         // when the error is thrown.
-        const sfsm = new Sfsm();
-        sfsm.loadFA(turnstileWithCheckCoinFa);
+        const sfsm = new Sfsm(turnstileWithCheckCoinFa);
 
         const runner = new FaRunner(sfsm, ["start", "coin", "weight-ok", "coin-ok"]);
 
@@ -214,8 +211,7 @@ describe("FaRunner – stacked turnstile: happy path (coin accepted)", () => {
 describe("FaRunner – stacked turnstile: rejection paths", () => {
 
     it("should reject the coin and stay locked when the weight check fails", () => {
-        const sfsm = new Sfsm();
-        sfsm.loadFA(turnstileWithCheckCoinFa);
+        const sfsm = new Sfsm(turnstileWithCheckCoinFa);
 
         // "weight-bad" is consumed by the "check-weight" command. CheckCoin
         // transitions to E_Rejected, pops, and "weight-bad" is forwarded to
@@ -237,8 +233,7 @@ describe("FaRunner – stacked turnstile: rejection paths", () => {
     });
 
     it("should reject the coin and stay locked when the form check fails", () => {
-        const sfsm = new Sfsm();
-        sfsm.loadFA(turnstileWithCheckCoinFa);
+        const sfsm = new Sfsm(turnstileWithCheckCoinFa);
 
         // Weight passes, but form fails. "form-bad" is consumed by the
         // "check-form" command. CheckCoin exits with E_Rejected, "form-bad"
@@ -269,8 +264,7 @@ describe("FaRunner – stacked turnstile: stack inspection", () => {
 
     it("should show [Turnstile] before and after the sub-FA runs", () => {
         // Before any signal, the stack is just the root FA.
-        const sfsm = new Sfsm();
-        sfsm.loadFA(turnstileWithCheckCoinFa);
+        const sfsm = new Sfsm(turnstileWithCheckCoinFa);
         expect(sfsm.getCurrentStack()).toEqual(["Turnstile"]);
 
         // After "start", still just the root.

@@ -29,24 +29,18 @@ const turnstileWithCheckCoinFa: FaDefinition = {
     ]
 };
 
-function buildSfsm(): Sfsm {
-    const sfsm = new Sfsm();
-    sfsm.loadFA(turnstileWithCheckCoinFa);
-    return sfsm;
-}
-
 describe("Tutorial – Stacked Finite State Machine (turnstile with CheckCoin)", () => {
 
     // ── Entry state and stack ──────────────────────────────────────────────
 
     it("should start in the reserved state 'I' with only Turnstile on the stack", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(turnstileWithCheckCoinFa);
         expect(sfsm.getHeadState()).toBe("I");
         expect(sfsm.getCurrentStack()).toEqual(["Turnstile"]);
     });
 
     it("should move to 'locked' after the start signal", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(turnstileWithCheckCoinFa);
         sfsm.receiveSignal("start");
         expect(sfsm.getHeadState()).toBe("locked");
         expect(sfsm.getCurrentStack()).toEqual(["Turnstile"]);
@@ -55,7 +49,7 @@ describe("Tutorial – Stacked Finite State Machine (turnstile with CheckCoin)",
     // ── Sub-FA push ────────────────────────────────────────────────────────
 
     it("should push CheckCoin onto the stack when 'coin' is received while locked", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(turnstileWithCheckCoinFa);
         sfsm.receiveSignal("start");
         sfsm.receiveSignal("coin");
         // CheckCoin is pushed; the 'coin' signal is forwarded into it,
@@ -65,7 +59,7 @@ describe("Tutorial – Stacked Finite State Machine (turnstile with CheckCoin)",
     });
 
     it("should advance to 'checking-form' after the weight check passes", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(turnstileWithCheckCoinFa);
         sfsm.receiveSignal("start");
         sfsm.receiveSignal("coin");
         sfsm.receiveSignal("weight-ok");
@@ -76,7 +70,7 @@ describe("Tutorial – Stacked Finite State Machine (turnstile with CheckCoin)",
     // ── Sub-FA pop on success (E_OK) ───────────────────────────────────────
 
     it("should pop CheckCoin and unlock when both checks pass (E_OK → coin-ok forwarded)", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(turnstileWithCheckCoinFa);
         sfsm.receiveSignal("start");
         sfsm.receiveSignal("coin");
         sfsm.receiveSignal("weight-ok");
@@ -88,7 +82,7 @@ describe("Tutorial – Stacked Finite State Machine (turnstile with CheckCoin)",
     });
 
     it("should lock again after a push signal following a successful coin check", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(turnstileWithCheckCoinFa);
         sfsm.receiveSignal("start");
         sfsm.receiveSignal("coin");
         sfsm.receiveSignal("weight-ok");
@@ -100,7 +94,7 @@ describe("Tutorial – Stacked Finite State Machine (turnstile with CheckCoin)",
     // ── Sub-FA pop on rejection (E_Rejected) ───────────────────────────────
 
     it("should pop CheckCoin and stay locked when the weight check fails", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(turnstileWithCheckCoinFa);
         sfsm.receiveSignal("start");
         sfsm.receiveSignal("coin");
         sfsm.receiveSignal("weight-bad");
@@ -111,7 +105,7 @@ describe("Tutorial – Stacked Finite State Machine (turnstile with CheckCoin)",
     });
 
     it("should pop CheckCoin and stay locked when the form check fails", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(turnstileWithCheckCoinFa);
         sfsm.receiveSignal("start");
         sfsm.receiveSignal("coin");
         sfsm.receiveSignal("weight-ok");

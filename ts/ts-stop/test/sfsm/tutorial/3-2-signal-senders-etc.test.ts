@@ -39,8 +39,7 @@ describe("Tutorial – 3.2 Signal Senders, Command Receivers, Controllers, and t
         }
     }
 
-    const sfsm = new Sfsm();
-    sfsm.loadFA(turnstileFa);
+    const sfsm = new Sfsm(turnstileFa);
 
     const gate = new TurnstileGate();
 

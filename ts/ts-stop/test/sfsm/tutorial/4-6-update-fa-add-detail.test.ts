@@ -39,8 +39,7 @@ const addCoinValidationUpdate: FaUpdate = {
 
 describe("Tutorial – Utilities: promoting a leaf state to a sub-FA via updateCompactFA", () => {
     it("should unlock immediately on 'coin' before the update (no validation)", () => {
-        const sfsm = new Sfsm();
-        sfsm.loadFA(simpleTurnstileFa);
+        const sfsm = new Sfsm(simpleTurnstileFa);
         sfsm.receiveSignal("start");
         sfsm.receiveSignal("coin");
         expect(sfsm.getHeadState()).toBe("unlocked");
@@ -49,8 +48,7 @@ describe("Tutorial – Utilities: promoting a leaf state to a sub-FA via updateC
     it("should route 'coin' through CoinCheck after the update, unlocking only on CC.ok", () => {
         const updatedFa = updateCompactFA(simpleTurnstileFa, addCoinValidationUpdate);
 
-        const sfsm = new Sfsm();
-        sfsm.loadFA(updatedFa);
+        const sfsm = new Sfsm(updatedFa);
         sfsm.receiveSignal("start");
         sfsm.receiveSignal("coin");
 
@@ -64,8 +62,7 @@ describe("Tutorial – Utilities: promoting a leaf state to a sub-FA via updateC
     it("should stay locked after the update when the checker rejects the coin", () => {
         const updatedFa = updateCompactFA(simpleTurnstileFa, addCoinValidationUpdate);
 
-        const sfsm = new Sfsm();
-        sfsm.loadFA(updatedFa);
+        const sfsm = new Sfsm(updatedFa);
         sfsm.receiveSignal("start");
         sfsm.receiveSignal("coin");
         sfsm.receiveSignal("CC.bad");

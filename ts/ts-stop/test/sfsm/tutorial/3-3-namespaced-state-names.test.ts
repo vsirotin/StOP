@@ -25,27 +25,22 @@ const namespacedTurnstileFa: FaDefinition = {
     ]
 };
 
-function buildSfsm(): Sfsm {
-    const sfsm = new Sfsm();
-    sfsm.loadFA(namespacedTurnstileFa);
-    return sfsm;
-}
 
 describe("Tutorial – Name conventions (namespaced entry/exit state names)", () => {
     it("should auto-detect the namespaced entry state 'TS.I' for the root FA", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(namespacedTurnstileFa);
         expect(sfsm.getCurrentStack()).toEqual(["TS"]);
         expect(sfsm.getHeadState()).toBe("TS.I");
     });
 
     it("should move to 'TS.L' on the start signal", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(namespacedTurnstileFa);
         sfsm.receiveSignal("TS>start");
         expect(sfsm.getHeadState()).toBe("TS.L");
     });
 
     it("should push CC on a coin and auto-detect its namespaced entry state 'CC.I'", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(namespacedTurnstileFa);
         sfsm.receiveSignal("TS>start");
         sfsm.receiveSignal("TS>coin");
         // CC.I"s own transition is triggered directly by the forwarded "TS>coin"
@@ -55,7 +50,7 @@ describe("Tutorial – Name conventions (namespaced entry/exit state names)", ()
     });
 
     it("should recognise 'CC.E_ok' as an exit ('.E_' form), pop CC, and unlock", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(namespacedTurnstileFa);
         sfsm.receiveSignal("TS>start");
         sfsm.receiveSignal("TS>coin");
         sfsm.receiveSignal("CC>ok");
@@ -67,7 +62,7 @@ describe("Tutorial – Name conventions (namespaced entry/exit state names)", ()
     });
 
     it("should recognise 'CC.E_bad' as an exit, pop CC, and stay locked", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(namespacedTurnstileFa);
         sfsm.receiveSignal("TS>start");
         sfsm.receiveSignal("TS>coin");
         sfsm.receiveSignal("CC>bad");

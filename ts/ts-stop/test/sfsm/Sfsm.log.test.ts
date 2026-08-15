@@ -58,10 +58,9 @@ describe('Sfsm logging', () => {
     let receiver: RecordingReceiver;
 
     beforeEach(() => {
-        sfsm = new Sfsm();
+        sfsm = new Sfsm(turnstileFa);
         receiver = new RecordingReceiver();
         sfsm.setCommandReceiver(receiver);
-        sfsm.loadFA(turnstileFa);
     });
 
     test('log is empty right after loadFA', () => {
@@ -146,10 +145,9 @@ describe('Sfsm logging', () => {
                 ts: [['I', 'go', 'A', 'ping']]
             }
         };
-        const local = new Sfsm();
+        const local = new Sfsm(fa);
         const rec = new RecordingReceiver();
         local.setCommandReceiver(rec);
-        local.loadFA(fa);
 
         local.receiveSignal('go', { payload: 42 });
 
@@ -168,10 +166,9 @@ describe('Sfsm logging', () => {
                 ts: [['I', 'go', 'A', 'ping$']]
             }
         };
-        const local = new Sfsm();
+        const local = new Sfsm(fa);
         const rec = new RecordingReceiver();
         local.setCommandReceiver(rec);
-        local.loadFA(fa);
 
         local.receiveSignal('go', { payload: 42 });
 
@@ -189,10 +186,9 @@ describe('Sfsm logging', () => {
                 ts: [['I', 'go', 'A', 'ping$']]
             }
         };
-        const local = new Sfsm({ byMissingData: 'error' });
+        const local = new Sfsm(fa, { byMissingData: 'error' });
         const rec = new RecordingReceiver();
         local.setCommandReceiver(rec);
-        local.loadFA(fa);
 
         expect(() => local.receiveSignal('go')).toThrow(/expects data/);
     });
@@ -206,8 +202,7 @@ describe('Sfsm logging', () => {
                 ts: [['I', 'go', 'A']]
             }
         };
-        const local = new Sfsm();
-        local.loadFA(fa);
+        const local = new Sfsm(fa);
 
         expect(() => local.receiveSignal('push')).toThrow(/no transition/);
     });
@@ -220,8 +215,7 @@ describe('Sfsm logging', () => {
                 ts: [['I', 'go', 'A']]
             }
         };
-        const local = new Sfsm({ byMissingTransition: 'log_warning' });
-        local.loadFA(fa);
+        const local = new Sfsm(fa, { byMissingTransition: 'log_warning' });
 
         // Suppress the expected warning.
         const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});

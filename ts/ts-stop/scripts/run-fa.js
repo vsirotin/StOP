@@ -152,8 +152,7 @@ function formatTraceWithFaNames(entries) {
         .join('\n');
 }
 
-const sfsm = new Sfsm();
-sfsm.loadFA(faDefinition);
+const sfsm = new Sfsm(faDefinition);
 
 const runner = new FaRunner(sfsm, signals);
 if (interpreter) {

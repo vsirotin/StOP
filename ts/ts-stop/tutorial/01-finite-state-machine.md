@@ -66,8 +66,7 @@ And here is how it is loaded and driven with the `Sfsm` class:
 import { Sfsm, FaDefinition } from '@vsirotin/ts-stop/sfsm';
 import turnstileFa from './turnstile-fa.json';
 
-const sfsm = new Sfsm();
-sfsm.loadFA(turnstileFa as FaDefinition);
+const sfsm = new Sfsm(turnstileFa as FaDefinition);
 
 sfsm.getHeadState();          // 'I'  — the reserved entry state
 
@@ -113,8 +112,7 @@ const turnstileTransitions = typedTransitions<TurnstileState, TurnstileSignal>([
 
 const turnstileFa: FaDefinition = { Turnstile: turnstileTransitions };
 
-const sfsm = new Sfsm();
-sfsm.loadFA(turnstileFa);
+const sfsm = new Sfsm(turnstileFa);
 ```
 
 This costs nothing at runtime — `typedTransitions()` just returns its argument — but any misspelled state or signal name is now a compile-time error instead of a silent bug. A runnable version of this example is available as a unit test: [1-2-1-type-safe-fa-definition.test.ts](../../ts-stop/test/sfsm/tutorial/1-2-1-type-safe-fa-definition.test.ts).
@@ -163,8 +161,8 @@ Instead of trying to list every possible malfunction signal, one joker-signal tr
 ```typescript
 import { Sfsm, FaDefinition } from '@vsirotin/ts-stop/sfsm';
 
-const sfsm = new Sfsm();
-sfsm.loadFA(turnstileWithJokerSignalFa as FaDefinition);
+const sfsm = new Sfsm(turnstileWithJokerSignalFa);
+sfsm.loadFA(turnstileWithJokerSignalFa);
 
 sfsm.receiveSignal('start');
 sfsm.getHeadState();             // 'locked'
@@ -200,8 +198,7 @@ A single joker-state transition expresses exactly that, regardless of how many o
 ```typescript
 import { Sfsm, FaDefinition } from '@vsirotin/ts-stop/sfsm';
 
-const sfsm = new Sfsm();
-sfsm.loadFA(turnstileWithJokerStateFa as FaDefinition);
+const sfsm = new Sfsm(turnstileWithJokerStateFa);
 
 sfsm.receiveSignal('start');
 sfsm.receiveSignal('service');

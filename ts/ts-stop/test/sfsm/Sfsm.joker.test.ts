@@ -22,8 +22,7 @@ describe("SFSM – Joker signal (default '*')", () => {
                 ["running", "*", "off"] // joker-signal: any other signal while running -> off
             ]
         };
-        const sfsm = new Sfsm();
-        sfsm.loadFA(fa);
+        const sfsm = new Sfsm(fa);
         sfsm.receiveSignal("start");
         return sfsm;
     }
@@ -55,12 +54,11 @@ describe("SFSM – Joker signal (default '*')", () => {
                 ["running", "*", "off", "DEV.shutdown"]
             ]
         };
-        const sfsm = new Sfsm();
+        const sfsm = new Sfsm(fa);
         sfsm.setCommandReceiver({
             receiveCommand: (command, data) => received.push({ command, data }),
             getCommandNames: () => [] //Not used in this test 
         });
-        sfsm.loadFA(fa);
         sfsm.receiveSignal("start");
         sfsm.receiveSignal("anySignal");
 
@@ -80,8 +78,7 @@ describe("SFSM – Joker state (default '*')", () => {
                 ["*", "service", "maintenance"] // joker-state: "service" always -> maintenance
             ]
         };
-        const sfsm = new Sfsm();
-        sfsm.loadFA(fa);
+        const sfsm = new Sfsm(fa);
         sfsm.receiveSignal("start");
         return sfsm;
     }
@@ -109,8 +106,7 @@ describe("SFSM – Joker state (default '*')", () => {
                 ["*", "service", "maintenance"]
             ]
         };
-        const sfsm = new Sfsm();
-        sfsm.loadFA(fa);
+        const sfsm = new Sfsm(fa);
         sfsm.receiveSignal("start");
         sfsm.receiveSignal("service");
         expect(sfsm.getHeadState()).toBe("specialMaintenance");
@@ -127,8 +123,7 @@ describe("SFSM – custom joker symbols via SfsmOptions", () => {
                 ["running", "ANY_SIGNAL", "off"]
             ]
         };
-        const sfsm = new Sfsm({ jokerSignal: "ANY_SIGNAL" });
-        sfsm.loadFA(fa);
+        const sfsm = new Sfsm(fa, { jokerSignal: "ANY_SIGNAL" });
         sfsm.receiveSignal("start");
 
         sfsm.receiveSignal("unknownSignal");
@@ -143,8 +138,7 @@ describe("SFSM – custom joker symbols via SfsmOptions", () => {
                 ["ANY_STATE", "service", "maintenance"]
             ]
         };
-        const sfsm = new Sfsm({ jokerState: "ANY_STATE" });
-        sfsm.loadFA(fa);
+        const sfsm = new Sfsm(fa, { jokerState: "ANY_STATE" });
         sfsm.receiveSignal("start");
 
         sfsm.receiveSignal("work");
@@ -161,8 +155,7 @@ describe("SFSM – custom joker symbols via SfsmOptions", () => {
                 ["running", "*", "literalStarState"]
             ]
         };
-        const sfsm = new Sfsm({ jokerSignal: "ANY_SIGNAL" });
-        sfsm.loadFA(fa);
+        const sfsm = new Sfsm(fa, { jokerSignal: "ANY_SIGNAL" });
         sfsm.receiveSignal("start");
         sfsm.receiveSignal("*");
         expect(sfsm.getHeadState()).toBe("literalStarState");

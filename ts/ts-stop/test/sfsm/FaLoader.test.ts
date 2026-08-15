@@ -60,11 +60,9 @@ describe("loadFAFromFile – return value", () => {
 
 describe("loadFAFromFile – Sfsm integration with extended FA", () => {
     it("should load and run extended FA from file: TS>start reaches TS:Locked", () => {
-        const sfsm = new Sfsm({ byMissingTransition: "error", byMissingData: "error" });
+        const sfsm = new Sfsm(loadFAFromFile(extendedPath), { byMissingTransition: "error", byMissingData: "error" });
         const rec = new RecordingReceiver();
         sfsm.setCommandReceiver(rec);
-
-        sfsm.loadFA(loadFAFromFile(extendedPath));
 
         // After loadFA the engine sits at the root entry state.
         expect(sfsm.getCurrentStack()).toEqual(["TS"]);
@@ -77,8 +75,7 @@ describe("loadFAFromFile – Sfsm integration with extended FA", () => {
     });
 
     it("should load extended FA and produce a log entry for TS>start", () => {
-        const sfsm = new Sfsm();
-        sfsm.loadFA(loadFAFromFile(extendedPath));
+        const sfsm = new Sfsm(loadFAFromFile(extendedPath));
 
         sfsm.receiveSignal("TS>start");
         const log = sfsm.getLog();
@@ -97,11 +94,9 @@ describe("loadFAFromFile – Sfsm integration with extended FA", () => {
 
 describe("loadFAFromFile – Sfsm integration with compact FA", () => {
     it("should load and run compact FA from file: TS>start reaches TS:Locked", () => {
-        const sfsm = new Sfsm({ byMissingTransition: "error", byMissingData: "error" });
+        const sfsm = new Sfsm(loadFAFromFile(compactPath), { byMissingTransition: "error", byMissingData: "error" });
         const rec = new RecordingReceiver();
         sfsm.setCommandReceiver(rec);
-
-        sfsm.loadFA(loadFAFromFile(compactPath));
 
         // After loadFA the engine sits at the root entry state.
         expect(sfsm.getCurrentStack()).toEqual(["TS"]);
@@ -114,8 +109,7 @@ describe("loadFAFromFile – Sfsm integration with compact FA", () => {
     });
 
     it("should load compact FA and produce a log entry for TS>start", () => {
-        const sfsm = new Sfsm();
-        sfsm.loadFA(loadFAFromFile(compactPath));
+        const sfsm = new Sfsm(loadFAFromFile(compactPath));
 
         sfsm.receiveSignal("TS>start");
         const log = sfsm.getLog();
@@ -128,8 +122,7 @@ describe("loadFAFromFile – Sfsm integration with compact FA", () => {
     });
 
     it("compact FA log entries should not contain metadata name fields", () => {
-        const sfsm = new Sfsm();
-        sfsm.loadFA(loadFAFromFile(compactPath));
+        const sfsm = new Sfsm(loadFAFromFile(compactPath));
 
         sfsm.receiveSignal("TS>start");
         const log = sfsm.getLog();

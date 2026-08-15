@@ -200,11 +200,9 @@ describe("reduceFA – round-trip: reduce then load produces same behaviour", ()
     });
 
     it("reduced FA loads into Sfsm and reaches the same state as the extended FA", () => {
-        const sfsmReduced = new Sfsm();
-        sfsmReduced.loadFA(reduced);
+        const sfsmReduced = new Sfsm(reduced);
 
-        const sfsmExtended = new Sfsm();
-        sfsmExtended.loadFA(extendedRoundTripFa);
+        const sfsmExtended = new Sfsm(extendedRoundTripFa);
 
         // Both engines start at I on the root FA.
         expect(sfsmReduced.getHeadState()).toBe(sfsmExtended.getHeadState());
@@ -241,14 +239,12 @@ describe("reduceFA – round-trip: reduce then load produces same behaviour", ()
         const reducedWithCommand = reduceFA(extendedWithCommand);
 
         const recReduced = new RecordingReceiver();
-        const sfsmReduced = new Sfsm();
+        const sfsmReduced = new Sfsm(reducedWithCommand);
         sfsmReduced.setCommandReceiver(recReduced);
-        sfsmReduced.loadFA(reducedWithCommand);
 
         const recExtended = new RecordingReceiver();
-        const sfsmExtended = new Sfsm();
+        const sfsmExtended = new Sfsm(extendedWithCommand);
         sfsmExtended.setCommandReceiver(recExtended);
-        sfsmExtended.loadFA(extendedWithCommand);
 
         sfsmReduced.receiveSignal('go');
         sfsmExtended.receiveSignal('go');
@@ -259,8 +255,7 @@ describe("reduceFA – round-trip: reduce then load produces same behaviour", ()
     });
 
     it("reduced FA log entries have no metadata name fields (compact format)", () => {
-        const sfsmReduced = new Sfsm();
-        sfsmReduced.loadFA(reduced);
+        const sfsmReduced = new Sfsm(reduced);
 
         sfsmReduced.receiveSignal('start');
         const log = sfsmReduced.getLog();

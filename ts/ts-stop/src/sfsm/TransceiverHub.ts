@@ -30,7 +30,7 @@ export class TransceiverHub implements ICommandReceiver {
     private signalSenders: ISignalSender[] = [];
 
 
-    constructor(sfsm: Sfsm = new Sfsm(), transceivers: readonly ITransceiver[] = []) {
+    constructor(private sfsm: Sfsm, private transceivers: readonly ITransceiver[] = []) {
         for (const transceiver of transceivers) {
         // Workflow N1 + N2: wire the SFSM as the signal target for this transceiver's sender.
         const signalSender = transceiver;
@@ -61,6 +61,7 @@ export class TransceiverHub implements ICommandReceiver {
      */
     registerSignalSender(sender: ISignalSender): this {
         this.signalSenders.push(sender);
+        sender.connectSignalTarget(this.sfsm);
         return this;
     }
 

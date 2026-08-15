@@ -177,34 +177,23 @@ describe('Sfsm core engine', () => {
 
     describe('initialisation', () => {
         test('loadFA activates the root FA at its entry state', () => {
-            const sfsm = new Sfsm();
-            sfsm.loadFA(turnstileFa);
+            const sfsm = new Sfsm(turnstileFa);
 
             expect(sfsm.getCurrentStack()).toEqual(['Turnstile']);
             expect(sfsm.getHeadState()).toBe('I');
         });
 
         test('loadFA resets the log and the signal queue', () => {
-            const sfsm = new Sfsm();
-            sfsm.loadFA(turnstileFa);
+            const sfsm = new Sfsm(turnstileFa);
             sfsm.receiveSignal('coin');
-
             sfsm.loadFA(turnstileFa);
+
 
             expect(sfsm.getLog()).toEqual([]);
             expect(sfsm.getCurrentStack()).toEqual(['Turnstile']);
             expect(sfsm.getHeadState()).toBe('I');
         });
 
-        test('getHeadState throws when the engine has not been initialised', () => {
-            const sfsm = new Sfsm();
-            expect(() => sfsm.getHeadState()).toThrow(/not initialised/);
-        });
-
-        test('receiveSignal throws before loadFA is called', () => {
-            const sfsm = new Sfsm();
-            expect(() => sfsm.receiveSignal('coin')).toThrow(/loadFA/);
-        });
     });
 
     describe('single-FA transitions (rule 2.1)', () => {
@@ -212,10 +201,9 @@ describe('Sfsm core engine', () => {
         let receiver: RecordingReceiver;
 
         beforeEach(() => {
-            sfsm = new Sfsm();
+            sfsm = new Sfsm(turnstileFa);
             receiver = new RecordingReceiver();
             sfsm.setCommandReceiver(receiver);
-            sfsm.loadFA(turnstileFa);
         });
 
         test('a signal handled by the head FA advances its state', () => {
@@ -253,10 +241,9 @@ describe('Sfsm core engine', () => {
                     ]
                 }
             };
-            const local = new Sfsm();
+            const local = new Sfsm(fa);
             const rec = new RecordingReceiver();
             local.setCommandReceiver(rec);
-            local.loadFA(fa);
 
             local.receiveSignal('coin');   // I -> Unlocked
             local.receiveSignal('push', { who: 'visitor' }); // Unlocked -> Locked, fires lock$
@@ -278,10 +265,9 @@ describe('Sfsm core engine', () => {
                     ts: [['I', 'go', 'A', 'ping']]
                 }
             };
-            const local = new Sfsm();
+            const local = new Sfsm(fa);
             const rec = new RecordingReceiver();
             local.setCommandReceiver(rec);
-            local.loadFA(fa);
 
             local.receiveSignal('go', { payload: 1 });
 
@@ -302,8 +288,7 @@ describe('Sfsm core engine', () => {
 
     describe('exit states (rule 5)', () => {
         test('reaching an exit state on the root FA resets it to the entry state', () => {
-            const sfsm = new Sfsm();
-            sfsm.loadFA(turnstileFa);
+            const sfsm = new Sfsm(turnstileFa);
 
             sfsm.receiveSignal('coin');    // I -> Unlocked
             sfsm.receiveSignal('reset');   // Unlocked -> E_ok -> root resets to I
@@ -313,8 +298,7 @@ describe('Sfsm core engine', () => {
         });
 
         test('reaching an exit state on a non-root FA pops it and forwards the signal', () => {
-            const sfsm = new Sfsm();
-            sfsm.loadFA(stackedFa);
+            const sfsm = new Sfsm(stackedFa);
 
             // Push the child FA onto the stack. The 'start' signal is
             // forwarded into Child, driving it from I to Working.
@@ -334,8 +318,7 @@ describe('Sfsm core engine', () => {
 
     describe('stacked FAs (rule 4 — push sub-FA)', () => {
         test('transitioning to a sub-FA state pushes the sub-FA onto the stack', () => {
-            const sfsm = new Sfsm();
-            sfsm.loadFA(stackedFa);
+            const sfsm = new Sfsm(stackedFa);
 
             sfsm.receiveSignal('start');
 
@@ -346,8 +329,7 @@ describe('Sfsm core engine', () => {
         });
 
         test('signals are forwarded to the head of the stack after a push', () => {
-            const sfsm = new Sfsm();
-            sfsm.loadFA(stackedFa);
+            const sfsm = new Sfsm(stackedFa);
 
             sfsm.receiveSignal('start');   // push Child, Child.I -> Working
             sfsm.receiveSignal('work');    // Child.Working -> Working (self-loop)
@@ -393,8 +375,7 @@ describe('Sfsm core engine', () => {
                     ]
                 }
             };
-            const sfsm = new Sfsm();
-            sfsm.loadFA(fa);
+            const sfsm = new Sfsm(fa);
 
             sfsm.receiveSignal('start');   // push Child, Child.I -> Working
             expect(sfsm.getCurrentStack()).toEqual(['Parent', 'Child']);
@@ -418,14 +399,12 @@ describe('Sfsm core engine', () => {
         };
 
         test('default policy throws on a missing transition', () => {
-            const sfsm = new Sfsm();
-            sfsm.loadFA(fa);
+            const sfsm = new Sfsm(fa);
             expect(() => sfsm.receiveSignal('unknown')).toThrow(/no transition/);
         });
 
         test('log_warning policy warns and leaves the state untouched', () => {
-            const sfsm = new Sfsm({ byMissingTransition: 'log_warning' });
-            sfsm.loadFA(fa);
+            const sfsm = new Sfsm(fa, { byMissingTransition: 'log_warning' });
 
             const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
             sfsm.receiveSignal('unknown');
@@ -436,8 +415,7 @@ describe('Sfsm core engine', () => {
         });
 
         test('ignore policy silently drops the signal', () => {
-            const sfsm = new Sfsm({ byMissingTransition: 'ignore' });
-            sfsm.loadFA(fa);
+            const sfsm = new Sfsm(fa, { byMissingTransition: 'ignore' });
 
             sfsm.receiveSignal('unknown');
 
@@ -457,19 +435,17 @@ describe('Sfsm core engine', () => {
         };
 
         test('default policy throws when a $ command receives no data', () => {
-            const sfsm = new Sfsm();
+            const sfsm = new Sfsm(fa);
             const rec = new RecordingReceiver();
             sfsm.setCommandReceiver(rec);
-            sfsm.loadFA(fa);
 
             expect(() => sfsm.receiveSignal('go')).toThrow(/expects data/);
         });
 
         test('log_warning policy warns but still fires the command', () => {
-            const sfsm = new Sfsm({ byMissingData: 'log_warning' });
+            const sfsm = new Sfsm(fa, { byMissingData: 'log_warning' });
             const rec = new RecordingReceiver();
             sfsm.setCommandReceiver(rec);
-            sfsm.loadFA(fa);
 
             const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
             sfsm.receiveSignal('go');
@@ -481,10 +457,9 @@ describe('Sfsm core engine', () => {
         });
 
         test('ignore policy silently fires the command without data', () => {
-            const sfsm = new Sfsm({ byMissingData: 'ignore' });
+            const sfsm = new Sfsm(fa, { byMissingData: 'ignore' });
             const rec = new RecordingReceiver();
             sfsm.setCommandReceiver(rec);
-            sfsm.loadFA(fa);
 
             sfsm.receiveSignal('go');
 
@@ -518,10 +493,9 @@ describe('Sfsm core engine', () => {
                 }
             };
 
-            const sfsm = new Sfsm();
+            const sfsm = new Sfsm(fa);
             const rec = new RecordingReceiver();
             sfsm.setCommandReceiver(rec);
-            sfsm.loadFA(fa);
 
             // The receiver re-enters the engine with 'next' while 'go' is
             // still being processed.
@@ -538,8 +512,7 @@ describe('Sfsm core engine', () => {
 
     describe('stack inspection', () => {
         test('getCurrentStack returns the FA names from bottom to head', () => {
-            const sfsm = new Sfsm();
-            sfsm.loadFA(stackedFa);
+            const sfsm = new Sfsm(stackedFa);
 
             expect(sfsm.getCurrentStack()).toEqual(['Parent']);
             sfsm.receiveSignal('start');
@@ -549,9 +522,8 @@ describe('Sfsm core engine', () => {
 
     describe('repeated deep push/pop cycles', () => {
         test('re-entering a sub-FA always starts at its entry state, even after multiple cycles', () => {
-            const sfsm = new Sfsm();
-            sfsm.loadFA(deepStackedFa);
-
+            const sfsm = new Sfsm(deepStackedFa);
+            
             // Run the deep cycle 3 times. Each cycle pushes B and C onto
             // the stack, pops C, re-pushes C (which MUST reset to I), pops
             // C again, then pops B — leaving A back at I for the next cycle.

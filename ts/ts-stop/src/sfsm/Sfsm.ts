@@ -45,13 +45,21 @@ export class Sfsm implements ISignalReceiver {
     private processing = false;
     private signalQueue: Array<{ signal: string; data?: unknown }> = [];
 
-    constructor(options: SfsmOptions = {}) {
+    /**
+     * Create a new SFSM instance. If a model is provided, it is loaded immediately.
+     * @param model The FA definition to load initially, or null.
+     * @param options Configuration options for the SFSM instance.
+     */
+    constructor(model: FaDefinition, options: SfsmOptions = {}) {
         this.options = {
             byMissingData: options.byMissingData ?? 'error',
             byMissingTransition: options.byMissingTransition ?? 'error',
             jokerSignal: options.jokerSignal ?? '*',
             jokerState: options.jokerState ?? '*'
         };
+
+        this.loadFA(model);
+        
     }
 
     /** Register the single command receiver for this SFSM instance. */

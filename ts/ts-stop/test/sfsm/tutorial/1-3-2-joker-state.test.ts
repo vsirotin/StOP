@@ -15,15 +15,10 @@ const turnstileWithJokerStateFa: FaDefinition = {
     ]
 };
 
-function buildSfsm(): Sfsm {
-    const sfsm = new Sfsm();
-    sfsm.loadFA(turnstileWithJokerStateFa);
-    return sfsm;
-}
 
 describe("Tutorial – Joker state (turnstile maintenance mode)", () => {
     it("should reach maintenance from 'locked'", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(turnstileWithJokerStateFa);
         sfsm.receiveSignal("start");
         expect(sfsm.getHeadState()).toBe("locked");
 
@@ -32,7 +27,7 @@ describe("Tutorial – Joker state (turnstile maintenance mode)", () => {
     });
 
     it("should reach maintenance from 'unlocked' just as easily", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(turnstileWithJokerStateFa);
         sfsm.receiveSignal("start");
         sfsm.receiveSignal("coin");
         expect(sfsm.getHeadState()).toBe("unlocked");
@@ -42,7 +37,7 @@ describe("Tutorial – Joker state (turnstile maintenance mode)", () => {
     });
 
     it("should still behave normally for coin/push when service is never sent", () => {
-        const sfsm = buildSfsm();
+        const sfsm = new Sfsm(turnstileWithJokerStateFa);
         sfsm.receiveSignal("start");
         sfsm.receiveSignal("coin");
         sfsm.receiveSignal("push");

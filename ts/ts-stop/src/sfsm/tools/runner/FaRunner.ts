@@ -48,8 +48,7 @@ import { CommandInterpreter } from './CommandInterpreter';
  * ## Example
  *
  * ```typescript
- * const sfsm = new Sfsm();
- * sfsm.loadFA(turnstileFa);
+ * const sfsm = new Sfsm(turnstileFa);
  *
  * const runner = new FaRunner(sfsm, ["start", "coin", "push"]);
  * const trace = runner.run();
