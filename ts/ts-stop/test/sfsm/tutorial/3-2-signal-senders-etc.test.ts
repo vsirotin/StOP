@@ -1,4 +1,5 @@
-import { Sfsm, FaDefinition, TransceiverHub, ISignalSender, ISignalReceiver, ITransceiver } from "../../../src/sfsm";
+import { Sfsm, FaDefinition, TransceiverHub, wireSfsm } from "../../../src/sfsm";
+import { TransceiverBase } from "../../../src/sfsm/TransceiverBase";
 
 describe("Tutorial – 3.2 Signal Senders, Command Receivers, Controllers, and the Transceiver Hub)", () => {
 
@@ -10,32 +11,27 @@ describe("Tutorial – 3.2 Signal Senders, Command Receivers, Controllers, and t
         ]
     };
     
-    class TurnstileGate implements ITransceiver {
+class TurnstileGate extends TransceiverBase {
 
-    //--- External interface for the TurnstileGate controller     
-        private locked = true;
+//--- External interface for the TurnstileGate controller     
+    start(): void       { this.sendSignal('start'); }
+    insertCoin(): void  { this.sendSignal('coin'); }
+    walkThrough(): void { this.sendSignal('push'); }
+    isLocked(): boolean { return this.locked; }
 
-        start(): void       { this.sendSignal('start'); }
-        insertCoin(): void  { this.sendSignal('coin'); }
-        walkThrough(): void { this.sendSignal('push'); }
-        isLocked(): boolean { return this.locked; }
+    private locked = true;
 
-    //--- Implementation of the ITransceiver interface
-        private signalTarget?: ISignalReceiver;
+    constructor() {
+        super(['start', 'coin', 'push'], ['GATE.lock', 'GATE.unlock']);
+    }
 
-        getSignalNames(): readonly string[] { return ['start', 'coin', 'push']; }
-        getCommandNames(): readonly string[] { return ['GATE.lock', 'GATE.unlock']; }
-
-        receiveCommand(command: string): void {
+    //--- Implementation of abstract methods from TransceiverBase
+        protected handleCommand(command: string): void {
             this.locked = command === 'GATE.lock';
         }
 
-        connectSignalTarget(target: ISignalReceiver): void {
-            this.signalTarget = target;
-        }
-
-        sendSignal(name: string): void {
-            this.signalTarget?.receiveSignal(name);
+        protected handleSignal(signal: string): void {
+            // Not used in this test
         }
     }
 
@@ -43,9 +39,7 @@ describe("Tutorial – 3.2 Signal Senders, Command Receivers, Controllers, and t
 
     const gate = new TurnstileGate();
 
-    const transcivers: ITransceiver[] = [gate];
-
-    new TransceiverHub(sfsm, transcivers);
+    wireSfsm(sfsm, [gate]);
 
     it("should return an object for the extended FA file", () => {
         gate.start();

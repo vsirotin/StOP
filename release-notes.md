@@ -1,4 +1,8 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.12.0 build 109
+feat: ts-stop - New abstract classes TransceiverBase, SignalSenderBase, SignalReceiverBase, CommandReceiverBase function wireSfsm added. These classes provide a structured way to implement transceivers, signal senders, signal receivers, and command receivers in the StOP framework. The wireSfsm function facilitates the connection of these components to an Sfsm instance, enabling seamless communication between them. 
+
+
 ## Version: 3.11.6 build 108
 refactor: ts-stop - Signature of Sfsm conctructor changed.
 

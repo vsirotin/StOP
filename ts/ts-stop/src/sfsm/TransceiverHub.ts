@@ -14,15 +14,6 @@ import { Sfsm } from './Sfsm';
  * - connectTo(sfsm) — wires everything: sets itself as the SFSM's command receiver
  *   and calls connectSignalTarget(sfsm) on every registered signal sender.
  *
- * A single component that plays both roles (most real devices do) extends
- * SignalSender and additionally implements the CommandReceiver contract on the
- * same class, then is registered once with each method:
- *
- *   new TransceiverHub()
- *     .registerSignalSender(turnstileService)
- *     .registerSignalSender(turnstileDevice)
- *     .registerCommandReceiver(turnstileDevice)
- *     .connectTo(sfsm);
  */
 export class TransceiverHub implements ICommandReceiver {
 
@@ -80,19 +71,6 @@ export class TransceiverHub implements ICommandReceiver {
         return this;
     }
 
-    /**
-     * Wire this hub to the given SFSM instance:
-     * 1. Sets this hub as the SFSM's command receiver.
-     * 2. Calls connectSignalTarget(sfsm) on every registered signal sender.
-     * Fluent — returns this.
-     */
-    connectTo(sfsm: Sfsm): this {
-        sfsm.setCommandReceiver(this);
-        for (const sender of this.signalSenders) {
-            sender.connectSignalTarget(sfsm);
-        }
-        return this;
-    }
 
     /** ICommandReceiver implementation — dispatches command to the registered receiver. */
     receiveCommand(command: string, data?: unknown): void {
@@ -120,4 +98,19 @@ export class TransceiverHub implements ICommandReceiver {
     getCommandNames(): readonly string[] {
         return [...this.commandRoutes.keys()];
     }
+}
+
+/**
+ * Utility function to wire an SFSM with a collection of transceivers, signal senders, and command receivers.
+ * Returns the TransceiverHub instance that was created and wired.
+ */
+export function wireSfsm(sfsm: Sfsm, transceivers: readonly ITransceiver[] = [], signalSenders: readonly ISignalSender[] = [], commandReceivers: readonly ICommandReceiver[] = []): TransceiverHub {
+    const hub = new TransceiverHub(sfsm, transceivers);
+    for (const sender of signalSenders) {
+        hub.registerSignalSender(sender);
+    }
+    for (const receiver of commandReceivers) {
+        hub.registerCommandReceiver(receiver);
+    }
+    return hub;
 }

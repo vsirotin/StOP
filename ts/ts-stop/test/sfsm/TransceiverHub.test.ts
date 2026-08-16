@@ -128,10 +128,6 @@ describe("TransceiverHub – registerSignalSender / connectTo", () => {
         expect(() => sfsm.receiveSignal("s")).not.toThrow();
     });
 
-    it("test_connectTo_isFluentAndReturnsSameHub", () => {
-        const hub = new TransceiverHub(new Sfsm({"a":[]}));
-        expect(hub.connectTo(new Sfsm({"a":[]}))).toBe(hub);
-    });
 });
 
 describe("TransceiverHub – diagnostic accessors", () => {
@@ -202,8 +198,6 @@ describe("TransceiverHub – device implementing both roles", () => {
         const hub = new TransceiverHub(sfsm)
             .registerSignalSender(device)
             .registerCommandReceiver(device);
-
-        hub.connectTo(sfsm);
 
         // Signal side wired
         expect(device.target).toBe(sfsm);
