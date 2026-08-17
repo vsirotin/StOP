@@ -143,4 +143,4 @@ By commands it is recommended to use the same convention: `<FaName>.<command>` â
 
 A runnable version of this example, built entirely with namespaced names, is available as a unit test: [3-3-namespaced-state-names.test.ts](../../ts-stop/test/sfsm/tutorial/3-3-namespaced-state-names.test.ts).
 
-In future chapters will be expanded with more advanced topics, including description of tools and best practices for building large SFSMs.
+In future chapters will be expanded with more advanced topics, including description of tools and best practices for building large SFSMs. 

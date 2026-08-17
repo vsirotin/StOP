@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.12.2 build 112
+doc: ts-stop — Updated tutorials and skills.
+
 ## Version: 3.12.1 build 110
 doc: ts-stop — Updated tutorials, skills and unit tests.
 
