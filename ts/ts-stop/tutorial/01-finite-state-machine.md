@@ -12,14 +12,14 @@ Namely. We have:
 
 All the magic of finite automata is based on this simple idea.
 
-To define a specific finite automaton, you need to specify a list of its states (States S), signals (Signals G), and transitions (Transitions T) in the form of a list of triples:
+To define a specific finite automaton, you need to specify a list of its states (S), signals (G), and transitions (T) in the form of a list of triples:
 
 `<s0, g, s1>`, where:
 - `s0` - the state in which the automaton is currently located (initially - the starting state)
 - `g` - the signal
 - `s1` - the state to which our object will transition after receiving the signal
 
-Of course, we don't need states in S and signals in G that are not represented in T in any way. For practical use, some other constraints are also important, but we won't delve into the depths of theory for now, and will move on to a concrete programming example.
+For practical use, some other aspects are also important, but we won't delve into the depths of theory for now, and will move on to a concrete programming example.
 
 Let's examine the use of a finite automaton (FA) using the example of a very simple automaton - a primitive turnstile that lets someone into the metro or a paid restroom after they drop a coin or special token into its slot.
 
@@ -33,40 +33,31 @@ This automaton has two states: **locked** and **unlocked**, and two signals: **c
 
 The [TypeScript StOP library](https://github.com/vsirotin/StOP) processes finite automata with the `Sfsm` engine (available from the `@vsirotin/ts-stop` package). 
 
-SFSM stands for "Stacked Finite State Machine" — a finite automaton that can contain other finite automata as sub-machines, and can be stacked into hierarchies of arbitrary depth. The turnstile is a simple FA with no children, so it is a good starting point for our tutorial. Because of its simple behaviour we talk about finite automata (FA) and not about finite machines.
+SFSM stands for "Stacked Finite State Machine" — a finite automaton that can contain other finite automata as sub-machines, and can be stacked into hierarchies of arbitrary depth. The turnstile is a simple FA with no children, so it is a good starting point for our tutorial. Because of its simple behaviour we talk about finite automata (FA) and not about stacked finite state machine.
 
-Some FA is described as a list of transitions, each one a triple (or, when a command must be sent, a quadruple — covered in a later chapter):
+One detail of the `Sfsm` engine is important to know from the very first example: every FA always starts in a reserved entry state named `"I"` or, by complex machines with `"*.I"`, e.g. `"BCC.I"`, that means `initial state`. This is not part of the pure theory above — it is the convention. For now, it simply means our turnstile needs one extra transition out of `"I"`.
 
-```
-[s0, g, s1]
-```
+Here is the complete turnstile FA, written as compact form.:
 
-which is a direct, literal translation of the `<s0, g, s1>` triples introduced above. This representation is convenient when a FA is small — for large, dense automata you may prefer other representations, but that is out of scope here.
-
-One detail of the `Sfsm` engine is important to know from the very first example: every FA always starts in a reserved entry state named `"I"` or, by complex machines with `"*.I"`, e.g. `"BCC.I"`, that means `initial state`. This is not part of the pure theory above — it is a small, deliberate engine convention that becomes very useful once FAs are combined into hierarchies (a topic of a later chapter). For now, it simply means our turnstile needs one extra transition out of `"I"` into its real initial state, triggered by an explicit "start" signal.
-
-Here is the complete turnstile FA, written as compact JSON:
-
-```json
-{
-  "Turnstile": [
-    ["I",       "Start", "Locked"],
-    ["Locked",  "Coin",  "Unlocked"],
-    ["Unlocked","Push",  "Locked"]
-  ]
-}
+```typescript
+const turnstileFa: FaDefinition = {
+    Turnstile: [
+        ["I", "start", "locked"],
+        ["locked", "coin", "unlocked"],
+        ["unlocked", "push", "locked"]
+    ]
+};
 ```
 
 This FA can be visually presented as a simple state diagram:
-![Turnstile](./images/TurnstileBaseFA.png)
+![Turnstile](./images/TurnstileBaseFA.png). As you can see, it is a JSON object with a single property `"Turnstile"` that contains an array of transitions. Each transition is a triple of the form `<s0, g, s1>`.
 
-And here is how it is loaded and driven with the `Sfsm` class:
+
+Here is how it is loaded and driven with the `Sfsm` class:
 
 ```typescript
-import { Sfsm, FaDefinition } from '@vsirotin/ts-stop/sfsm';
-import turnstileFa from './turnstile-fa.json';
 
-const sfsm = new Sfsm(turnstileFa as FaDefinition);
+const sfsm = new Sfsm(turnstileFa);
 
 sfsm.getHeadState();          // 'I'  — the reserved entry state
 
@@ -158,22 +149,6 @@ Instead of trying to list every possible malfunction signal, one joker-signal tr
 }
 ```
 
-```typescript
-import { Sfsm, FaDefinition } from '@vsirotin/ts-stop/sfsm';
-
-const sfsm = new Sfsm(turnstileWithJokerSignalFa);
-sfsm.loadFA(turnstileWithJokerSignalFa);
-
-sfsm.receiveSignal('start');
-sfsm.getHeadState();             // 'locked'
-
-sfsm.receiveSignal('coin');
-sfsm.getHeadState();             // 'unlocked'  (exact transition still wins)
-
-sfsm.receiveSignal('powerFailure');
-sfsm.getHeadState();             // 'off'       (joker-signal fallback)
-```
-
 The turnstile keeps behaving exactly as before for `coin` and `push`; only signals it has no explicit rule for fall through to `*` and trigger the safety shutdown.
 
 A runnable version of this example is available as a unit test: [1-3-1-joker-signal.test.ts](../../ts-stop/test/sfsm/tutorial/1-3-1-joker-signal.test.ts).
@@ -195,34 +170,16 @@ A single joker-state transition expresses exactly that, regardless of how many o
 }
 ```
 
-```typescript
-import { Sfsm, FaDefinition } from '@vsirotin/ts-stop/sfsm';
-
-const sfsm = new Sfsm(turnstileWithJokerStateFa);
-
-sfsm.receiveSignal('start');
-sfsm.receiveSignal('service');
-sfsm.getHeadState();             // 'maintenance' — reached straight from 'locked'
-
-// ...and it works the same from any other state:
-sfsm.loadFA(turnstileWithJokerStateFa as FaDefinition);
-sfsm.receiveSignal('start');
-sfsm.receiveSignal('coin');      // now 'unlocked'
-sfsm.receiveSignal('service');
-sfsm.getHeadState();             // 'maintenance' — reached just as easily from 'unlocked'
-```
-
 One transition now covers "enter maintenance mode" from every current and future state — including states added to the FA later, with no changes needed to the `service` rule itself.
 
 A runnable version of this example is available as a unit test: [1-3-2-joker-state.test.ts](../../ts-stop/test/sfsm/tutorial/1-3-2-joker-state.test.ts).
 
-In the [next chapter](./02-stacked-finite-state-machine.md) we will see how to combine multiple FAs into a hierarchy, and how the `Sfsm` engine processes signals through that hierarchy.
 
 ## 1.4 Senders, receivers and commands
 
 An FA defines the pure behaviour of a system, but says nothing about what supports that behaviour. Who sends signals to the FA? How does the external world react when the FA changes state?
 
-The StOP approach makes minimal assumptions about these surrounding objects. It assumes that some objects (**senders**) send signals to the FA, and that some objects (**receivers**) react to state changes by performing actions. An object that is both a sender and a receiver is called a **transceiver**.
+The StOP approach makes minimal assumptions about these surrounding objects. It assumes that some objects (**signal senders**) send signals to the FA, and that some objects (**signal receivers**) receive signals and react by performing actions. An object that is both a sender and a receiver is called a **transceiver**.
 
 External senders and receivers can be connected to the FA through a special API described in the next chapter.
 
@@ -238,7 +195,7 @@ Let us extend the turnstile example. To make the simulation more realistic, we m
 }
 ```
 
-Now consider the transition:
+Another aspect. Now consider the transition:
 
 ```json
 ["locked", "coin", "unlocked"]
@@ -258,7 +215,9 @@ What happens when the inserted coin is not valid? We need a coin validator objec
 }
 ```
 
-A command is triggered by appending its name as the fourth element of a transition. When the FA fires that transition, it invokes the command; the command then sends one of its declared result signals back into the FA. The original `"coin"` transition is therefore split into an intermediate validation state plus the two outcome transitions:
+A command is triggered by appending its name as the fourth element of a transition. When the FA fires that transition, it sends the command to the designated **command receiver**. The command receiver (itself or via another object) then sends one of its declared result signals back into the FA. 
+
+The original `"coin"` transition is therefore split into an intermediate validation state plus the two outcome transitions:
 
 ```json
 {
@@ -274,6 +233,9 @@ A command is triggered by appending its name as the fourth element of a transiti
 ```
 
 Each command is executed at the end of transition processing and may use information from the current state and the incoming signal.
+
+---
+In the [next chapter](./02-stacked-finite-state-machine.md) we will see how to combine multiple FAs into a hierarchy, and how the `Sfsm` engine processes signals through that hierarchy.
 
 
 

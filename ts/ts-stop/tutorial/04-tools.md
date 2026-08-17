@@ -10,57 +10,30 @@ StOP SDK ships with a few AI-skills, that can be useful by working with SFSMs. T
 
 Every example so far has used the **compact** (runtime) format: a plain list of `[from, signal, to]` tuples or `[from, signal, to, command]` tuples. For larger FAs, an **extended** (declaration) format is available where every state, signal, and command can carry a human-readable `name`/`description`, and a `sender`/`receiver` — much more pleasant to read and maintain by hand, and to auto-generate documentation from.
 
-The `reduceFA()` function converts an extended definition into the flat compact form that `Sfsm.loadFA()` actually consumes internally:
-
-```typescript
-import { reduceFA, FaDefinition } from '@vsirotin/ts-stop/sfsm';
-
-const compact = reduceFA(extendedTurnstileFa as FaDefinition);
-```
+The `reduceFA()` function converts an extended definition into the flat compact form that `Sfsm` actually consumes internally:
 
 Passing an already-compact definition through `reduceFA()` returns it unchanged, so it is always safe to call.
 
 ### 4.3 `FaRunner` — driving an FA from code
 
-`FaRunner` reads a signal sequence from a text file (one signal name per line, blank lines and `//` comments ignored) and feeds it, in order, into an `Sfsm` instance. It is the programmatic counterpart of the `run-fa` CLI script and is useful when you want to drive an SFSM from a test or another Node.js script without spawning a child process:
+`FaRunner` reads a signal sequence from a text file (one signal name per line, blank lines and `//` comments ignored) and feeds it, in order, into an `Sfsm` instance. It is the programmatic counterpart of the `run-fa` CLI script and is useful when you want to drive an SFSM from a test or another Node.js script without spawning a child process.
 
-```typescript
-import { FaRunner } from '@vsirotin/ts-stop/sfsm';
+`runFromFile()` returns the complete execution trace — every transition taken, including joker fallbacks and stack push/pop events. 
 
-const runner = new FaRunner(sfsm);
-const trace = await runner.runFromFile('./signals.txt');
-console.log(trace);   // array of { signal, from, to, command? }
-```
-
-`runFromFile()` returns the complete execution trace — every transition taken, including joker fallbacks and stack push/pop events. A runnable version of this example is available as a unit test: [4-3-runner.test.ts](../../ts-stop/test/sfsm/tutorial/4-3-runner.test.ts). The full behaviour of `FaRunner` is covered by [FaRunner.test.ts](../../ts-stop/test/sfsm/FaRunner.test.ts) and [FaRunnerStacked.test.ts](../../ts-stop/test/sfsm/FaRunnerStacked.test.ts).
+ The full behaviour of `FaRunner` is covered by [FaRunner.test.ts](../../ts-stop/test/sfsm/FaRunner.test.ts).
 
 ### 4.4 `FaValidator` — validating an FA definition
 
 `FaValidator` checks a compact or extended `FaDefinition` against a set of structural rules and returns a detailed list of errors and warnings. It is the engine behind the `validate-fa` CLI script and can also be used directly from code to catch definition mistakes before they reach the `Sfsm` engine:
 
-```typescript
-import { FaValidator } from '@vsirotin/ts-stop/sfsm';
-
-const validator = new FaValidator();
-const result = validator.validate(myFaDefinition);
-
-if (!result.valid) {
-    for (const err of result.errors) {
-        console.error(`Rule ${err.rule}: ${err.message}`, err.faName ?? '');
-    }
-}
-for (const warn of result.warnings) {
-    console.warn(`Rule ${warn.rule}: ${warn.message}`, warn.faName ?? '');
-}
-```
 
 The validator checks 14 rules: 6 structural errors (well-formed JSON, valid tree, no duplicate keys, no empty FAs, exactly one entry state per FA, no transitions from exit states), 2 structural warnings (duplicate FA names across the tree, duplicate signal names), 3 reference errors (each transition target exists, each sub-FA has at least one exit state, no duplicate from-state/signal pairs), and 3 semantic warnings (exit-state signal is forwarded by an ancestor, each sub-FA is referenced by its parent, no unreachable states).
 
-A runnable version of this example is available as a unit test: [4-4-validator.test.ts](../../ts-stop/test/sfsm/tutorial/4-4-validator.test.ts). The full behaviour of `FaValidator` is covered by [FaValidator.test.ts](../../ts-stop/test/sfsm/FaValidator.test.ts).
+ The full behaviour of `FaValidator` is covered by [FaValidator.test.ts](../../ts-stop/test/sfsm/FaValidator.test.ts).
 
 ### 4.5 The multi-FA compact format
 
-Once an FA has children, the compact format lists **every** FA (root and all descendants) as separate top-level keys of the same object — the parent's `ts` list simply refers to a child by name as a transition target, exactly like `CoinCheck` in the example below. The root FA is auto-detected as whichever key is never referenced as a target (3rd element) in any FA's transitions. Both this format and a single flat FA are accepted by `loadFA()` without any change to the calling code.
+Once an FA has children, the compact format lists **every** FA (root and all descendants) as separate top-level keys of the same object — the parent's `ts` list simply refers to a child by name as a transition target, exactly like `CoinCheck` in the example in chapter 2. The root FA is auto-detected as whichever key is never referenced as a target (3rd element) in any FA's transitions. Both this format and a single flat FA are accepted by `loadFA()` without any change to the calling code.
 
 ### 4.6 `updateCompactFA` / `updateFullFA` — evolving an FA definition without rewriting it
 

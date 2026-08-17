@@ -2,20 +2,21 @@
 
 ## 3.1 How stacked states are processed
 
-Once an FA can contain other FAs, "processing a signal" needs a precise algorithm — not just "look up the transition," but also "where do I look, and what happens once I find (or fail to find) one." Here are the rules the `Sfsm` engine actually implements (verified directly against its source, `Sfsm.ts`):
+Here are the rules the `Sfsm` engine actually implements, inclusive of the logging rules that are described in chapter below:
 
-1. After `loadFA()`, the root FA is the only element on the stack and its active state is `"I"`. The engine now waits for a signal.
+1. After loading, the root FA is the only element on the stack and its active state is `"I"`. The engine now waits for a signal.
 2. When a signal `s` arrives, the engine searches for a matching transition, starting at the **head** of the stack (the innermost, currently active FA) and, if needed, continuing down through each ancestor FA towards the root:
-   - **2.1** — If the head FA has a transition matching its own active state and `s` (including joker fallbacks, see chapter 1 §1.3), that transition is applied directly: the head's active state becomes the transition's target. This step is logged with rule `"2.1"`.
+   - **2.1** — If the head FA has a transition matching its own active state and `s` (including joker fallbacks, see chapter 1), that transition is applied directly: the head's active state becomes the transition's target. This step is logged with rule `"2.1"`.
    - **2.2** — If the head FA has *no* matching transition, the search continues in its parent FA, then that FA's parent, and so on down to the root.
      - **2.2.1** — If a matching transition is found in some ancestor FA, every FA above it on the stack is popped (they are abandoned mid-flight), that ancestor becomes the new head, and the transition is applied there. 
      - **2.2.2** — If **no** FA anywhere in the stack — from the head all the way down to the root — has a matching transition, **no log entry is created**, and the engine instead applies the `byMissingTransition` policy (`'error'` throws, `'log_warning'` warns and does nothing, `'ignore'` silently does nothing).
 3. If the transition found in step 2 carries a command (its 4th element), the command is sent to the registered command receiver. 
-4. If the transition's target state is itself the name of a sub-FA, that sub-FA is pushed onto the stack with active state `"I"`, and the very same signal `s` is immediately forwarded into it, restarting this whole process (step 2) one level deeper.
+4. If the transition's target state is itself the name of a sub-FA, that sub-FA is pushed onto the stack with active state `"*.I"`, and the very same signal `s` is immediately forwarded into it, restarting this whole process (step 2) one level deeper.
 5. If the transition's target state is an exit state (starts with `"E_"`):
    - **5.1** — if the current FA is the only one left on the stack (the root), it simply resets its own active state back to `"I"`;
    - **5.2** — otherwise, the current FA is popped off the stack, and the very same signal `s` is forwarded to the FA that is now the head, restarting this whole process (step 2) one level up.
 
+The engine logs every step of this process.
 
 The example of using the SFSM engine can be found in [Sfsm.log.test.ts](../../ts-stop/test/sfsm/Sfsm.log.test.ts).
 
@@ -25,10 +26,10 @@ Everything so far has driven the `Sfsm` engine directly, by calling `receiveSign
 
 - **`ISignalSender`** — an interface, that needs to emit signals from some object into the SFSM.
 - **`ICommandReceiver`** — an interface that needs to react to commands coming *from* the SFSM.
-- **`ITransceiver`** — (also often named as the **Bidirectional Protocol Transceiver** or more simply - *Mapper*) is the class that can wire many signal senders and/or command receivers together in one unit. It is useful in special cases, when some object should play the role of both an `ISignalSender` and an `ICommandReceiver` for the SFSM.
-- **`TransceiverHub`** — the wiring hub that connects every signal sender and command receiver (also via controller) to one `Sfsm` instance.
+- **`ITransceiver`** — (also often named as the **Bidirectional Protocol Transceiver**  is the class that can wire many signal senders and/or command receivers together in one unit. It is useful in special cases, when some object should play the role of both an `ISignalSender` and an `ICommandReceiver` for the SFSM.
+- **`TransceiverHub`** — the wiring hub that connects every signal sender and command receiver  to one `Sfsm` instance.
 
-Then you cannot extend your class to implement `ISignalSender` or/and `ICommandReceiver`; you should implement some adapter for your class, that will implement `ISignalSender` or/and `ICommandReceiver` and will be used in `TransceiverHub` to connect your class to `Sfsm`.
+In most cases it is still "invisible" for the user, because it is created and called inside the function `wireSfsm`.
 
 Here is a minimal physical turnstile "gate" Transceiver — it plays both roles at once, exactly like the real simulators used elsewhere in this library's own test suite:
 
@@ -36,56 +37,85 @@ Here is a minimal physical turnstile "gate" Transceiver — it plays both roles 
 
 const turnstileFa: FaDefinition = {
     Turnstile: [
-        ['I',        'start', 'locked'],
+        ['I',        'coin',  'unlocked', 'GATE.unlock'],
         ['locked',   'coin',  'unlocked', 'GATE.unlock'],
-        ['unlocked', 'push',  'locked',   'GATE.lock']
+        ['unlocked', 'push',  'locked',   'GATE.lock'],
+        [`*`, `service`, 'locked', 'GATE.service']
     ]
 };
+    
+class TurnstileGate extends TransceiverBase {
 
-class TurnstileGate implements ITransceiver {
-
-//--- External interface for the TurnstileGate controller     
-    private locked = true;
-
-    start(): void       { this.sendSignal('start'); }
+    //--- External interface for the TurnstileGate controller     
     insertCoin(): void  { this.sendSignal('coin'); }
     walkThrough(): void { this.sendSignal('push'); }
-    isLocked(): boolean { return this.locked; }
 
-//--- Implementation of the ITransceiver interface
-    private signalTarget?: ISignalReceiver;
+    // Simulated light signal on the gate: green means "go", red means "stop"
+    lightSignal: 'green' | 'yellow' | 'red' = 'red';
 
-    getSignalNames(): readonly string[] { return ['start', 'coin', 'push']; }
-    getCommandNames(): readonly string[] { return ['GATE.lock', 'GATE.unlock']; }
-
-    receiveCommand(command: string): void {
-        this.locked = command === 'GATE.lock';
+    constructor() {
+        super(
+            ['coin', 'push', 'service'], // Signals, that gate can send to the SFSM
+            ['GATE.lock', 'GATE.unlock', 'GATE.service'] // Commands, that gate can receive from the SFSM
+        );
     }
 
-    connectSignalTarget(target: ISignalReceiver): void {
-        this.signalTarget = target;
-    }
-
-    sendSignal(name: string): void {
-        this.signalTarget?.receiveSignal(name);
+    //--- Implementation of abstract method from TransceiverBase
+    protected handleCommand(command: string): void {
+        if (command === 'GATE.unlock') {
+            this.lightSignal = 'green';
+            return;
+        } 
+        if (command === 'GATE.service') {
+            this.lightSignal = 'yellow';
+            return;
+        }       
+        this.lightSignal = 'red';    
     }
 }
+
+class ServiceButton extends SignalSenderBase {
+
+    constructor() {
+        super(['service']); // Signals, that button can send to the SFSM
+    }
+
+    pushButton(): void { 
+        this.sendSignal('service'); 
+    }
+    
+}
+
 
 const sfsm = new Sfsm(turnstileFa);
 
 const gate = new TurnstileGate();
 
-const transcivers: ITransceiver[] = [gate];
+const serviceButton = new ServiceButton();
 
-new TransceiverHub(sfsm, transcivers);
-
-gate.start();
-gate.insertCoin();
-gate.isLocked();      // false — the SFSM sent 'GATE.unlock' in response to 'coin'
-
-gate.walkThrough();
-gate.isLocked();      // true  — the SFSM sent 'GATE.lock' in response to 'push'
+const hub = wireSfsm(sfsm, [gate]);
+hub.registerSignalSender(serviceButton);
 ```
+
+It can be tested like this:
+
+```typescript
+...
+    gate.insertCoin();
+    let state = sfsm.getHeadState();  // "unlocked" — the SFSM processed the 'coin' signal and 
+    expect(state).toBe('unlocked');  
+    expect(gate.lightSignal).toBe('green');  // the SFSM sent 'GATE.unlock' to the gate, which turned its light green
+
+    gate.walkThrough();
+    state = sfsm.getHeadState();  // "locked" — the SFSM processed the 'push' signal and
+    expect(state).toBe('locked');  
+    expect(gate.lightSignal).toBe('red');  // the SFSM sent 'GATE.lock' to the gate, which turned its light red
+
+    serviceButton.pushButton();
+    state = sfsm.getHeadState();  // "locked" — the SFSM processed the 'service' signal and
+    expect(state).toBe('locked');  
+    expect(gate.lightSignal).toBe('yellow');  // the SFSM sent 'GATE.service' to the gate, which turned its light yellow
+```        
 
 Notice that `TurnstileGate` never touches the `Sfsm` instance directly: it only knows how to emit its own signals and react to its own commands. All the wiring — "which signal sender sends which signal," "which command receiver handles which command" — lives in one place, the `TransceiverHub`, which also gives you `getRegisteredSignals()` / `getRegisteredCommands()` for diagnostics (e.g. to validate that every signal and command mentioned in an FA definition actually has a Transceiver behind it).
 
@@ -93,29 +123,24 @@ A runnable version of this example is available as a unit test: [3-2-signal-send
 
 ## 3.3 Name conventions
 
-Every example so far has named the entry state simply `"I"` and exit states `"E_something"` — perfectly fine for a small, self-contained FA. Once a stacked SFSM grows to dozens of FAs, plain abbreviations like `"TS:Locked"`, `"TS:Unlocked"`, `"I"`, `"E_R"` start colliding in your head across FAs, and it becomes hard to tell, just by looking at a state name, *which* FA it belongs to.
+Every example so far has named the entry state simply `"I"` and exit states `"E_something"` — perfectly fine for a small, self-contained FA.
 
-For larger SFSMs, it is recommended to namespace state names with their own FA's name, using a dot: `<FaName>.I` for the entry state, and `<FaName>.<state>` for ordinary states — e.g. `TS.I`, `TS.L`, `TS.U` instead of bare `I`, `L`, `U`. Exit states keep their familiar `E_` marker but move it after the FA-name dot: `<FaName>.E_<name>` — e.g. `TS.E_ok` instead of bare `E_ok`.
+For larger SFSMs, it is recommended to namespace state names with their own FA's name, using a dot: `<FaName>:I` for the entry state, and `<FaName>:<state>` for ordinary states — e.g. `TS:I`, `TS:L`, `TS:U` instead of bare `I`, `L`, `U`. Exit states keep their familiar `E_` marker but move it after the FA-name dot: `<FaName>:E_<name>` — e.g. `TS:E_ok` instead of bare `E_ok`.
+
+By signals it is recommended to use the same convention: `<FaName>><signal>` — e.g. `TS>coin`, `TS>push` instead of bare `coin`, `push`.
+
+By commands it is recommended to use the same convention: `<FaName>.<command>` — e.g. `TS.lock`, `TS.unlock` instead of bare `lock`, `unlock`.
 
 ```json
 {
   "TS": [
-    ["TS.I", "TS>start",   "TS.L"],
-    ["TS.L", "TS>coin", "TS.U"],
-    ["TS.U", "TS>push", "TS.L"]
+    ["TS:I", "TS>start",   "TS:L", "TS.lock"],
+    ["TS:L", "TS>coin", "TS:U"],
+    ["TS:U", "TS>push", "TS:L"]
   ]
 }
 ```
 
-The `Sfsm` engine recognises **both** forms everywhere, automatically:
-- an entry state is whatever from-state a FA's own transitions use that is exactly `"I"` **or** ends with `".I"`;
-- an exit state is any target state that starts with `"E_"` **or** contains `".E_"`.
-
-This means:
-- every FA fixture used earlier in this tutorial (bare `"I"` / `"E_..."`) keeps working exactly as written — no migration is required;
-- you can freely mix both styles across FAs in the same SFSM (e.g. namespace only the FAs that are large enough to benefit from it);
-- nothing else changes — this is purely a naming convention for readability, not a new engine feature: no new `SfsmOptions`, no change to how transitions, pushes, pops, or jokers are matched.
-
 A runnable version of this example, built entirely with namespaced names, is available as a unit test: [3-3-namespaced-state-names.test.ts](../../ts-stop/test/sfsm/tutorial/3-3-namespaced-state-names.test.ts).
 
-In future this chapter will be expanded with more advanced topics, including description of best practices for building large SFSMs, and a few more examples of real-world applications.
+In future chapters will be expanded with more advanced topics, including description of tools and best practices for building large SFSMs.

@@ -20,7 +20,7 @@ and shrinks (pop) when a sub-FA finishes and control returns to its parent.
 
 Two naming conventions make this hierarchy work uniformly for every FA, at any
 depth:
-- every FA has exactly one **entry state**, always named `"I"` (as already seen
+- every FA has exactly one **entry state**, always named `"*.I"` (as already seen
   in chapter 1);
 - every FA has one or more **exit states**, each named starting with `"E_"` —
   reaching one means "this FA is done, hand control back to whoever activated
@@ -103,4 +103,4 @@ sfsm.getHeadState();          // 'locked'
 ```
 
 A runnable version of this example is available as a unit test:
-[04-stacked-finite-state-machine.test.ts](../../ts-stop/test/sfsm/tutorial/04-stacked-finite-state-machine.test.ts).
+[2-1-1-stacked-finite-state-machine.test.ts](../../ts-stop/test/sfsm/tutorial/2-1-1-stacked-finite-state-machine.test.ts).
