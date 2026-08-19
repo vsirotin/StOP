@@ -82,6 +82,15 @@ A runnable version of this example is available as a unit test: [4-6-update-fa-a
 
 ### 4.7 Loading FA definitions from files and URLs
 
+You can use SFSM definition direct from code oder load them from external JSON files or URLs. 
+By using SFSM from external files:
+
+```typescript
+const sfsm = new Sfsm('./turnstile-fa.json');   // Node.js only (uses fs)
+```
+
+The `loadFAFromFile()` and `loadFAFromURL()` helpers read a JSON file or fetch it from a URL  and return a `FaDefinition` object ready to be passed to `Sfsm.loadFA()`. Both accept extended or compact JSON and throw on a failed read/fetch or invalid JSON.
+
 Two small helpers load a `FaDefinition` from outside the source code, so FA JSON files can live alongside the code that uses them (or be served remotely) instead of being inlined:
 
 ```typescript

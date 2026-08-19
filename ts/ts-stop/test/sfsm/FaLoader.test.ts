@@ -54,6 +54,34 @@ describe("loadFAFromFile – return value", () => {
     });
 });
 
+describe("loading FA direct in constructor", () => {
+    it("should return an object for the extended FA file", () => {
+        const fa = new Sfsm(extendedPath);
+        expect(typeof fa).toBe("object");
+        expect(fa).not.toBeNull();
+    });
+
+    it("should contain root key 'TS' for the extended FA file", () => {
+        const fa = new Sfsm(extendedPath);
+        expect(fa.getCurrentStack()).toEqual(["TS"]);
+    });
+
+    it("should return an object for the compact FA file", () => {
+        const fa = new Sfsm(compactPath);
+        expect(typeof fa).toBe("object");
+        expect(fa).not.toBeNull();
+    });
+
+    it("should contain keys TS, PU, BPU, CPU for the compact FA file", () => {
+        const fa = new Sfsm(compactPath);
+        expect(fa.getCurrentStack()).toEqual(["TS"]);
+    });
+
+    it("should throw when file does not exist", () => {
+        expect(() => new Sfsm("/non/existent/file.json")).toThrow();
+    });
+});
+
 // ---------------------------------------------------------------------------
 // loadFAFromFile – integration with Sfsm (extended format)
 // ---------------------------------------------------------------------------

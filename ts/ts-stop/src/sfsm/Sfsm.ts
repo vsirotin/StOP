@@ -1,6 +1,7 @@
 import { FaDefinition, LogEntry, SfsmOptions } from './types';
 import { ICommandReceiver, ISignalReceiver } from './interfaces';
 import { FaResolver } from './tools/FaResolver';
+import { loadFAFromFile, loadFAFromURL } from './tools/FaLoader';
 
 interface StackFrame {
     faName: string;
@@ -47,10 +48,10 @@ export class Sfsm implements ISignalReceiver {
 
     /**
      * Create a new SFSM instance. If a model is provided, it is loaded immediately.
-     * @param model The FA definition to load initially, or null.
-     * @param options Configuration options for the SFSM instance.
+     * @param model The FA definition or path to JSON-file or URLwith model to load initially, or null.
+     * @param options Configuration options for the SFSM instance.  
      */
-    constructor(model: FaDefinition, options: SfsmOptions = {}) {
+    constructor(model: FaDefinition | string, options: SfsmOptions = {}) {
         this.options = {
             byMissingData: options.byMissingData ?? 'error',
             byMissingTransition: options.byMissingTransition ?? 'error',
@@ -58,8 +59,15 @@ export class Sfsm implements ISignalReceiver {
             jokerState: options.jokerState ?? '*'
         };
 
-        this.loadFA(model);
-        
+        let faDefinition: FaDefinition | null = null;
+        if (typeof model === 'string') {
+            faDefinition = loadFAFromFile(model);
+        } else {
+            faDefinition = model;
+        }
+        if (faDefinition) {
+            this.loadFA(faDefinition);
+        }
     }
 
     /** Register the single command receiver for this SFSM instance. */

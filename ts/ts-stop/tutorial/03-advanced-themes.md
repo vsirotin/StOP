@@ -20,13 +20,13 @@ The engine logs every step of this process.
 
 The example of using the SFSM engine can be found in [Sfsm.log.test.ts](../../ts-stop/test/sfsm/Sfsm.log.test.ts).
 
-## 3.2 Signal Senders, Command Receivers, Controllers, and the Transceiver Hub
+## 3.2 Signal Senders, Command Receivers, Transceivers and the Transceiver Hub
 
 Everything so far has driven the `Sfsm` engine directly, by calling `receiveSignal()` from test code. In a real application, signals come from real devices — a coin slot, a push sensor, a button — and commands need to reach real devices too — a lock, a light, a dispenser. The library gives you three small building blocks to wire this up cleanly:
 
 - **`ISignalSender`** — an interface, that needs to emit signals from some object into the SFSM.
 - **`ICommandReceiver`** — an interface that needs to react to commands coming *from* the SFSM.
-- **`ITransceiver`** — (also often named as the **Bidirectional Protocol Transceiver**  is the class that can wire many signal senders and/or command receivers together in one unit. It is useful in special cases, when some object should play the role of both an `ISignalSender` and an `ICommandReceiver` for the SFSM.
+- **`ITransceiver`** — (also often named as the **Bidirectional Protocol Transceiver**) is the class that can wire many signal senders and/or command receivers together in one unit. It is useful in special cases, when some object should play the role of both an `ISignalSender` and an `ICommandReceiver` for the SFSM.
 - **`TransceiverHub`** — the wiring hub that connects every signal sender and command receiver  to one `Sfsm` instance.
 
 In most cases it is still "invisible" for the user, because it is created and called inside the function `wireSfsm`.
