@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { FaDefinition } from '../types';
+import { FaDefinition } from '@vsirotin/ts-stop';
 
 /**
  * Reads and parses a JSON file at the given path and returns it as a FaDefinition.

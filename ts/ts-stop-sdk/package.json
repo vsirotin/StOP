@@ -1,19 +1,16 @@
 {
-  "name": "@vsirotin/ts-stop",
-  "version": "3.13.0",
-  "description": "State Oriented Programming library for TypeScript",
+  "name": "@vsirotin/ts-stop-sdk",
+  "version": "3.14.0",
+  "description": "State Oriented Programming Software Development Kit — CLI tools, tutorials, skills and Node-only helpers. Depends on @vsirotin/ts-stop.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "module": "lib/esm/index.js",
   "exports": {
     ".": {
       "types": "./lib/index.d.ts",
-      "import": "./lib/esm/index.js",
       "require": "./lib/index.js"
     },
     "./sfsm": {
       "types": "./lib/sfsm/index.d.ts",
-      "import": "./lib/esm/sfsm/index.js",
       "require": "./lib/sfsm/index.js"
     }
   },
@@ -41,9 +38,7 @@
     "gen-commands": "./scripts/gen-commands.js"
   },
   "scripts": {
-    "build": "npm run build:cjs && npm run build:esm",
-    "build:cjs": "tsc",
-    "build:esm": "tsc -p tsconfig.esm.json",
+    "build": "tsc",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "clean": "rm -rf lib coverage",
@@ -64,7 +59,8 @@
   "keywords": [
     "typescript",
     "state-oriented-programming",
-    "stop"
+    "stop",
+    "sdk"
   ],
   "author": "Viktor Sirotin",
   "license": "(Apache-2.0 OR StOP-Commercial)",
@@ -82,6 +78,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@vsirotin/ts-stop": "file:../ts-stop-lib",
     "elkjs": "^0.12.0",
     "xml2js": "^0.6.2"
   }

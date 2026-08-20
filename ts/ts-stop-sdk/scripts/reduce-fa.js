@@ -15,7 +15,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { reduceFA } = require('../lib/sfsm');
+const { reduceFA } = require('@vsirotin/ts-stop/sfsm');
 
 const inputArg = process.argv[2];
 

@@ -15,7 +15,7 @@
 
 const fs   = require('fs');
 const path = require('path');
-const { updateFullFA, updateCompactFA } = require('../lib/sfsm');
+const { updateFullFA, updateCompactFA } = require('@vsirotin/ts-stop/sfsm');
 
 // ---------------------------------------------------------------------------
 // Parse args

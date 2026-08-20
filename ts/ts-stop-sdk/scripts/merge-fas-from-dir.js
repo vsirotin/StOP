@@ -18,7 +18,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { mergeFAs } = require('../lib/sfsm');
+const { mergeFAs } = require('@vsirotin/ts-stop/sfsm');
 
 const args = process.argv.slice(2);
 const options = {};

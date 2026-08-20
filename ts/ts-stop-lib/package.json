@@ -1,0 +1,54 @@
+{
+  "name": "@vsirotin/ts-stop",
+  "version": "3.14.0",
+  "description": "State Oriented Programming — cross-platform TypeScript/JavaScript library (Node.js, Browser, ESM)",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "module": "lib/esm/index.js",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/esm/index.js",
+      "require": "./lib/index.js"
+    },
+    "./sfsm": {
+      "types": "./lib/sfsm/index.d.ts",
+      "import": "./lib/esm/sfsm/index.js",
+      "require": "./lib/sfsm/index.js"
+    }
+  },
+  "files": [
+    "lib",
+    "LICENSE-COMMERCIAL.md",
+    "LICENSE-PUBLIC.md",
+    "release-notes.md",
+    "README.md"
+  ],
+  "keywords": [
+    "typescript",
+    "state-oriented-programming",
+    "stop"
+  ],
+  "author": "Viktor Sirotin",
+  "license": "(Apache-2.0 OR StOP-Commercial)",
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/js-yaml": "^4.0.9",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^26.1.1",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "clean": "rm -rf lib coverage"
+  }
+}

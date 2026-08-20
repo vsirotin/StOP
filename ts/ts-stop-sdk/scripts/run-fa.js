@@ -41,7 +41,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { Sfsm, FaRunner, CommandInterpreter } = require('../lib/sfsm');
+const { Sfsm, FaRunner, CommandInterpreter } = require('@vsirotin/ts-stop/sfsm');
 
 // ── Argument parsing ────────────────────────────────────────────────────────
 

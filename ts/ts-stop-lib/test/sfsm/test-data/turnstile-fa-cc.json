@@ -1,0 +1,191 @@
+{
+    "TS": {
+        "states": {
+            "PU": {
+                "states": {
+                    "BPU": {
+                        "states": {
+                            "BPU:Check of banknote": {
+                                "name": "Check of banknote",
+                                "description": "Checks if a banknote is an official and can be used as payment element"
+                            },
+                            "BPU:Acceptance of banknote": {
+                                "name": "Acceptance of banknote",
+                                "description": "Accept a real banknote and save it in internal tresor"
+                            }
+                        },
+                        "signals": {
+                            "BPU>Banknote candidate inserted": {
+                                "name": "Banknote candidate",
+                                "description": "Some artifact is putted in banknote slot. This signal contains data with this artifact",
+                                "sender": "Banknote Receiver"
+                            },
+                            "BPU>Banknote is ok": {
+                                "name": "Banknote is ok",
+                                "description": "Banknote checker send this signal, when banknote is checked and can be used as payment element. This signal contains data with this banknote",
+                                "sender": "Banknote Checker"
+                            },
+                            "BPU>Banknote is false": {
+                                "name": "Banknote is not ok (rejected)",
+                                "description": "Banknote checker send this signal, when banknote is checked and can't be used as payment element. This signal contains data with this banknote",
+                                "sender": "Banknote Checker"
+                            },
+                            "BPU>Banknote change needed": {
+                                "name": "Change is needed",
+                                "description": "Banknote Acceptor sends this signal when the accepted banknote requires change. Data contains the change value.",
+                                "sender": "Banknote Acceptor"
+                            },
+                            "BPU>Banknote change not needed": {
+                                "name": "Change is not needed",
+                                "description": "Banknote Acceptor sends this signal when the accepted banknote requires no change.",
+                                "sender": "Banknote Acceptor"
+                            }
+                        },
+                        "commands": {
+                            "BPU.check banknote": {
+                                "name": "Check banknote",
+                                "description": "Command to banknote checker with data with banknote for checking",
+                                "receiver": "Banknote Checker"
+                            },
+                            "BPU.accept banknote": {
+                                "name": "Accept banknote",
+                                "description": "Command to banknote acceptor with data with banknote for acceptance",
+                                "receiver": "Banknote Acceptor"
+                            }
+                        },
+                        "ts": [
+                            ["I", "BPU>Banknote candidate inserted", "BPU:Check of banknote",   "BPU.check banknote"],
+                            ["BPU:Check of banknote", "BPU>Banknote is ok",  "BPU:Acceptance of banknote",   "BPU.accept banknote"],
+                            ["BPU:Check of banknote", "BPU>Banknote is false",  "E_Rejected"         ],
+                            ["BPU:Acceptance of banknote", "BPU>Banknote change needed",  "E_Change needed"         ],
+                            ["BPU:Acceptance of banknote", "BPU>Banknote change not needed",   "E_Change not needed"         ]
+                        ]
+                    },
+                    "CCPP": {
+                        "states": {
+                            "BPU:Check of banknote": {
+                                "name": "Charge processing",
+                                "description": "Credit card charge is being processed by the payment terminal"
+                            }
+                        },
+                        "signals": {
+                            "CCRD.sw$": {
+                                "name": "Credit card swiped",
+                                "description": "A credit card has been presented to the reader. This signal contains data with the card token.",
+                                "sender": "Credit Card Reader"
+                            },
+                            "CCRD.a$": {
+                                "name": "Card charge accepted",
+                                "description": "Payment terminal confirms the charge was approved.",
+                                "sender": "Credit Card Reader"
+                            },
+                            "CCRD.r$": {
+                                "name": "Card charge rejected",
+                                "description": "Payment terminal reports the charge was declined.",
+                                "sender": "Credit Card Reader"
+                            }
+                        },
+                        "commands": {
+                            "CCRD.c$": {
+                                "name": "Initiate card charge",
+                                "description": "Command to the payment terminal to charge the card for the fare amount.",
+                                "receiver": "Credit Card Reader"
+                            }
+                        },
+                        "ts": [
+                            ["I", "CCRD.sw$", "BPU:Check of banknote",   "CCRD.c$"],
+                            ["BPU:Check of banknote", "CCRD.a$",  "E_Change needed"           ],
+                            ["BPU:Check of banknote", "CCRD.r$",  "E_Rejected"           ]
+                        ]
+                    }
+                },
+                "ReB": {
+                    "name": "Rejection of artifact",
+                    "description": "Rejection of false artifacts (banknote or card) and return them to the user"
+                },
+                "CCM": {
+                    "name": "Making change",
+                    "description": "Making change by changer and send it to change box"
+                },
+                "signals": {
+                    "ReB>Rejection done": {
+                        "name": "Rejection done",
+                        "description": "Rejection of artifact is done.",
+                        "sender": "Rejector"
+                    },
+                    "CCM>Change is done": {
+                        "name": "Change is done",
+                        "description": "Making change is done.",
+                        "sender": "Changer"
+                    }
+                },
+                "commands": {
+                    "CCM.Make change": {
+                        "name": "Make change",
+                        "description": "Command to the Changer to dispense change. Data contains the change amount copied from the triggering signal.",
+                        "receiver": "Changer"
+                    }
+                },
+                "ts": [
+                    ["I",    "BPU>Banknote candidate inserted",   "BPU"          ],
+                    ["I",    "CCRD.sw$", "CCPP"         ],
+                    ["BPU",  "BPU>Banknote is false",    "ReB"           ],
+                    ["BPU",  "BPU>Banknote change needed",    "CCM", "CCM.Make change"  ],
+                    ["BPU",  "BPU>Banknote change not needed",     "E_Change not needed"          ],
+                    ["CCPP", "CCRD.r$",  "ReB"           ],
+                    ["CCPP", "CCRD.a$",  "E_Payment_OK"          ],
+                    ["ReB",   "ReB>Rejection done",     "E_Rejected"          ],
+                    ["CCM",   "CCM>Change is done",     "E_Payment_OK"          ]
+                ]
+            },
+            "TS:Locked": {
+                "name": "Locked",
+                "description": "Turnstile is locked and doesn't let someone into the metro or a paid restroom"
+            },
+            "TS:Unlocked": {
+                "name": "Unlocked",
+                "description": "Turnstile is unlocked and let someone into the metro or a paid restroom"
+            }
+        },
+        "signals": {
+            "TS>start": {
+                "name": "System start",
+                "description": "SFSM initialization signal that transitions the turnstile into its initial Locked state.",
+                "sender": "SFSM"
+            },
+            "TS>timeout": {
+                "name": "Turnstile timeout",
+                "description": "Turnstile is in unlocked state too long and should be locked",
+                "sender": "Turnstile"
+            },
+            "TS>pass": {
+                "name": "Passage",
+                "description": "Someone pass through turnstile and it should be locked",
+                "sender": "Turnstile"
+            }
+        },
+        "commands": {
+            "TS.lock": {
+                "name": "Lock turnstile",
+                "description": "Command to turnstile to lock itself",
+                "receiver": "Turnstile"
+            },
+            "TS.unlock": {
+                "name": "Unlock turnstile",
+                "description": "Command to turnstile to unlock itself and start a timeout for waiting of passage",
+                "receiver": "Turnstile"
+            }
+        },
+        "ts": [
+            ["I",  "TS>start",     "TS:Locked"           ],
+            ["TS:Locked",  "BPU>Banknote candidate inserted",   "PU"          ],
+            ["TS:Locked",  "CCRD.sw$", "PU"          ],
+            ["PU", "BPU>Banknote change not needed",     "TS:Unlocked",  "TS.unlock" ],
+            ["PU", "CCM>Change is done",     "TS:Unlocked",  "TS.unlock" ],
+            ["PU", "CCRD.a$",  "TS:Unlocked",  "TS.unlock" ],
+            ["PU", "ReB>Rejection done",     "TS:Locked",  "TS.lock"  ],
+            ["TS:Unlocked",  "TS>timeout",    "TS:Locked",  "TS.lock"  ],
+            ["TS:Unlocked",  "TS>pass",    "TS:Locked",  "TS.lock"  ]
+        ]
+    }
+}

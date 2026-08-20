@@ -1,26 +1,40 @@
 #!/usr/bin/env node
 
 /**
- * Simple import test to verify @vsirotin/ts-stop package works correctly
- * after local installation or npm deployment.
+ * Simple import test to verify the @vsirotin/ts-stop-sdk package works
+ * correctly after local installation or npm deployment.
+ *
+ * It verifies:
+ *  - the SDK package (@vsirotin/ts-stop-sdk) resolves and exposes both the
+ *    core library (re-exported from @vsirotin/ts-stop) and the Node-only
+ *    loader helpers (loadFAFromFile / loadFAFromURL),
+ *  - the SDK ships its CLI tools, tutorial, and AI skills.
  */
 
 try {
-  console.log('Testing @vsirotin/ts-stop imports...\n');
+  console.log('Testing @vsirotin/ts-stop-sdk imports...\n');
 
-  // Test main export
-  const { Sfsm } = require('@vsirotin/ts-stop');
-  console.log('✅ Main export works: Sfsm imported');
+  // Test SDK main export (re-exports the core library + Node helpers)
+  const sdk = require('@vsirotin/ts-stop-sdk');
+  if (typeof sdk.Sfsm !== 'function') throw new Error('Sfsm not exported by SDK');
+  console.log('✅ SDK exports Sfsm (re-exported from @vsirotin/ts-stop)');
 
-  // Test sfsm submodule export
-  const { FaDefinition } = require('@vsirotin/ts-stop/sfsm');
-  console.log('✅ Submodule export works: FaDefinition imported from sfsm');
+  if (typeof sdk.loadFAFromFile !== 'function') throw new Error('loadFAFromFile missing');
+  console.log('✅ SDK exports loadFAFromFile (Node-only helper)');
 
-  // Test CLI tools are present
+  if (typeof sdk.FaRunner !== 'function') throw new Error('FaRunner missing');
+  console.log('✅ SDK exports FaRunner');
+
+  // Verify the SDK package itself is present with its scripts/tutorial/skills
   const fs = require('fs');
   const path = require('path');
-  
-  const scriptsPath = path.join(__dirname, '../node_modules/@vsirotin/ts-stop/scripts');
+
+  // Resolve to the SDK's main file (lib/index.js), then walk up to the package root
+  const sdkMainFile = require.resolve('@vsirotin/ts-stop-sdk');
+  const sdkPath = path.resolve(path.dirname(sdkMainFile), '..');
+  const sdkVersion = JSON.parse(fs.readFileSync(path.join(sdkPath, 'package.json'), 'utf-8')).version;
+  console.log(`✅ SDK package found (version ${sdkVersion})`);
+
   const scripts = [
     'reduce-fa.js',
     'merge-fas.js',
@@ -30,34 +44,21 @@ try {
     'drawio-to-json.js',
     'compare-compact-jsons.js'
   ];
-
-  const missingScripts = scripts.filter(script => !fs.existsSync(path.join(scriptsPath, script)));
-  if (missingScripts.length === 0) {
-    console.log(`✅ All 7 CLI tools present in scripts/`);
-  } else {
-    console.log(`❌ Missing scripts: ${missingScripts.join(', ')}`);
-    process.exit(1);
+  const missingScripts = scripts.filter(script => !fs.existsSync(path.join(sdkPath, 'scripts', script)));
+  if (missingScripts.length !== 0) {
+    throw new Error(`Missing SDK scripts: ${missingScripts.join(', ')}`);
   }
+  console.log('✅ All CLI tools present in SDK scripts/');
 
-  // Test tutorial is present
-  const tutorialPath = path.join(__dirname, '../node_modules/@vsirotin/ts-stop/tutorial');
-  if (fs.existsSync(tutorialPath)) {
-    console.log('✅ Tutorial directory present');
-  } else {
-    console.log('❌ Tutorial directory missing');
-    process.exit(1);
-  }
+  const tutorialPath = path.join(sdkPath, 'tutorial');
+  if (!fs.existsSync(tutorialPath)) throw new Error('Tutorial directory missing');
+  console.log('✅ SDK tutorial directory present');
 
-  // Test AI skills are present
-  const aiSkillsPath = path.join(__dirname, '../node_modules/@vsirotin/ts-stop/ai/skills');
-  if (fs.existsSync(aiSkillsPath)) {
-    console.log('✅ AI skills directory present');
-  } else {
-    console.log('❌ AI skills directory missing');
-    process.exit(1);
-  }
+  const aiSkillsPath = path.join(sdkPath, 'ai', 'skills');
+  if (!fs.existsSync(aiSkillsPath)) throw new Error('AI skills directory missing');
+  console.log('✅ SDK ai/skills directory present');
 
-  console.log('\n✅ All tests passed! Package is ready to use.');
+  console.log('\n✅ All tests passed! SDK package is ready to use.');
   process.exit(0);
 } catch (error) {
   console.error('\n❌ Test failed:', error.message);

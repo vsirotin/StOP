@@ -1,8 +1,7 @@
 import * as path from "path";
 import * as fs from "fs";
 import { loadFAFromFile, loadFAFromURL } from "../../src/sfsm";
-import { Sfsm } from "../../src/sfsm/Sfsm";
-import { FaDefinition } from "../../src/sfsm/types";
+import { Sfsm, FaDefinition } from "@vsirotin/ts-stop";
 import { RecordingReceiver } from "./RecordingReceiver";
 
 /**

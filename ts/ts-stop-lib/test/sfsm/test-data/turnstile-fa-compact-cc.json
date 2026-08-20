@@ -1,0 +1,36 @@
+{
+    "TS": [
+        ["I",   "TS>start",      "TS:Locked"           ],
+        ["TS:Locked",   "BPU>Banknote candidate inserted",    "PU"          ],
+        ["TS:Locked",   "CCRD.sw$",  "PU"          ],
+        ["PU",  "BPU>Banknote change not needed",      "TS:Unlocked",  "TS.unlock" ],
+        ["PU",  "CCM>Change is done",      "TS:Unlocked",  "TS.unlock" ],
+        ["PU",  "CCRD.a$",   "TS:Unlocked",  "TS.unlock" ],
+        ["PU",  "ReB>Rejection done",      "TS:Locked",  "TS.lock"  ],
+        ["TS:Unlocked",   "TS>timeout",     "TS:Locked",  "TS.lock"  ],
+        ["TS:Unlocked",   "TS>pass",     "TS:Locked",  "TS.lock"  ]
+    ],
+    "PU": [
+        ["I",    "BPU>Banknote candidate inserted",   "BPU"          ],
+        ["I",    "CCRD.sw$", "CCPP"         ],
+        ["BPU",  "BPU>Banknote is false",    "ReB"           ],
+        ["BPU",  "BPU>Banknote change needed",    "CCM", "CCM.Make change"  ],
+        ["BPU",  "BPU>Banknote change not needed",     "E_Change not needed"          ],
+        ["CCPP", "CCRD.r$",  "ReB"           ],
+        ["CCPP", "CCRD.a$",  "E_Payment_OK"          ],
+        ["ReB",   "ReB>Rejection done",     "E_Rejected"          ],
+        ["CCM",   "CCM>Change is done",     "E_Payment_OK"          ]
+    ],
+    "BPU": [
+        ["I", "BPU>Banknote candidate inserted", "BPU:Check of banknote",  "BPU.check banknote"],
+        ["BPU:Check of banknote", "BPU>Banknote is ok",  "BPU:Acceptance of banknote",  "BPU.accept banknote"],
+        ["BPU:Check of banknote", "BPU>Banknote is false",  "E_Rejected"        ],
+        ["BPU:Acceptance of banknote", "BPU>Banknote change needed",  "E_Change needed"        ],
+        ["BPU:Acceptance of banknote", "BPU>Banknote change not needed",   "E_Change not needed"        ]
+    ],
+    "CCPP": [
+        ["I", "CCRD.sw$", "BPU:Check of banknote",  "CCRD.c$"],
+        ["BPU:Check of banknote", "CCRD.a$",  "E_Change needed"          ],
+        ["BPU:Check of banknote", "CCRD.r$",  "E_Rejected"          ]
+    ]
+}

@@ -24,7 +24,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { FaValidator } = require('../lib/sfsm');
+const { FaValidator } = require('@vsirotin/ts-stop/sfsm');
 
 // ── Argument parsing ────────────────────────────────────────────────────────
 

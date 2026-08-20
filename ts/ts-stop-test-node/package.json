@@ -1,14 +1,13 @@
 {
-  "name": "ts-stop-local-test",
+  "name": "ts-stop-test-node",
   "version": "1.0.0",
-  "description": "Local integration test project for @vsirotin/ts-stop package",
+  "description": "Node integration test project for the @vsirotin/ts-stop-sdk package (which depends on @vsirotin/ts-stop library)",
   "private": true,
   "scripts": {
-    "test": "node src/test-imports.js",
-    "test:bundle": "esbuild src/test-bundle.ts --bundle --outfile=dist/bundle.js --platform=browser --external:@vsirotin/ts-stop"
+    "test": "node src/test-imports.js"
   },
   "dependencies": {
-    "@vsirotin/ts-stop": "file:../ts-stop"
+    "@vsirotin/ts-stop-sdk": "file:../ts-stop-sdk"
   },
   "devDependencies": {
     "esbuild": "^0.20.0"
