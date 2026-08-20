@@ -1,5 +1,8 @@
 # StOP Library (`@vsirotin/ts-stop`) — Release notes
 
+## Version: 3.14.0 build 115
+dist: Project: ts/ts-stop-lib. Split from ts-stop; now a standalone cross-platform library exposing VERSION/LIB_VERSION. Node-only helpers (loadFAFromFile) moved to ts-stop-sdk.
+
 ## Version: 3.14.0 build 114
 dist: Project split — ts-stop now split into `@vsirotin/ts-stop` (library) and `@vsirotin/ts-stop-sdk` (tools, skills, tutorial, Node helpers). Library is cross-platform (Node CJS + Browser ESM).
 

@@ -1,220 +1,101 @@
-# TypeScript StOP Library Development
+# StOP Development
 
-## 1. Project description
+This guide covers building, testing, and deploying the TypeScript implementation of StOP, which is split into four sub-projects under `ts/`.
 
-This is the core TypeScript implementation of the StOP (State-Oriented Programming) SDK. It provides a robust framework for building finite state machines, centered on:
-- **Stacked Finite State Machine (SFSM)** — a stack-based engine for hierarchical, multi-component FA processing
+## 1. Project structure
 
+| Path                        | npm package              | Purpose                                                            |
+|-----------------------------|--------------------------|--------------------------------------------------------------------|
+| `ts/ts-stop-lib`            | `@vsirotin/ts-stop`       | Cross-platform core library (CJS Node + ESM Browser)               |
+| `ts/ts-stop-sdk`            | `@vsirotin/ts-stop-sdk`   | CLI tools, tutorials, AI skills, Node-only helpers (depends on lib)|
+| `ts/ts-stop-test-node`      | — (private)              | Node integration smoke-test of the SDK                             |
+| `ts/ts-stop-test-angular`   | — (private)              | Angular smoke-test of the library                                  |
 
-## 2. How to build
+## 2. The library (`ts/ts-stop-lib`)
+
+Pure `Sfsm` engine and FA utilities with no Node.js or DOM dependencies.
 
 ```bash
-cd ts/ts-stop
+cd ts/ts-stop-lib
+npm run build        # CJS -> lib/, ESM -> lib/esm/
+npm test             # jest unit tests
+```
+
+Publish:
+
+```bash
+cd ts/ts-stop-lib
 npm run build
+npm publish --access public
 ```
 
-This builds both CommonJS and ES modules to the `lib/` directory.
+## 3. The SDK (`ts/ts-stop-sdk`)
 
-## 3. Unit testing
+Depends on the library and adds CLI tools, tutorials, AI skills and `loadFAFromFile`.
 
-# Run tests
 ```bash
-cd ts/ts-stop
-npm test
+cd ts/ts-stop-lib
+npm run build        # SDK consumes the library, so build it first
+
+cd ../ts-stop-sdk
+npm ci               # resolves @vsirotin/ts-stop via file:../ts-stop-lib
+npm run build        # Node-only lib/
+npm test             # jest CLI + Node tests
 ```
 
-# Run tests in watch mode
-npm run test:watch
+Publish:
 
-# Run tests with coverage report
 ```bash
-cd ts/ts-stop
-npm run test:coverage
+cd ts/ts-stop-sdk
+npm run build
+npm publish --access public
 ```
 
-## 4. SFSM tools
+## 4. Local validation before the NPM deployment
 
-See [04-tools.md](../../tutorial/04-tools.md) 
-
-## 5. Testing new version locally before NPM deployment
-
-### Step 1: Create a local npm package
+### Step 1: Build and pack locally
 
 ```bash
 bash scripts/publish-local.sh
 ```
 
-*(Run from the workspace root directory)*
+*(Run from the workspace root.)*
 
-This script:
-- Builds the `@vsirotin/ts-stop` library (`npm run build`)
-- Creates a tarball using `npm pack` (respects the `"files"` array in `package.json` exactly as npm will)
-- Installs the tarball into `TMP/node_modules/@vsirotin/ts-stop`
+This builds and packs both `@vsirotin/ts-stop` and `@vsirotin/ts-stop-sdk`
+into `TMP/node_modules/@vsirotin/*`.
 
-### Step 2: Prepare test package for ts-stop-local-test
+### Step 2: Update the Node test project
 
 ```bash
 bash scripts/test-with-local-lib.sh
 ```
 
-*(Run from the workspace root directory)*
+This copies the locally-built packages into `ts/ts-stop-test-node/node_modules`.
 
-This script:
-1. Verifies the local package exists in `TMP/node_modules/@vsirotin/ts-stop` (created by Step 1)
-2. Copies the package to `ts/ts-stop-local-test/node_modules/@vsirotin/ts-stop`
-3. Prints instructions for running integration tests
-
-✅ **After this step, the package is ready for integration testing via ts-stop-local-test.**
-
-### Step 3: Run integration tests
+### Step 3: Run Node integration tests
 
 ```bash
-cd ts/ts-stop-local-test
-
-# Run import and deployment validation tests
+cd ts/ts-stop-test-node
 npm test
 ```
 
-This runs the `test-imports.js` script which validates:
-- ✅ Main export: `import { Sfsm } from '@vsirotin/ts-stop'`
-- ✅ Submodule export: `import { FaDefinition } from '@vsirotin/ts-stop/sfsm'`
-- ✅ All 7 CLI tools present
-- ✅ Tutorial directory deployed
-- ✅ AI skills directory deployed
+The `test-imports.js` script validates that the SDK resolves, re-exports the
+core library and Node helpers, and ships its CLI tools, tutorial, and AI skills.
 
-**If all checks pass, the package is ready for NPM deployment.**
-
-### Step 4: Verify package structure visually (Optional)
-
-After running Steps 1-2, inspect the deployed package:
+### Step 4: Run Angular integration test (optional)
 
 ```bash
-cd ts/ts-stop-local-test/node_modules/@vsirotin/ts-stop
+cd ts/ts-stop-lib
+npm run build
 
-# Check the version
-cat package.json | grep '"version"'
-
-# View directory structure
-ls -la
-```
-
-Expected structure:
-
-```
-lib/
-├── esm/
-│   ├── sfsm/                 (12 files)
-│   ├── src/
-│   └── index.js
-├── sfsm/                     (48 files)
-├── src/
-├── index.d.ts
-├── index.js
-└── ... (type definitions, source maps)
-
-scripts/
-├── reduce-fa.js              (5 core tools)
-├── merge-fas.js
-├── merge-fas-from-dir.js
-├── update-fa.js
-├── json-to-drawio.js         (3 diagram tools)
-├── drawio-to-json.js
-└── compare-compact-jsons.js
-
-ai/skills/                    (3 AI skills)
-├── sfsm-json-to-uml-diagram/
-├── sfsm-uml-diagram-to-json/
-└── sfsm-compare-json-uml-diagram/
-
-tutorial/                     (4 chapters + images)
-├── 01-finite-state-machine.md
-├── 02-stacked-finite-state-machine.md
-├── 03-advanced-themes.md
-├── 04-tools.md
-└── images/
-
-README.md
-LICENSE-COMMERCIAL.md
-LICENSE-PUBLIC.md
-release-notes.md
-package.json
-```
-
-
-
-### FYI: Included documentation and licensing files
-
-The following files from the monorepo root are included in the npm package:
-- `README.md` — automatically included by npm
-- `LICENSE-COMMERCIAL.md` — dual licensing for commercial use
-- `LICENSE-PUBLIC.md` — public license option
-- `release-notes.md` — changelog
-
-These are configured in `ts/ts-stop/package.json` under the `"files"` array and are part of every published version.
-
-**Verification:**
-```bash
-npm view @vsirotin/ts-stop dist.tarball
-tar -tzf <tarball-url> | grep -E '(LICENSE|release-notes)'
-```### Step 5: Deployment to NPM registry
-
-Before publishing, ensure the licensing and release notes files are in the package directory:
-
-```bash
-cd ts/ts-stop
-
-# Copy licensing and release notes from monorepo root
-cp ../LICENSE-COMMERCIAL.md .
-cp ../LICENSE-PUBLIC.md .
-cp ../release-notes.md .
-
-# Publish to npm
-npm publish --access public
-
-# Clean up (keep these files in monorepo root only, not in ts-stop)
-rm LICENSE-COMMERCIAL.md LICENSE-PUBLIC.md release-notes.md
-```
-
-This publishes the package to the npm registry. The `package.json` "files" array controls what gets deployed:
-- `lib/` — compiled library (CommonJS + ES modules)
-- `scripts/` — CLI tools (7 scripts)
-- `ai/skills/` — AI skills for various tasks
-- `tutorial/` — markdown documentation
-- `LICENSE-COMMERCIAL.md`, `LICENSE-PUBLIC.md` — dual licensing
-- `release-notes.md` — changelog
-
-**Note:** The `publish-local.sh` script handles this copying automatically for local testing. For real NPM publication, you must do it manually. 
-
-## 6. Local integration testing with ts-stop-local-test
-
-The `ts/ts-stop-local-test/` project is a minimal consumer that validates the `@vsirotin/ts-stop` package after deployment:
-
-### Purpose
-- Verify package imports work correctly (main export + submodule exports)
-- Check all CLI tools are included
-- Validate tutorial and AI skills directories are deployed
-- Catch bundler/integration issues before publishing
-
-### How to use
-
-```bash
-cd ts/ts-stop-local-test
-
-# Install dependencies (links local ts-stop via "file:" protocol)
+cd ../ts-stop-test-angular
 npm install
-
-# Run import tests
-npm test
+npm run build
 ```
 
-The test verifies:
-- ✅ Main export: `import { Sfsm } from '@vsirotin/ts-stop'`
-- ✅ Submodule export: `import { FaDefinition } from '@vsirotin/ts-stop/sfsm'`
-- ✅ All 7 CLI tools present
-- ✅ Tutorial directory deployed
-- ✅ AI skills directory deployed
+A successful build confirms the cross-platform library bundles and runs inside
+Angular with no Node-only dependencies.
 
-If `npm test` passes, the package is ready for your application integration.
+## 5. Release notes
 
-
-
+Each sub-project has its own `release-notes.md` and `version.json`.

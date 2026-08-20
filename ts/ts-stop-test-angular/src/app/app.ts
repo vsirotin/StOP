@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Sfsm, FaDefinition } from '@vsirotin/ts-stop';
+import { Sfsm, FaDefinition, VERSION as LIB_VERSION } from '@vsirotin/ts-stop';
 
 /**
  * Simple smoke-test that the actual installed version of @vsirotin/ts-stop
@@ -30,24 +30,13 @@ export class App {
     readonly state: string;
 
     constructor() {
-        // Read the installed library version from its package.json.
-        this.libVersion = readLibVersion();
+        // Read the actual library version exported by @vsirotin/ts-stop.
+        this.libVersion = LIB_VERSION;
 
         // Prove the library can be instantiated and driven inside the browser.
         const sfsm = new Sfsm(turnstileFa);
         sfsm.receiveSignal('start');
         this.sfsmLoaded = typeof sfsm.getHeadState() === 'string';
         this.state = sfsm.getHeadState();
-    }
-}
-
-function readLibVersion(): string {
-    // Uses a dynamic import with a URL that bundlers map to the installed package.
-    // Falls back to a constant when the package.json is not resolvable at runtime.
-    try {
-        const ver = (globalThis as unknown as { __STOP_VERSION__?: string }).__STOP_VERSION__;
-        return ver ?? 'unknown (bundled)';
-    } catch {
-        return 'unknown';
     }
 }

@@ -7,32 +7,31 @@
 ![badge-nodejs](https://img.shields.io/badge/platform-jsNode-F8DB5D.svg?style=flat)
 ![badge-browser](https://img.shields.io/badge/platform-jsBrowser-F8DB5D.svg?style=flat)
 
-# StOP SDK - State Oriented Programming Software Development Kit
+# StOP - State Oriented Programming
 
-State Oriented Programming (StOP) is a programming paradigm that focuses on explicit state management and transformation. 
+State Oriented Programming (StOP) is a programming paradigm that focuses on explicit state management and transformation.
 
-This SDK provides a TypeScript/JavaScript library for implementing StOP concepts with [tutorial](ts/ts-stop/tutorial), [tools](ts/ts-stop/scripts), [skills for AI-agents](ts/ts-stop/ai/skills) and [examples](ts/ts-stop/test).
-
-Version 2.x of the SDK is a complete rewrite of the original 1.x version, with strong orientation for modern AI-agent development.
-
-Therefore, the delivered units contain as well a set of skills for AI-agents. These skills and tutorials are now delivered together with code, to allow agents to read needed information without explicitly visiting the GitHub Project on the Internet.
-
-This approach, library and tools are proven by the author in his commercial projects.
+The TypeScript/JavaScript implementation of StOP is split into **4 sub-projects** under `ts/`:
 
 ## Project structure
 
-- **`ts/ts-stop/`** — Main StOP library with TypeScript source, compiled output, CLI tools, tutorial, and AI skills
-- **`ts/ts-stop-local-test/`** — Minimal integration test project for validating the published package before deployment
+- **`ts/ts-stop-lib/`** — the cross-platform core library, published as **`@vsirotin/ts-stop`**.
+  Contains the pure `Sfsm` engine and FA utilities with no Node.js or DOM dependencies.
+  Builds for Node.js (CJS) and Browser (ESM).
+- **`ts/ts-stop-sdk/`** — the Software Development Kit, published as **`@vsirotin/ts-stop-sdk`**.
+  Depends on `@vsirotin/ts-stop`. Contains CLI tools, tutorials, AI-agent skills, and Node-only helpers (`loadFAFromFile`).
+- **`ts/ts-stop-test-node/`** — a minimal Node.js integration project that validates the actual SDK version before deployment.
+- **`ts/ts-stop-test-angular/`** — a simple Angular application that verifies the actual library version loads and works in a browser framework.
 
 ## Development
 
-See [DEVELOPMENT.md](./DEVELOPMENT.md) for build, test, and deployment instructions, including the `ts-stop-local-test` validation workflow.
+See [DEVELOPMENT.md](./DEVELOPMENT.md) for build, test, and deployment instructions.
 
 ## License
 
 This project is dual-licensed:
 
-- **[Apache 2.0](./LICENSE)** - Free for open-source, academic, and small commercial use
+- **[Apache 2.0](./LICENSE-PUBLIC.md)** - Free for open-source, academic, and small commercial use
 - **[Commercial License](./LICENSE-COMMERCIAL.md)** - For organizations with 10+ employees or projects with $10,000+ annual revenue
 
 **Quick Summary:**

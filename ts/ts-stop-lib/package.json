@@ -22,7 +22,8 @@
     "LICENSE-COMMERCIAL.md",
     "LICENSE-PUBLIC.md",
     "release-notes.md",
-    "README.md"
+    "README.md",
+    "version.json"
   ],
   "keywords": [
     "typescript",

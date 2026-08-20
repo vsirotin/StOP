@@ -21,7 +21,8 @@
     "tutorial",
     "LICENSE-COMMERCIAL.md",
     "LICENSE-PUBLIC.md",
-    "release-notes.md"
+    "release-notes.md",
+    "version.json"
   ],
   "bin": {
     "reduce-fa": "./scripts/reduce-fa.js",

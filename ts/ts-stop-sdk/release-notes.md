@@ -1,5 +1,8 @@
 # StOP SDK (`@vsirotin/ts-stop-sdk`) — Release notes
 
+## Version: 3.14.0 build 115
+dist: Project: ts/ts-stop-sdk. Split from ts-stop; now a standalone SDK depending on @vsirotin/ts-stop. CLI scripts require('@vsirotin/ts-stop/sfsm'); Node-only loader re-exported.
+
 ## Version: 3.14.0 build 114
 dist: Project split — ts-stop now split into `@vsirotin/ts-stop-sdk` (tools, skills, tutorial, Node helpers) and `@vsirotin/ts-stop` (cross-platform library).
 
