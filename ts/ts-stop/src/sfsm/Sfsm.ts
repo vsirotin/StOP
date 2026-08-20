@@ -51,7 +51,7 @@ export class Sfsm implements ISignalReceiver {
      * @param model The FA definition or path to JSON-file or URLwith model to load initially, or null.
      * @param options Configuration options for the SFSM instance.  
      */
-    constructor(model: FaDefinition | string, options: SfsmOptions = {}) {
+    constructor(model: FaDefinition | null, options: SfsmOptions = {}) {
         this.options = {
             byMissingData: options.byMissingData ?? 'error',
             byMissingTransition: options.byMissingTransition ?? 'error',
@@ -59,14 +59,8 @@ export class Sfsm implements ISignalReceiver {
             jokerState: options.jokerState ?? '*'
         };
 
-        let faDefinition: FaDefinition | null = null;
-        if (typeof model === 'string') {
-            faDefinition = loadFAFromFile(model);
-        } else {
-            faDefinition = model;
-        }
-        if (faDefinition) {
-            this.loadFA(faDefinition);
+        if (model) {
+            this.loadFA(model as FaDefinition);
         }
     }
 

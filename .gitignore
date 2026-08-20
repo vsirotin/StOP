@@ -106,3 +106,6 @@ docs/Tutorial/Z_06-StOP-SFSM-Definition.md
 docs/Tutorial/Z_05-StOP-The-Simplest-FA.md
 commit-text-proposal.txt
 ts/ts-stop/tutorial/06-case-study-turnstile-sfsm/sfsm/model/use-cases/*
+.github/skills/post-task
+.github/skills/feature-development/
+.github/skills/common-development/

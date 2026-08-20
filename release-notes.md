@@ -1,4 +1,7 @@
 # Project StOP (State Oriented Programming). Release notes 
+## Version: 3.14.0 build 114
+feat: ts-stop — Using SFSM definitions from external JSON files in constructor removed.
+
 ## Version: 3.13.0 build 113
 feat: ts-stop — Using SFSM definitions from external JSON files in constructor added.
 
