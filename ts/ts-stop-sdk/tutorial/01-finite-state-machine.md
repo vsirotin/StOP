@@ -71,7 +71,7 @@ sfsm.receiveSignal('push');
 sfsm.getHeadState();          // 'locked'
 ```
 
-A runnable version of this exact example is available as a unit test: [1-1-what-is-a-finite-automaton.test.ts](../../ts-stop/test/sfsm/tutorial/1-1-what-is-a-finite-automaton.test.ts).
+A runnable version of this exact example is available as a unit test: `1-1-what-is-a-finite-automaton.test.ts`.
 
 ### 1.2.1 A type-safe alternative
 
@@ -106,7 +106,7 @@ const turnstileFa: FaDefinition = { Turnstile: turnstileTransitions };
 const sfsm = new Sfsm(turnstileFa);
 ```
 
-This costs nothing at runtime — `typedTransitions()` just returns its argument — but any misspelled state or signal name is now a compile-time error instead of a silent bug. A runnable version of this example is available as a unit test: [1-2-1-type-safe-fa-definition.test.ts](../../ts-stop/test/sfsm/tutorial/1-2-1-type-safe-fa-definition.test.ts).
+This costs nothing at runtime — `typedTransitions()` just returns its argument — but any misspelled state or signal name is now a compile-time error instead of a silent bug. A runnable version of this example is available as a unit test: `1-2-1-type-safe-fa-definition.test.ts`.
 
 
 ## 1.3 Jokers: wildcard signals and states
@@ -151,7 +151,7 @@ Instead of trying to list every possible malfunction signal, one joker-signal tr
 
 The turnstile keeps behaving exactly as before for `coin` and `push`; only signals it has no explicit rule for fall through to `*` and trigger the safety shutdown.
 
-A runnable version of this example is available as a unit test: [1-3-1-joker-signal.test.ts](../../ts-stop/test/sfsm/tutorial/1-3-1-joker-signal.test.ts).
+A runnable version of this example is available as a unit test: `1-3-1-joker-signal.test.ts`.
 
 ### 1.3.2 Joker state: a universal signal for technical personnel
 
@@ -172,7 +172,7 @@ A single joker-state transition expresses exactly that, regardless of how many o
 
 One transition now covers "enter maintenance mode" from every current and future state — including states added to the FA later, with no changes needed to the `service` rule itself.
 
-A runnable version of this example is available as a unit test: [1-3-2-joker-state.test.ts](../../ts-stop/test/sfsm/tutorial/1-3-2-joker-state.test.ts).
+A runnable version of this example is available as a unit test: `1-3-2-joker-state.test.ts`.
 
 
 ## 1.4 Senders, receivers and commands

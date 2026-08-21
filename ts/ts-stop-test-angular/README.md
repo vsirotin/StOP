@@ -41,7 +41,7 @@ latest local build is tested:
 
 ```json
 "dependencies": {
-  "@vsirotin/ts-stop": "file:../ts-stop-lib"
+  "@vsirotin/ts-stop": "^3.14.0"
 }
 ```
 

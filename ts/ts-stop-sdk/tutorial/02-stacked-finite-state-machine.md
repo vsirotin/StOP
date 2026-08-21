@@ -103,4 +103,4 @@ sfsm.getHeadState();          // 'locked'
 ```
 
 A runnable version of this example is available as a unit test:
-[2-1-1-stacked-finite-state-machine.test.ts](../../ts-stop/test/sfsm/tutorial/2-1-1-stacked-finite-state-machine.test.ts).
+`2-1-1-stacked-finite-state-machine.test.ts`.

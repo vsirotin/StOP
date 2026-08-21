@@ -1,22 +1,29 @@
 {
   "name": "ts-stop-test-angular",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Simple Angular test app to verify the @vsirotin/ts-stop library loads and report its version",
   "private": true,
   "scripts": {
     "build": "ng build",
-    "serve": "ng build --no-serve",
+    "serve": "ng serve",
+    "start": "ng serve",
     "test": "ng test",
     "check": "npm i && npm run build"
   },
   "dependencies": {
-    "@vsirotin/ts-stop": "file:../ts-stop-lib"
+    "@vsirotin/ts-stop": "^3.14.0"
   },
   "devDependencies": {
+    "@angular/animations": "^20.3.29",
     "@angular/build": "^20.0.0",
     "@angular/cli": "^20.0.0",
+    "@angular/common": "^20.0.0",
+    "@angular/compiler": "^20.0.0",
+    "@angular/compiler-cli": "^20.0.0",
     "@angular/core": "^20.0.0",
-    "typescript": "^5.0.0"
+    "@angular/platform-browser": "^20.0.0",
+    "typescript": "^5.0.0",
+    "zone.js": "^0.15.0"
   },
   "publishConfig": {
     "access": "private"

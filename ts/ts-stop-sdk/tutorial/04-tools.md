@@ -20,7 +20,7 @@ Passing an already-compact definition through `reduceFA()` returns it unchanged,
 
 `runFromFile()` returns the complete execution trace — every transition taken, including joker fallbacks and stack push/pop events. 
 
- The full behaviour of `FaRunner` is covered by [FaRunner.test.ts](../../ts-stop/test/sfsm/FaRunner.test.ts).
+ The full behaviour of `FaRunner` is covered by `FaRunner.test.ts`.
 
 ### 4.4 `FaValidator` — validating an FA definition
 
@@ -29,7 +29,7 @@ Passing an already-compact definition through `reduceFA()` returns it unchanged,
 
 The validator checks 14 rules: 6 structural errors (well-formed JSON, valid tree, no duplicate keys, no empty FAs, exactly one entry state per FA, no transitions from exit states), 2 structural warnings (duplicate FA names across the tree, duplicate signal names), 3 reference errors (each transition target exists, each sub-FA has at least one exit state, no duplicate from-state/signal pairs), and 3 semantic warnings (exit-state signal is forwarded by an ancestor, each sub-FA is referenced by its parent, no unreachable states).
 
- The full behaviour of `FaValidator` is covered by [FaValidator.test.ts](../../ts-stop/test/sfsm/FaValidator.test.ts).
+ The full behaviour of `FaValidator` is covered by `FaValidator.test.ts`.
 
 ### 4.5 The multi-FA compact format
 
@@ -78,7 +78,7 @@ const detailedTurnstileFa = updateCompactFA(simpleTurnstileFa as FaDefinition, u
 
 `simpleTurnstileFa` is untouched; `detailedTurnstileFa` now behaves exactly like the original for `start`/`push`, but pushes `CoinCheck` onto the stack on `"coin"` (rule 4 from the previous chapter) and only reaches `"unlocked"` once a `CC.ok` signal arrives — otherwise it falls back to `"locked"` on `CC.bad`. No existing consumer of the FA (nor the SFSM engine itself) needs to change for this to work.
 
-A runnable version of this example is available as a unit test: [4-6-update-fa-add-detail.test.ts](../../ts-stop/test/sfsm/tutorial/4-6-update-fa-add-detail.test.ts). The full behaviour of `updateCompactFA` / `updateFullFA` (removing FAs, replacing existing ones, pruning dangling transitions, non-mutation of the source) is covered by [FaUpdater.test.ts](../../ts-stop/test/sfsm/FaUpdater.test.ts).
+A runnable version of this example is available as a unit test: `4-6-update-fa-add-detail.test.ts`. The full behaviour of `updateCompactFA` / `updateFullFA` (removing FAs, replacing existing ones, pruning dangling transitions, non-mutation of the source) is covered by `FaUpdater.test.ts`.
 
 ### 4.7 Loading FA definitions from files and URLs
 
@@ -102,7 +102,7 @@ const sfsm = new Sfsm({ byMissingTransition: 'error' });
 sfsm.loadFA(await loadFAFromURL('https://example.com/turnstile-fa.json'));  // browser & Node.js ≥ 18
 ```
 
-Both accept extended or compact JSON and throw on a failed read/fetch or invalid JSON. Their full behaviour is covered by [FaLoader.test.ts](../../ts-stop/test/sfsm/FaLoader.test.ts).
+Both accept extended or compact JSON and throw on a failed read/fetch or invalid JSON. Their full behaviour is covered by `FaLoader.test.ts`.
 
 ### 4.8 CLI tools and scripts
 
@@ -115,7 +115,7 @@ npm run reduce-fa -- <path-to-fa-file>
 # writes <path-to-fa-file>-compact.json (or to stdout if no file extension)
 ```
 
-Converts an **extended** (hand-authored) FA definition into the flat **compact** format used at runtime by `Sfsm.loadFA()`. Input can be either extended or compact; compact input passes through unchanged. Thin wrapper around `reduceFA()`, whose behaviour is covered by [FaReducer.test.ts](../../ts-stop/test/sfsm/FaReducer.test.ts).
+Converts an **extended** (hand-authored) FA definition into the flat **compact** format used at runtime by `Sfsm.loadFA()`. Input can be either extended or compact; compact input passes through unchanged. Thin wrapper around `reduceFA()`, whose behaviour is covered by `FaReducer.test.ts`.
 
 #### 4.8.2 `update-compact-fa` / `update-full-fa` — Apply structured changes to FA definitions
 
@@ -124,7 +124,7 @@ npm run update-compact-fa -- --source=<path> --update=<path> [--result=<path>]
 npm run update-full-fa    -- --source=<path> --update=<path> [--result=<path>]
 ```
 
-Applies a small structured `FaUpdate` descriptor (JSON file with `remove` and/or `add` keys) to an existing FA definition, returning a modified copy without mutating the source. By default, `--result` outputs to `<source-basename>-updated.json` if omitted. Thin wrappers around `updateCompactFA()` / `updateFullFA()`, whose behaviour is covered by [FaUpdater.test.ts](../../ts-stop/test/sfsm/FaUpdater.test.ts).
+Applies a small structured `FaUpdate` descriptor (JSON file with `remove` and/or `add` keys) to an existing FA definition, returning a modified copy without mutating the source. By default, `--result` outputs to `<source-basename>-updated.json` if omitted. Thin wrappers around `updateCompactFA()` / `updateFullFA()`, whose behaviour is covered by `FaUpdater.test.ts`.
 
 #### 4.8.3 `json-to-drawio` — Convert compact FA JSON to UML state diagram
 
@@ -182,11 +182,11 @@ Validates a compact or extended FA definition against 14 structural rules (6 err
 node scripts/run-fa.js <fa.json> <signals.txt> [expected-trace.txt]
 ```
 
-Loads a compact or extended FA definition, feeds it the signals from `signals.txt` (one per line, blank lines and `//` comments ignored), and prints the execution trace — one line per transition taken. If `expected-trace.txt` is given, the actual trace is compared against it line-by-line and the script exits with code 0 on match, 1 on mismatch. Thin wrapper around `FaRunner`, whose behaviour is covered by [FaRunner.test.ts](../../ts-stop/test/sfsm/FaRunner.test.ts) and [FaRunnerStacked.test.ts](../../ts-stop/test/sfsm/FaRunnerStacked.test.ts).
+Loads a compact or extended FA definition, feeds it the signals from `signals.txt` (one per line, blank lines and `//` comments ignored), and prints the execution trace — one line per transition taken. If `expected-trace.txt` is given, the actual trace is compared against it line-by-line and the script exits with code 0 on match, 1 on mismatch. Thin wrapper around `FaRunner`, whose behaviour is covered by `FaRunner.test.ts` and `FaRunnerStacked.test.ts`.
 
 ### 4.9 AI skills for diagram generation and validation
 
-Three AI skills in the [ai-skills directory](../../ts/ts-stop/ai/skills) automate common diagram workflows:
+Three AI skills in the `ai-skills` directory automate common diagram workflows:
 
 - **`sfsm-json-to-uml-diagram`**: Wraps `json-to-drawio.js`. Use when you need to visualize an SFSM JSON definition as a professional draw.io UML state diagram. Generates hierarchical layout with nested sub-FAs and full metadata preservation. Note: the generated diagram is production-ready but may benefit from small manual repositioning of states or containers for optimal visual polish.
 

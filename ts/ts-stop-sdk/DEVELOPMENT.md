@@ -16,15 +16,8 @@ The core library (`Sfsm` engine, pure FA utilities, component bases) is provided
 
 ## 2. Development-Dependencies
 
-The SDK declares `@vsirotin/ts-stop` as a dependency in `package.json`:
+During development use last version ts-stop library.
 
-```json
-"dependencies": {
-  "@vsirotin/ts-stop": "file:../ts-stop-lib"
-}
-```
-
-During development this uses a `file:` reference to the local `ts/ts-stop-lib`.
 The CLI scripts resolve the library via `require('@vsirotin/ts-stop/sfsm')`.
 
 ## 3. How to build
@@ -64,7 +57,7 @@ bash dev-scripts/clear-ts-stop-lib.sh
 2. Install local version of @vsirotin/ts-stop  with script (from project directory):
 
 ```bash
-bash ts/ts-stop-sdk/dev-scripts/install-ts-stop-lib.sh
+bash dev-scripts/install-ts-stop-lib.sh
 ```
 3. Process unit test (see section 4)
 

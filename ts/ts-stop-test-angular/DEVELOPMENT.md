@@ -35,7 +35,7 @@ bash dev-scripts/clear-ts-stop-lib.sh
 2. Install local version of @vsirotin/ts-stop  with script (from project directory):
 
 ```bash
-bash ts/ts-stop-sdk/dev-scripts/install-ts-stop-lib.sh
+bash dev-scripts/install-ts-stop-lib.sh
 ```
 3. Start the Angular app (from project directory):
 

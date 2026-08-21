@@ -18,7 +18,7 @@ Here are the rules the `Sfsm` engine actually implements, inclusive of the loggi
 
 The engine logs every step of this process.
 
-The example of using the SFSM engine can be found in [Sfsm.log.test.ts](../../ts-stop/test/sfsm/Sfsm.log.test.ts).
+The example of using the SFSM engine can be found in `Sfsm.log.test.ts`.
 
 ## 3.2 Signal Senders, Command Receivers, Transceivers and the Transceiver Hub
 
@@ -119,7 +119,7 @@ It can be tested like this:
 
 Notice that `TurnstileGate` never touches the `Sfsm` instance directly: it only knows how to emit its own signals and react to its own commands. All the wiring — "which signal sender sends which signal," "which command receiver handles which command" — lives in one place, the `TransceiverHub`, which also gives you `getRegisteredSignals()` / `getRegisteredCommands()` for diagnostics (e.g. to validate that every signal and command mentioned in an FA definition actually has a Transceiver behind it).
 
-A runnable version of this example is available as a unit test: [3-2-signal-senders-etc.test.tss](../../ts-stop/test/sfsm/tutorial/3-2-signal-senders-etc.test.ts).
+A runnable version of this example is available as a unit test: `3-2-signal-senders-etc.test.ts`.
 
 ## 3.3 Name conventions
 
@@ -141,6 +141,6 @@ By commands it is recommended to use the same convention: `<FaName>.<command>` �
 }
 ```
 
-A runnable version of this example, built entirely with namespaced names, is available as a unit test: [3-3-namespaced-state-names.test.ts](../../ts-stop/test/sfsm/tutorial/3-3-namespaced-state-names.test.ts).
+A runnable version of this example, built entirely with namespaced names, is available as a unit test: `3-3-namespaced-state-names.test.ts`.
 
 In future chapters will be expanded with more advanced topics, including description of tools and best practices for building large SFSMs. 

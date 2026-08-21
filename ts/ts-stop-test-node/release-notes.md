@@ -1,5 +1,8 @@
 # ts-stop-test-node — Release notes
 
+## Version: 1.0.2 build 4
+doc: Added dev-scripts for local integration testing (clear-ts-stop-lib-and-sdk.sh).
+
 ## Version: 1.0.1 build 3
 doc: README.md and DEVELOPMENT.md updated.
 

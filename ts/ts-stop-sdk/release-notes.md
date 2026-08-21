@@ -1,5 +1,8 @@
 # StOP SDK (`@vsirotin/ts-stop-sdk`) — Release notes
 
+## Version: 3.14.2 build 117
+doc: Added dev-scripts for local integration testing (clear-ts-stop-lib.sh, install-ts-stop-lib.sh, install-ts-stop-lib-and-sdk.sh).
+
 ## Version: 3.14.1 build 116
 doc: README.md and DEVELOPMENT.md updated.
 

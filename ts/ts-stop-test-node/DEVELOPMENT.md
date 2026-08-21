@@ -20,7 +20,7 @@ bash dev-scripts/clear-ts-stop-lib-and-sdk.sh
 2. Install local version of @vsirotin/ts-stop  and @vsirotin/ts-stop-sdk with script (from project directory):
 
 ```bash
-bash ts/ts-stop-sdk/dev-scripts/install-ts-stop-lib-and-sdk.sh
+bash dev-scripts/install-ts-stop-lib-and-sdk.sh
 ```
 3. Process unit test 
 
