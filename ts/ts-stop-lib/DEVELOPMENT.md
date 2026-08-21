@@ -10,8 +10,6 @@ The library contains the platform-independent building blocks of StOP:
 - **Component bases** — transceivers, signal senders/receivers, command receivers
 - **Wiring hub** — `TransceiverHub` / `wireSfsm`
 
-Node-only helpers (e.g. `loadFAFromFile`) live in the **SDK** project `@vsirotin/ts-stop-sdk`, which depends on this library.
-
 ## 2. How to build
 
 ```bash
@@ -45,19 +43,27 @@ The library is compiled and deployed for:
 
 ## 5. Publishing
 
-The `package.json` `"files"` array controls what gets published:
-- `lib/` — compiled library (CommonJS + ES modules)
-- `LICENSE-COMMERCIAL.md`, `LICENSE-PUBLIC.md` — dual licensing
-- `release-notes.md` — changelog
-- `README.md`
-
 To publish:
 
+1. Build und test the library (see above).
+
+2. Be sure, that local integration test in partner projects: - ts/ts-stop-sdk (see `ts/ts-stop-sdk/DEVELOPMENT.md`).,
+- ts/ts-stop-test-node (see `ts/ts-stop-test-node/DEVELOPMENT.md`),
+- ts/ts-stop-test-angular (see `ts/ts-stop-test-angular/DEVELOPMENT.md`)
+
+are passing with the new version of the library.
+
+3. Update the version in `package.json` and commit the change.
+
+4. Publish the package to npm:
+
 ```bash
-cd ts/ts-stop-lib
-npm run build
 npm publish --access public
 ```
+
+---
+
+## 6. Related packages
 
 The CLI tools, tutorials, and AI skills that ship with StOP are published separately
 under the `@vsirotin/ts-stop-sdk` package (see `ts/ts-stop-sdk/DEVELOPMENT.md`).

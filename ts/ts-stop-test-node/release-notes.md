@@ -1,5 +1,8 @@
 # ts-stop-test-node — Release notes
 
+## Version: 1.0.1 build 3
+doc: README.md and DEVELOPMENT.md updated.
+
 ## Version: 1.0.0 build 2
 dist: Updated to validate the @vsirotin/ts-stop-sdk package; test-imports.js uses require.resolve for package root.
 

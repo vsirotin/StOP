@@ -10,13 +10,13 @@ This package contains the developer-facing content of the StOP SDK, and depends 
 
 ## What's included
 
+- **Tutorial** (`tutorial/`) — 5 chapters
+- **AI-agent skills** (`ai/skills/`) — 3 skills
 - **CLI tools** (Node.js, `scripts/`)
   - reduce-fa, merge-fas, merge-fas-from-dir, update-fa, run-fa, validate-fa,
     extract-fa-from-draft, validate-whole-sfsm, extract-sfsm, validate-ext-sfsm,
     gen-commands, json-to-drawio, drawio-to-json, compare-compact-jsons
 - **Node-only library helpers** — `loadFAFromFile` (uses `fs`)
-- **Tutorial** (`tutorial/`) — 5 chapters
-- **AI-agent skills** (`ai/skills/`) — 3 skills
 - **Tests** — CLI and Node integration tests
 
 ## Install
@@ -33,7 +33,4 @@ See [DEVELOPMENT.md](./DEVELOPMENT.md) for build, test, and publishing instructi
 
 ## License
 
-This project is dual-licensed:
-
-- **[Apache 2.0](./LICENSE-PUBLIC.md)** — Free for open-source, academic, and small commercial use
-- **[Commercial License](./LICENSE-COMMERCIAL.md)** — For organizations with 10+ employees or projects with $10,000+ annual revenue
+**[Apache 2.0](./LICENSE-PUBLIC.md)** 

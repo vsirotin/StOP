@@ -1,6 +1,6 @@
 {
   "name": "ts-stop-test-angular",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simple Angular test app to verify the @vsirotin/ts-stop library loads and report its version",
   "private": true,
   "scripts": {

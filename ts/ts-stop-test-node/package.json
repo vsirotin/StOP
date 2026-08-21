@@ -1,6 +1,6 @@
 {
   "name": "ts-stop-test-node",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Node integration test project for the @vsirotin/ts-stop-sdk package (which depends on @vsirotin/ts-stop library)",
   "private": true,
   "scripts": {

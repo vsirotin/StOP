@@ -2,26 +2,27 @@
 
 A minimal Node.js integration test project for the StOP SDK.
 
-## Purpose
+## 1. Purpose
 
 `ts-stop-test-node` consumes the `@vsirotin/ts-stop-sdk` package (which pulls in the
 `@vsirotin/ts-stop` library) and verifies it can be loaded from Node.js without
 problems. It acts as a deployment smoke-test before the SDK is published to NPM.
 
-## Local workflow
+## 2. Local integration testing
 
-The SDK must be built and locally linked first:
+To test with the local (not already published) versions of `ts-stop-lib` and `ts-stop-sdk` (without publishing):
+
+1. Clear node_modules/@vsirotin/ts-stop and node_modules/@vsirotin/ts-stop-sdk manual or with script (from project directory):
 
 ```bash
-# 1. Build + pack the SDK (and its lib dependency)
-bash scripts/publish-local.sh
-
-# 2. Link the local SDK into this project (via file: dependency)
-cd ts/ts-stop-test-node
-npm install
+bash dev-scripts/clear-ts-stop-lib-and-sdk.sh
 ```
+2. Install local version of @vsirotin/ts-stop  and @vsirotin/ts-stop-sdk with script (from project directory):
 
-Then run the import test:
+```bash
+bash ts/ts-stop-sdk/dev-scripts/install-ts-stop-lib-and-sdk.sh
+```
+3. Process unit test 
 
 ```bash
 cd ts/ts-stop-test-node
@@ -40,13 +41,4 @@ Expected output (all checks green):
 ✅ SDK ai/skills directory present
 ```
 
-## Checked dependencies
 
-| Package               | Role                                    |
-|-----------------------|-----------------------------------------|
-| `@vsirotin/ts-stop-sdk`| The SDK under test                       |
-| `@vsirotin/ts-stop`    | The core library (SDK dependency)        |
-
-## Release notes
-
-See [release-notes.md](./release-notes.md).

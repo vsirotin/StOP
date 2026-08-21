@@ -25,17 +25,9 @@ The TypeScript/JavaScript implementation of StOP is split into **4 sub-projects*
 
 ## Development
 
-See [DEVELOPMENT.md](./DEVELOPMENT.md) for build, test, and deployment instructions.
+See development rules for each sub-project in file  DEVELOPMENT.md in project sub-directory.
 
 ## License
 
-This project is dual-licensed:
-
-- **[Apache 2.0](./LICENSE-PUBLIC.md)** - Free for open-source, academic, and small commercial use
-- **[Commercial License](./LICENSE-COMMERCIAL.md)** - For organizations with 10+ employees or projects with $10,000+ annual revenue
-
-**Quick Summary:**
-- ✅ Free for individuals and small teams (< 10 employees)
-- ✅ Free for non-commercial and low-revenue projects (< $10K/year)
-- 📧 Commercial licensing available - contact the author (don't worry, the commercial terms are reasonable :-)
+Projects have different licensing options. See details in LICENSE*.md files in each sub-project directory.
 

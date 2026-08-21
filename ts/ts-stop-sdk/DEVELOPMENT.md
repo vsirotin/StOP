@@ -1,20 +1,20 @@
 # StOP SDK (`@vsirotin/ts-stop-sdk`) — Development
 
-This is the developer-facing SDK of the StOP (State-Oriented Programming) project. It provides the CLI tools, tutorials, AI-agent skills, and Node-only helpers, and it **depends on the core library** `@vsirotin/ts-stop` which ships in a separate package.
+This is the developer-facing SDK for support of the StOP (State-Oriented Programming) software development paradigm. It provides the tutorials, skills for AI-Agents andCLI tools for creating, validating and using in production Stacked Finite Machines (SFSMs).
 
 ## 1. Project description
 
 The SDK contains the non-core developer content of StOP:
-- **CLI tools** (`scripts/`) — FA processing and validation utilities
-- **Node-only helpers** — `loadFAFromFile`, `loadFAFromURL` (in `src/`)
 - **Tutorial** (`tutorial/`) — 5 chapters
 - **AI-agent skills** (`ai/skills/`) — 3 skills
+- **CLI tools** (`scripts/`) — FA processing and validation utilities
+- **Node-only helpers** — `loadFAFromFile`, `loadFAFromURL` (in `src/`)
 - **Tests** — CLI and Node integration tests
 
 The core library (`Sfsm` engine, pure FA utilities, component bases) is provided by
 `@vsirotin/ts-stop` (see `ts/ts-stop-lib/`).
 
-## 2. Dependencies
+## 2. Development-Dependencies
 
 The SDK declares `@vsirotin/ts-stop` as a dependency in `package.json`:
 
@@ -52,26 +52,27 @@ The test suite covers the CLI tools (`run-fa`, `validate-fa`, `merge-fas`,
 `merge-fas-from-dir`) and the Node-only helpers (`loadFAFromFile`,
 `loadFAFromURL`).
 
-## 5. Publishing
+## 5. Local integration testing
 
-The `@vsirotin/ts-stop-sdk` package is Node-only. The `package.json` `"files"`
-array controls what gets published:
-- `lib/` — compiled Node-only helpers
-- `scripts/` — CLI tools
-- `ai/skills/` — AI skills
-- `tutorial/` — markdown documentation
-- `LICENSE-COMMERCIAL.md`, `LICENSE-PUBLIC.md` — dual licensing
-- `release-notes.md` — changelog
+To test with the local (not already published) version of `ts-stop-lib` (without publishing):
+
+1. Clear node_modules/@vsirotin/ts-stop manual or with script (from project directory):
+
+```bash
+bash dev-scripts/clear-ts-stop-lib.sh
+```
+2. Install local version of @vsirotin/ts-stop  with script (from project directory):
+
+```bash
+bash ts/ts-stop-sdk/dev-scripts/install-ts-stop-lib.sh
+```
+3. Process unit test (see section 4)
+
+## 6. Publishing
 
 To publish (manually):
 
 ```bash
 cd ts/ts-stop-sdk
-bash ../../scripts/publish-local.sh     # build + local pack
 npm publish --access public
 ```
-
-## 6. Local integration testing
-
-See `ts/ts-stop-test-node/` for a minimal consumer that validates the
-`@vsirotin/ts-stop-sdk` package after deployment.

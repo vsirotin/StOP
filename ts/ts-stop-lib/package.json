@@ -1,6 +1,6 @@
 {
   "name": "@vsirotin/ts-stop",
-  "version": "3.14.0",
+  "version": "3.14.1",
   "description": "State Oriented Programming — cross-platform TypeScript/JavaScript library (Node.js, Browser, ESM)",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -21,7 +21,6 @@
     "lib",
     "LICENSE-COMMERCIAL.md",
     "LICENSE-PUBLIC.md",
-    "release-notes.md",
     "README.md",
     "version.json"
   ],

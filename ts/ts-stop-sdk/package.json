@@ -1,6 +1,6 @@
 {
   "name": "@vsirotin/ts-stop-sdk",
-  "version": "3.14.0",
+  "version": "3.14.1",
   "description": "State Oriented Programming Software Development Kit — CLI tools, tutorials, skills and Node-only helpers. Depends on @vsirotin/ts-stop.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -19,9 +19,7 @@
     "scripts",
     "ai/skills",
     "tutorial",
-    "LICENSE-COMMERCIAL.md",
-    "LICENSE-PUBLIC.md",
-    "release-notes.md",
+    "LICENSE.md",
     "version.json"
   ],
   "bin": {
@@ -64,7 +62,7 @@
     "sdk"
   ],
   "author": "Viktor Sirotin",
-  "license": "(Apache-2.0 OR StOP-Commercial)",
+  "license": "Apache-2.0",
   "devDependencies": {
     "@types/jest": "^29.5.14",
     "@types/js-yaml": "^4.0.9",

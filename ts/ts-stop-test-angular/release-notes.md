@@ -1,5 +1,8 @@
 # ts-stop-test-angular — Release notes
 
+## Version: 1.0.1 build 2
+doc: README.md and DEVELOPMENT.md updated.
+
 ## Version: 1.0.0 build 2
 feat: Reads the library version via VERSION export from @vsirotin/ts-stop; conventional src/ layout.
 

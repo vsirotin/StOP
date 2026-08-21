@@ -8,7 +8,7 @@
 
 # StOP Library — `@vsirotin/ts-stop`
 
-The cross-platform TypeScript/JavaScript core library of **State Oriented Programming (StOP)**.
+The cross-platform TypeScript/JavaScript core library of **State Oriented Programming (StOP)**. This paradigm enables drastically accelerated AI-agent supported or manual development processes and is explained in detail in the partner project [ts-stop-sdk](../ts-stop-sdk/).
 
 State Oriented Programming (StOP) is a programming paradigm that focuses on explicit state management and transformation.
 
@@ -18,15 +18,6 @@ This package contains the pure, platform-independent library for building **Stac
 - **Browsers** (ES modules via `import`)
 - Any bundler (Webpack, Vite, Rollup, esbuild)
 
-## What's included
-
-- `Sfsm` — the stacked finite state machine engine
-- FA utilities: `reduceFA`, `mergeFAs`, `updateCompactFA`, `updateFullFA`, `FaResolver`
-- Runner utilities: `FaRunner`, `CommandInterpreter`, `FaValidator`
-- Component bases: `TransceiverBase`, `SignalSenderBase`, `SignalReceiverBase`, `CommandReceiverBase`, `TransceiverHub`, `wireSfsm`
-- All core types: `FaDefinition`, `FaNode`, `Transition`, `SfsmOptions`, `LogEntry`, etc.
-
-> **Note:** Node-only helpers such as `loadFAFromFile` (uses `fs`) are provided by the separate SDK package `@vsirotin/ts-stop-sdk`.
 
 ## Install
 
@@ -34,23 +25,6 @@ This package contains the pure, platform-independent library for building **Stac
 npm install @vsirotin/ts-stop
 ```
 
-## Quick start
-
-```typescript
-import { Sfsm } from '@vsirotin/ts-stop';
-
-const turnstile = {
-    Turnstile: [
-        ['I', 'start', 'locked'],
-        ['locked', 'coin', 'unlocked'],
-        ['unlocked', 'push', 'locked']
-    ]
-};
-
-const sfsm = new Sfsm(turnstile);
-sfsm.receiveSignal('start');
-console.log(sfsm.getHeadState()); // 'locked'
-```
 
 ## Development
 
