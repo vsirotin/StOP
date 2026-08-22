@@ -47,6 +47,8 @@ The test suite covers the CLI tools (`run-fa`, `validate-fa`, `merge-fas`,
 
 ## 5. Local integration testing
 
+Please note: VS Code Explorer may not immediately reflect changes made by the scripts. Therefore, if you are using VS Code, please check removing and creation new subdirectories in the `node_modules` folder with the file system explorer (or terminal).
+
 To test with the local (not already published) version of `ts-stop-lib` (without publishing):
 
 1. Clear node_modules/@vsirotin/ts-stop manual or with script (from project directory):

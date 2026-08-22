@@ -10,6 +10,8 @@ problems. It acts as a deployment smoke-test before the SDK is published to NPM.
 
 ## 2. Local integration testing
 
+Please note: VS Code Explorer may not immediately reflect changes made by the scripts. Therefore, if you are using VS Code, please check removing and creation new subdirectories in the `node_modules` folder with the file system explorer (or terminal).
+
 To test with the local (not already published) versions of `ts-stop-lib` and `ts-stop-sdk` (without publishing):
 
 1. Clear node_modules/@vsirotin/ts-stop and node_modules/@vsirotin/ts-stop-sdk manual or with script (from project directory):
