@@ -7,36 +7,66 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
-    name: Test ts-stop Library
+  test-library:
+    name: Test ts-stop library
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         node-version: [18.x, 20.x]
 
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      
-      - name: Install dependencies
-        working-directory: ./ts/ts-stop
-        run: |
-          npm ci
-          npm i @vsirotin/ts-stop
-      
+
+      - name: Install dependencies (library)
+        working-directory: ./ts/ts-stop-lib
+        run: npm ci
+
       - name: Build library
-        working-directory: ./ts/ts-stop
+        working-directory: ./ts/ts-stop-lib
         run: npm run build
-      
-      - name: Run tests
-        working-directory: ./ts/ts-stop
+
+      - name: Run library tests
+        working-directory: ./ts/ts-stop-lib
         run: npm test
-      
-      - name: Generate coverage report
-        working-directory: ./ts/ts-stop
-        run: npm run test:coverage
+
+  test-sdk:
+    name: Test ts-stop SDK
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies (library — SDK dependency)
+        working-directory: ./ts/ts-stop-lib
+        run: npm ci
+
+      - name: Build library
+        working-directory: ./ts/ts-stop-lib
+        run: npm run build
+
+      - name: Install SDK dependencies
+        working-directory: ./ts/ts-stop-sdk
+        run: npm ci
+
+      - name: Build SDK
+        working-directory: ./ts/ts-stop-sdk
+        run: npm run build
+
+      - name: Run SDK tests
+        working-directory: ./ts/ts-stop-sdk
+        run: npm test

@@ -1,0 +1,5 @@
+# UC-01: Coin Payment, change dispensed
+# External signals only — commands are resolved via commands.json
+Service Button>Service button pressed
+Coin Receiver>Coin inserted
+Push sensor>User passed through

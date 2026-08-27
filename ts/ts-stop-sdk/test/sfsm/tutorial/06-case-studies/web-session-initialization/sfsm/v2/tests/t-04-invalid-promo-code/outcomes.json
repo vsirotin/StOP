@@ -1,0 +1,11 @@
+{
+  "UI.presentUserProfilePage": "UI>User Profile page presented",
+  "UI.presentConsentPage": "UI>Consent page presented",
+  "UI.presentErrorPage": "UI>Error page presented",
+  "UI.presentPurchasePage": "UI>Purchase page presented",
+  "Browser local memory.readUserProfile": "Browser local memory>User Profile retrieved without consent",
+  "App-server.checkAvailability": "App-server>App-server available",
+  "App-server.checkPromoCode": "App-server>Promo code invalid",
+  "App-server.checkAppData": "App-server>Application data available",
+  "AI-provider.checkAvailability": "AI-provider>AI-provider available"
+}

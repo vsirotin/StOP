@@ -1,0 +1,12 @@
+Turnstile:I, Service Button>Service button pressed, Turnstile:Locked
+Turnstile:Locked, Coin Receiver>Coin inserted, Turnstile:Weight-checker, Weight-checker.weightCheck
+Weight-checker:I, Coin Receiver>Coin inserted, Weight-checker:Weight Checking
+Weight-checker:Weight Checking, Weight-checker>Weight valid, Weight-checker:E_Weight_OK
+Turnstile:Weight-checker, Weight-checker>Weight valid, Turnstile:Form-checker, Form-checker.checkForm
+Form-checker:I, Weight-checker>Weight valid, Form-checker:Form Checking
+Form-checker:Form Checking, Form-checker>Form valid, change needed, change available, Form-checker:E_Form_OK
+Turnstile:Form-checker, Form-checker>Form valid, change needed, change available, Turnstile:Change-dispenser, Change-dispenser.dispenseChange
+Change-dispenser:I, Form-checker>Form valid, change needed, change available, Change-dispenser:Dispensing
+Change-dispenser:Dispensing, Change-dispenser>Change dispensed, Change-dispenser:E_Change_OK
+Turnstile:Change-dispenser, Change-dispenser>Change dispensed, Turnstile:Unlocked
+Turnstile:Unlocked, Push sensor>User passed through, Turnstile:Locked

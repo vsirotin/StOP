@@ -1,0 +1,236 @@
+{
+    "TS": {
+        "name": "Turnstile device",
+        "description": "Turnstile device is a device that allows or denies passage of people into metro or paid restroom. It can be unlocked by payment with coin or banknote.",
+        "signals": {
+            "TS>start": {
+                "name": "System start",
+                "description": "SFSM initialization signal that transitions the turnstile into its initial Locked state.",
+                "sender": "SFSM"
+            },
+            "TS>timeout": {
+                "name": "Turnstile timeout",
+                "description": "Turnstile is in unlocked state too long and should be locked",
+                "sender": "Turnstile"
+            },
+            "TS>pass": {
+                "name": "Passage",
+                "description": "Someone pass through turnstile and it should be locked",
+                "sender": "Turnstile"
+            }
+        },
+        "commands": {
+            "TS.lock": {
+                "name": "Lock turnstile",
+                "description": "Command to turnstile to lock itself",
+                "receiver": "Turnstile"
+            },
+            "TS.unlock": {
+                "name": "Unlock turnstile",
+                "description": "Command to turnstile to unlock itself ans start a timeout for waiting of passage",
+                "receiver": "Turnstile"
+            }
+        },
+        "ts": [
+            ["TS:I","TS>start","TS:Locked"],
+            ["TS:Locked","BPU>Banknote candidate inserted","PU"],
+            ["TS:Locked","CPU>Coin candidate inserted","PU"],
+            ["PU","BPU>Banknote change not needed","TS:Unlocked","TS.unlock"],
+            ["PU","CPU>Change is not needed","TS:Unlocked","TS.unlock"],
+            ["PU","CCM>Change is done","TS:Unlocked","TS.unlock"],
+            ["PU","ReB>Rejection done","TS:Locked","TS.lock"],
+            ["TS:Unlocked","TS>timeout","TS:Locked","TS.lock"],
+            ["TS:Unlocked","TS>pass","TS:Locked","TS.lock"]
+        ],
+
+        "states": {
+            "TS:Locked": {
+                "name": "Locked",
+                "description": "Turnstile is locked and doesn't let someone into the metro or a paid restroom"
+            },
+            "TS:Unlocked": {
+                "name": "Unlocked",
+                "description": "Turnstile is unlocked and let someone into the metro or a paid restroom"
+            },
+            "PU": {
+                "name": "Payment unit",
+                "description": "Payment unit is a sub-FA of turnstile device that handles payment with coin or banknote. It can be in one of two sub-FAs: BPU (Banknote Payment Process) or CPU (Coin Payment Process).",
+                "states": {
+                    "BPU": {
+                        "name": "Banknote Payment Unit",
+                        "description": "Banknote Payment Unit is a sub-FA of Payment Unit that handles payment with banknote. It can be in one of two states: Check of banknote or Acceptance of banknote.",
+                        "states": {
+                            "BPU:Check of banknote": {
+                                "name": "Check of banknote",
+                                "description": "Checks if a banknote is an official and can be used as payment element"
+                            },
+                            "BPU:Acceptance of banknote": {
+                                "name": "Acceptance of banknote",
+                                "description": "Accept a real banknote and save it in internal tresor"
+                            }
+                        },
+                        "signals": {
+                            "BPU>Banknote candidate inserted": {
+                                "name": "Banknote candidate",
+                                "description": "Some artifact is putted in banknote slot. This signal contains data with this artifact",
+                                "sender": "Banknote Receiver"
+                            },
+                            "BPU>Banknote is ok": {
+                                "name": "Banknote is ok",
+                                "description": "Banknote checker send this signal, when banknote is checked and can be used as payment element. This signal contains data with this banknote",
+                                "sender": "Banknote Checker"
+                            },
+                            "BPU>Banknote is false": {
+                                "name": "Banknote is not ok (rejected)",
+                                "description": "Banknote checker send this signal, when banknote is checked and can't be used as payment element. This signal contains data with this banknote",
+                                "sender": "Banknote Checker"
+                            },
+                            "BPU>Banknote change needed": {
+                                "name": "Change is needed",
+                                "description": "Banknote Acceptor sends this signal when the accepted banknote requires change. Data contains the change value.",
+                                "sender": "Banknote Acceptor"
+                            },
+                            "BPU>Banknote change not needed": {
+                                "name": "Change is not needed",
+                                "description": "Banknote Acceptor sends this signal when the accepted banknote requires no change.",
+                                "sender": "Banknote Acceptor"
+                            }
+                        },
+                        "commands": {
+                            "BPU.check banknote": {
+                                "name": "Check banknote",
+                                "description": "Command to banknote checker with data with banknote for checking",
+                                "receiver": "Banknote Checker"
+                            },
+                            "BPU.accept banknote": {
+                                "name": "Accept banknote",
+                                "description": "Command to banknote acceptor with data with banknote for acceptance",
+                                "receiver": "Banknote Acceptor"
+                            }
+                        },
+                        "ts": [
+                            ["BPU:I","BPU>Banknote candidate inserted","BPU:Check of banknote","BPU.check banknote"],
+                            ["BPU:Check of banknote","BPU>Banknote is ok","BPU:Acceptance of banknote","BPU.accept banknote"],
+                            ["BPU:Check of banknote","BPU>Banknote is false","E_Rejected"],
+                            ["BPU:Acceptance of banknote","BPU>Banknote change needed","E_Change needed"],
+                            ["BPU:Acceptance of banknote","BPU>Banknote change not needed","E_Change not needed"]
+                        ]
+                    },
+                    "CPU": {
+                        "name": "Coin Payment Unit",
+                        "description": "Coin Payment Unit is a sub-FA of Payment Unit that handles payment with coin. It can be in one of three states: Check of weight of coin, Check of form of coin, or Acceptance of coin.",
+                        "states": {
+                            "CPU:Check of coin weight": {
+                                "name": "Check of weight of coin",
+                                "description": "Checks if a weight of a coin is in accepted interval"
+                            },
+                            "CPU:Check of coin form": {
+                                "name": "Check of form of coin",
+                                "description": "Checks if a form of coin is accepted"
+                            },
+                            "CPU:Acceptance of coin": {
+                                "name": "Aceceptance of coin",
+                                "description": "Accept a real coin and save it in internal tresor"
+                            }
+                        },
+                        "signals": {
+                            "CPU>Coin candidate inserted": {
+                                "name": "Coin candidate inserted",
+                                "description": "Some artifact is putted in coin slot. This signal contains data with this artifact",
+                                "sender": "Coin Receiver"
+                            },
+                            "CPU>Coin is OK": {
+                                "name": "Coin is ok",
+                                "description": "Coin checker send this signal, when coin is checked and can be used as payment element. This signal contains data with this coin",
+                                "sender": "Coin Checker"
+                            },
+                            "CPU>Coin rejected": {
+                                "name": "Coin is not ok (rejected)",
+                                "description": "Coin checker send this signal, when coin is checked and can't be used as payment element. This signal contains data with this coin",
+                                "sender": "Coin Checker"
+                            },
+                            "CPU>Change is needed": {
+                                "name": "Change is needed",
+                                "description": "Coin Acceptor sends this signal when the accepted coin requires change. Data contains the change value.",
+                                "sender": "Coin Acceptor"
+                            },
+                            "CPU>Change is not needed": {
+                                "name": "Change is not needed",
+                                "description": "Coin Acceptor sends this signal when the accepted coin requires no change.",
+                                "sender": "Coin Acceptor"
+                            }
+                        },
+                        "commands": {
+                            "CPU.Check coin weight": {
+                                "name": "Check coin weight",
+                                "description": "Command to Coin Checker to validate the weight of the coin candidate. Data contains the coin artifact.",
+                                "receiver": "Coin Checker"
+                            },
+                            "CPU.Check coin form": {
+                                "name": "Check coin form",
+                                "description": "Command to Coin Checker to validate the form/shape of the coin candidate. Data contains the coin artifact.",
+                                "receiver": "Coin Checker"
+                            },
+                            "CPU.accept coin": {
+                                "name": "Accept coin",
+                                "description": "Command to Coin Acceptor to accept the validated coin. Data contains the coin artifact.",
+                                "receiver": "Coin Acceptor"
+                            }
+                        },
+                        "ts": [
+                            ["CPU:I","CPU>Coin candidate inserted","CPU:Check of coin weight","CPU.Check coin weight"],
+                            ["CPU:Check of coin weight","CPU>Coin is OK","CPU:Check of coin form","CPU.Check coin form"],
+                            ["CPU:Check of coin form","CPU>Coin is OK","CPU:Acceptance of coin","CPU.accept coin"],
+                            ["CPU:Check of coin weight","CPU>Coin rejected","E_Rejected"],
+                            ["CPU:Check of coin form","CPU>Coin rejected","E_Rejected"],
+                            ["CPU:Acceptance of coin","CPU>Change is needed","E_Change needed"],
+                            ["CPU:Acceptance of coin","CPU>Change is not needed","E_Change not needed"]
+                        ]
+                    }
+                },
+                "ReB": {
+                    "name": "Reject bin",
+                    "description": "Rejection of false artifacts (coin or banknote) and send them to reject box",   
+                    "signals": {
+                        "ReB>Rejection done": {
+                            "name": "Rejection done",
+                            "description": "Rejection of artifact is done. ",
+                            "sender": "Rejector"
+                        }
+                    }
+                },
+                "CCM": {
+                    "name": "Currency change machine ",
+                    "description": "Currency change machine is a sub-FA of turnstile device that handles making change for accepted banknotes or coins."
+                },
+                "commands": {
+                    "CCM.Make change": {
+                        "name": "Make change",
+                        "description": "Command to the Changer to dispense change. Data contains the change amount copied from the triggering signal.",
+                        "receiver": "Changer"
+                    }
+                },
+                "signals": {
+                    "CCM>Change is done": {
+                        "name": "Change is done",
+                        "description": "Making change is done. ",
+                        "sender": "Changer"
+                    }
+                },
+                "ts": [
+                    ["PU:I","BPU>Banknote candidate inserted","BPU"],
+                    ["PU:I","CPU>Coin candidate inserted","CPU"],
+                    ["BPU","BPU>Banknote is false","ReB"],
+                    ["BPU","BPU>Banknote change needed","CCM","CCM.Make change"],
+                    ["BPU","BPU>Banknote change not needed","E_Change not needed"],
+                    ["CPU","CPU>Coin rejected","ReB"],
+                    ["CPU","CPU>Change is needed","CCM","CCM.Make change"],
+                    ["CPU","CPU>Change is not needed","E_Payment_OK"],
+                    ["ReB","ReB>Rejection done","E_Rejected"],
+                    ["CCM","CCM>Change is done","E_Payment_OK"]
+                ]
+            }
+        }
+        
+    }
+}

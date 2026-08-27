@@ -1,0 +1,7 @@
+{
+    "Turnstile": [
+        ["I", "start", "locked"],
+        ["locked", "coin", "unlocked"],
+        ["unlocked", "push", "locked"]
+    ]
+}

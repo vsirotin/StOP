@@ -1,0 +1,4 @@
+# UC-03: App-server unavailable
+# External signals only — command results via commands.json
+UI>Page loaded
+UI>Consent given

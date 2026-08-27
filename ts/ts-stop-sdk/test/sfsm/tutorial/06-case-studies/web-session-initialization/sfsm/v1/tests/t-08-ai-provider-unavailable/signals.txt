@@ -1,0 +1,4 @@
+# UC-08: AI-provider unavailable
+# External signals only — command results via commands.json
+User>Page loaded
+User>Consent given

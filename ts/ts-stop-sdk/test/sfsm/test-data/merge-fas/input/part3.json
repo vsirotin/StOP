@@ -1,0 +1,71 @@
+{
+    "CPU": {
+            "states": {
+                "CPU:Check of coin weight": {
+                    "name": "Check of weight of coin",
+                    "description": "Checks if a weight of a coin is in accepted interval"
+                },
+                "CPU:Check of coin form": {
+                    "name": "Check of form of coin",
+                    "description": "Checks if a form of coin is accepted"
+                },
+                "CPU:Acceptance of coin": {
+                    "name": "Aceceptance of coin",
+                    "description": "Accept a real coin and save it in internal tresor"
+                }
+            },
+            "signals": {
+                "CPU>Coin candidate inserted": {
+                    "name": "Coin candidate",
+                    "description": "Some artifact is putted in coin slot. This signal contains data with this artifact",
+                    "sender": "Coin Receiver"
+                },
+                "CPU>Coin is OK": {
+                    "name": "Coin is ok",
+                    "description": "Coin checker send this signal, when coin is checked and can be used as payment element. This signal contains data with this coin",
+                    "sender": "Coin Checker"
+                },
+                "CPU>Coin rejected": {
+                    "name": "Coin is not ok (rejected)",
+                    "description": "Coin checker send this signal, when coin is checked and can't be used as payment element. This signal contains data with this coin",
+                    "sender": "Coin Checker"
+                },
+                "CPU>Change is needed": {
+                    "name": "Change is needed",
+                    "description": "Coin Acceptor sends this signal when the accepted coin requires change. Data contains the change value.",
+                    "sender": "Coin Acceptor"
+                },
+                "CPU>Change is not needed": {
+                    "name": "Change is not needed",
+                    "description": "Coin Acceptor sends this signal when the accepted coin requires no change.",
+                    "sender": "Coin Acceptor"
+                }
+            },
+            "commands": {
+                "CPU.Check coin weight": {
+                    "name": "Check coin weight",
+                    "description": "Command to Coin Checker to validate the weight of the coin candidate. Data contains the coin artifact.",
+                    "receiver": "Coin Checker"
+                },
+                "CPU.Check coin form": {
+                    "name": "Check coin form",
+                    "description": "Command to Coin Checker to validate the form/shape of the coin candidate. Data contains the coin artifact.",
+                    "receiver": "Coin Checker"
+                },
+                "CPU.accept coin": {
+                    "name": "Accept coin",
+                    "description": "Command to Coin Acceptor to accept the validated coin. Data contains the coin artifact.",
+                    "receiver": "Coin Acceptor"
+                }
+            },
+            "ts": [
+                ["CPU:I","CPU>Coin candidate inserted","CPU:Check of coin weight","CPU.Check coin weight"],
+                ["CPU:Check of coin weight","CPU>Coin is OK","CPU:Check of coin form","CPU.Check coin form"],
+                ["CPU:Check of coin form","CPU>Coin is OK","CPU:Acceptance of coin","CPU.accept coin"],
+                ["CPU:Check of coin weight","CPU>Coin rejected","E_Rejected"],
+                ["CPU:Check of coin form","CPU>Coin rejected","E_Rejected"],
+                ["CPU:Acceptance of coin","CPU>Change is needed","E_Change needed"],
+                ["CPU:Acceptance of coin","CPU>Change is not needed","E_Change not needed"]
+            ]
+        }
+}

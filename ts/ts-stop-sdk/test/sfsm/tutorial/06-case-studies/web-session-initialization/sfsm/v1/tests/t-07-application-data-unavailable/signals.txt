@@ -1,0 +1,4 @@
+# UC-07: Application data unavailable
+# External signals only — command results via commands.json
+User>Page loaded
+User>Consent given

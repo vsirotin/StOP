@@ -1,0 +1,54 @@
+# Development
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Source files (only compiled lib/ is published)
+src/
+tsconfig*.json
+jest.config.js
+
+# Tests (source and compiled)
+test/
+lib/test
+lib/esm/test
+lib/cjs/test
+lib/*/test/
+__tests__/
+*.test.ts
+*.spec.ts
+*.test.js
+*.spec.js
+**/*.test.js
+**/*.test.d.ts
+**/*.test.d.ts.map
+**/*.spec.js
+**/*.spec.d.ts
+
+
+# Build artifacts (intermediate)
+dist/
+build/
+
+# Package management
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+# README.md is included via package.json "files"
+# tutorial/ and ai/skills/ are explicitly included in "files" array
+docs/
+
+# Temporary files
+*.tmp
+tmp/
+TMP/

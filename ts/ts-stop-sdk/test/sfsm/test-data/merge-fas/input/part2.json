@@ -1,0 +1,21 @@
+{
+    "PU": [
+        ["PU:I", "BPU>Banknote candidate inserted", "BPU"],
+        ["PU:I", "CPU>Coin candidate inserted", "CPU"],
+        ["BPU", "BPU>Banknote is false", "ReB"],
+        ["BPU", "BPU>Banknote change needed", "CCM", "CCM.Make change"],
+        ["BPU", "BPU>Banknote change not needed", "E_Change not needed"],
+        ["CPU", "CPU>Coin rejected", "ReB"],
+        ["CPU", "CPU>Change is needed", "CCM", "CCM.Make change"],
+        ["CPU", "CPU>Change is not needed", "E_Payment_OK"],
+        ["ReB", "ReB>Rejection done", "E_Rejected"],
+        ["CCM", "CCM>Change is done", "E_Payment_OK"]
+    ],
+    "BPU": [
+        ["BPU:I", "BPU>Banknote candidate inserted", "BPU:Check of banknote", "BPU.check banknote"],
+        ["BPU:Check of banknote", "BPU>Banknote is ok", "BPU:Acceptance of banknote", "BPU.accept banknote"],
+        ["BPU:Check of banknote", "BPU>Banknote is false", "E_Rejected"],
+        ["BPU:Acceptance of banknote", "BPU>Banknote change needed", "E_Change needed"],
+        ["BPU:Acceptance of banknote", "BPU>Banknote change not needed", "E_Change not needed"]
+    ]
+}

@@ -1,0 +1,9 @@
+Session:I, UI>Page loaded, Session:Showing User Profile Page, UI.presentUserProfilePage
+Session:Showing User Profile Page, UI>User Profile page presented, Session:Reading User Profile, Browser local memory.readUserProfile
+Session:Reading User Profile, Browser local memory>User Profile retrieved without consent, Session:Showing Consent Page, UI.presentConsentPage
+Session:Showing Consent Page, UI>Consent page presented, Session:Consent Request
+Session:Consent Request, UI>Consent given, Session:App-server Check, App-server.checkAvailability
+Session:App-server Check, App-server>App-server available, Session:Promo code Check, App-server.checkPromoCode
+Session:Promo code Check, App-server>Promo code valid, Session:Application Data Check, App-server.checkAppData
+Session:Application Data Check, App-server>Application data available, Session:AI-provider Check, AI-provider.checkAvailability
+Session:AI-provider Check, AI-provider>AI-provider available, Session:E_Session_Established

@@ -1,0 +1,5 @@
+# Signals for the simple turnstile happy path.
+# Drives: I → locked → unlocked → locked
+start
+coin
+push
