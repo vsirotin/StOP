@@ -17,6 +17,7 @@ To test with the local (not already published) versions of `ts-stop-lib` and `ts
 1. Clear node_modules/@vsirotin/ts-stop and node_modules/@vsirotin/ts-stop-sdk manual or with script (from project directory):
 
 ```bash
+cd ts/ts-stop-test-node
 bash dev-scripts/clear-ts-stop-lib-and-sdk.sh
 ```
 2. Install local version of @vsirotin/ts-stop  and @vsirotin/ts-stop-sdk with script (from project directory):
@@ -27,7 +28,6 @@ bash dev-scripts/install-ts-stop-lib-and-sdk.sh
 3. Process unit test 
 
 ```bash
-cd ts/ts-stop-test-node
 npm test
 ```
 
