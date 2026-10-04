@@ -60,6 +60,84 @@ Before starting, the user must provide:
 If any of this information is missing, request it from the user before
 proceeding.
 
+## Naming conventions
+
+Using the correct naming convention helps a quick and correct understanding of
+the application behaviour. Every name in the compact notation must follow the
+rules below — they are checked during normalization (Step 1) and are part of the
+acceptance criteria of the extension.
+
+### States of a sub-FA
+
+The name of a state inside a sub-FA **always starts with the abbreviation of the
+sub-FA it belongs to**, followed by `:` and the descriptive part of the name.
+
+- Exception: the entry state `I` and the exit states `E_...` — they keep their
+  fixed names.
+- Exception: FA names themselves (`ROOT`, `INIT_SESSION`, ...) — they are
+  targets that push a sub-FA and are therefore not prefixed.
+
+Examples:
+
+| Sub-FA                   | State of that sub-FA                             |
+|--------------------------|--------------------------------------------------|
+| `INIT_SESSION`           | `IS:Start analysis`|
+| `PROMOCODE_BUYING`       | `PB:Promocode buying`                             |
+| `METER_READING`          | `MR:Problem diagnosis`                            |
+
+The abbreviation is derived from the initials of the FA name words
+(`INIT_SESSION` → `IS`, `PROCESS_CONVERSATION` → `PC`,
+`PROCESS_CONVERSATION_TURNS` → `PCT`). When a new FA is introduced, its
+abbreviation must be added to this table and kept unique across the whole SFSM.
+Because the prefix already identifies the FA, the descriptive part must not
+repeat the FA name.
+
+> The prefix of a state is **not** the sender of the triggering signal — that is
+> what the signal prefix expresses. Do not name states after the component that
+> happens to process the command: in `IS:Start analysis` the state is entered by
+> the command `UI.analyseStartData` and still carries the `IS:` prefix.
+
+### Signals
+
+The prefix of a signal is the **sender** of the signal: `<Sender>><signal>`.
+
+- `UI>Page loaded` — sent by the UI (EventProcessorUI / TranscieverUI).
+- `AS>App-Server available` — sent by the App-Server transceiver.
+- `CM>Ready` — sent by the Conversation Manager.
+- `AI>Connected` — sent by the AI side.
+
+### Commands
+
+The prefix of a command is the **component that processes it**:
+`<Processor>.<command>`.
+
+- `UI.checkPrivacyPolicy` — processed by the UI transceiver.
+- `AS.loadConfiguration` — processed by the App-Server transceiver.
+- `CM.connectLiveAI` — processed by the Conversation Manager.
+- `AI.createLiveSession` — processed by the AI transceiver.
+
+### Entry and exit states
+
+- Exactly one entry state `I` per FA.
+- Exit states are prefixed `E_` and named after what the exit means, not after
+  the state they are reached from (`E_SHOWING_SPECIAL_PAGE`,
+  `E_CONVERSATION_FINISHED`). Keep one spelling per exit concept.
+
+### Consistency checks (part of Step 1 / Step 5)
+
+- Every state of every FA starts with that FA's abbreviation (except `I`,
+  `E_...` and FA names used as push targets).
+- Every signal has exactly one sender; the prefix matches it.
+- Every command has exactly one processor; the prefix matches it.
+- **No dead elements**: a command or signal registered by a
+  transceiver/event processor but not referenced by the SFSM definition is
+  removed together with its (dummy) implementation. A command or signal used by
+  the SFSM but neither registered nor handled anywhere is a defect — report it.
+- Golden traces, test catalogs and code comments that mention state names are
+  regenerated/updated in the same task (a rename is never left half-done).
+
+---
+
 ## Approach
 
 Extension is a complex, iterative task. It is broken into six steps; each
@@ -71,12 +149,10 @@ it updated while working.
 ### Step 1 — Normalize the draft and convert it to the compact notation
 
 1. **Fix spelling and naming** of the draft (drafts typically contain typos):
-   signals, states, and commands must follow the project conventions. Typical
-   conventions: commands namespaced `<FaName>.<command>`; states of an FA
-   namespaced `<FaName>: <state>` (when referenced across FAs); signals
-   `<Sender>><signal>`; exactly one entry state `I` per FA; exit states
-   prefixed `E_`. Record every normalization in a table (draft name →
-   canonical name) in the plan document.
+   signals, states, and commands must follow the project conventions (see
+   [Naming conventions](#naming-conventions) below). Record every
+   normalization in a table (draft name → canonical name) in the plan
+   document.
 2. **Map the extended draft notation to the compact format**: remove the
    `command -> "result signal"` annotations. They become the *contract* for
    the command implementations (Step 5). A command may have one or several
