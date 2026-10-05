@@ -18,6 +18,10 @@ if [[ -z "$COMMIT_MSG" ]]; then
 fi
 
 cd "$REPO_ROOT"
+
+# Run all sub-project tests before committing. Aborts the commit on failure.
+"$SCRIPT_DIR/test-all.sh"
+
 git add -A
 git commit -m "$COMMIT_MSG"
 git push

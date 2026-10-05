@@ -1,0 +1,105 @@
+{
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/node_modules/*/**": true,
+        "**/.hg/store/**": true
+    },
+
+    "js/ts.tsdk.path": "ts/ts-stop/node_modules/typescript/lib",
+    "js/ts.tsdk.promptToUseWorkspaceVersion": true,
+    "typescript.preferences.maxTsServerMemory": 4096,
+    "js/ts.suggest.autoImports": true,
+    "javascript.preferences.includePackageJsonAutoImports": "on",
+    "js/ts.validate.enabled": false,
+  // Updated path
+    "files.associations": {
+        "*.test.ts": "typescript",
+        "*.spec.ts": "typescript"
+    },
+    "chat.tools.terminal.autoApprove": {
+        "npm test": true,
+        "npm install": true,
+        "git checkout": true,
+        "/^cd /Users/viktorsirotin/VSCodeProjects/StOP && bash scripts/make-commit\\.sh 2>&1$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "npm run build": true,
+        "/^bash scripts/publish-local\\.sh 2>&1 \\| tail -5$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^bash scripts/publish-local\\.sh 2>&1 \\| tail -3$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "mkdir": true,
+        "mv": true,
+        "/^cd /Users/viktorsirotin/VSCodeProjects/StOP && bash scripts/make-commit\\.sh$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "npx jest": true,
+        "npm run test": true,
+        "/^bash scripts/publish-local\\.sh$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^cat /Users/viktorsirotin/VSCodeProjects/StOP/ts/ts-stop/package\\.json \\| python3 -m json\\.tool \\| grep -A 30 '\"exports\"'$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^cat /Users/viktorsirotin/VSCodeProjects/StOP/ts/ts-example/tsconfig\\.json \\| python3 -m json\\.tool$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^cat /Users/viktorsirotin/VSCodeProjects/StOP/ts/ts-example/package\\.json \\| python3 -m json\\.tool \\| grep -A 20 '\"dependencies\"'$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "npm run reduce-fa": true,
+        "npm run publish:local": true,
+        "npm pack": true,
+        "/^cd /Users/viktorsirotin/VSCodeProjects/StOP && node ts/ts-stop/scripts/json-to-drawio\\.js ts/ts-stop/test/sfsm/test-data/turnstile-fa-compact\\.json TMP/diagrams/generated-diagram\\.drawio$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^cd /Users/viktorsirotin/VSCodeProjects/StOP && node ts/ts-stop/scripts/drawio-to-json\\.js TMP/diagrams/generated-diagram\\.drawio TMP/diagrams/generated-diagram\\.json$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^node ts/ts-stop/scripts/compare-compact-jsons\\.js ts/ts-stop/test/sfsm/test-data/turnstile-fa-compact\\.json TMP/diagrams/generated-diagram\\.json$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "uniq": true,
+        "/^node ts/ts-stop/scripts/json-to-drawio\\.js ts/ts-stop/test/sfsm/test-data/turnstile-fa-compact\\.json TMP/diagrams/generated-diagram\\.drawio$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^node ts/ts-stop/scripts/drawio-to-json\\.js TMP/diagrams/generated-diagram\\.drawio TMP/diagrams/generated-diagram\\.json && node ts/ts-stop/scripts/compare-compact-jsons\\.js ts/ts-stop/test/sfsm/test-data/turnstile-fa-compact\\.json TMP/diagrams/generated-diagram\\.json$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    },
+
+    "jest.virtualFolders": [
+        { "name": "ts-stop-lib", "rootPath": "ts/ts-stop-lib" },
+        { "name": "ts-stop-sdk", "rootPath": "ts/ts-stop-sdk" }
+    ],
+
+    // no watch mode, no automatic run on startup
+    "jest.runMode": "on-demand",
+
+    // passive output: never steal focus, never auto-clear
+    "jest.outputConfig": {
+        "revealOn": "demand",
+        "revealWithFocus": "none",
+        "clearOnRun": "none"
+    },
+
+    // VS Code core setting: do not auto-open the Test Results panel
+    "testing.automaticallyOpenTestResults": "neverOpen"
+
+}

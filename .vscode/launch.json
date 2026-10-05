@@ -1,0 +1,45 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Current Test File",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/ts/ts-stop/node_modules/.bin/jest",
+      "args": [
+        "--runInBand",
+        "--no-cache",
+        "${relativeFile}"
+      ],
+      "cwd": "${workspaceFolder}/ts/ts-stop",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "TS_JEST": "true"
+      },
+      "windows": {
+        "program": "${workspaceFolder}/ts/ts-stop/node_modules/jest/bin/jest.js"
+      }
+    },
+    {
+      "name": "Debug All Tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/ts/ts-stop/node_modules/.bin/jest",
+      "args": [
+        "--runInBand",
+        "--no-cache"
+      ],
+      "cwd": "${workspaceFolder}/ts/ts-stop",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "TS_JEST": "true"
+      },
+      "windows": {
+        "program": "${workspaceFolder}/ts/ts-stop/node_modules/jest/bin/jest.js"
+      }
+    }
+  ],
+  "compounds": []
+}

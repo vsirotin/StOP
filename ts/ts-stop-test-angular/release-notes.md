@@ -1,5 +1,8 @@
 # ts-stop-test-angular — Release notes
 
+## Version: 1.0.3 build 4
+test: Added working test target (@angular/build:unit-test with vitest) and app.spec.ts smoke-test.
+
 ## Version: 1.0.2 build 3
 fix: Angular web app is now fully functional — added angular.json, start script, and missing @angular dependencies; fixed serve script.
 

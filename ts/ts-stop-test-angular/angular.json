@@ -26,6 +26,14 @@
           "options": {
             "buildTarget": "ts-stop-test-angular:build"
           }
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "buildTarget": "ts-stop-test-angular:build",
+            "tsConfig": "tsconfig.json",
+            "runner": "vitest"
+          }
         }
       }
     }
