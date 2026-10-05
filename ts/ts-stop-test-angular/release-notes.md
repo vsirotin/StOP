@@ -1,5 +1,11 @@
 # ts-stop-test-angular — Release notes
 
+## Version: 1.0.5 build 6
+doc: Verified the local ts-stop-lib integration scripts (clear/install-ts-stop-lib.sh) still work after the tsconfig moduleResolution change; test target passes with the locally built library.
+
+## Version: 1.0.4 build 5
+fix: tsconfig.json moduleResolution changed from deprecated node10 to bundler (with module esnext); removes the TS deprecation error in the editor.
+
 ## Version: 1.0.3 build 4
 test: Added working test target (@angular/build:unit-test with vitest) and app.spec.ts smoke-test.
 

@@ -2,42 +2,81 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug Current Test File",
+      "name": "Jest: Current Test File (ts-stop-lib)",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/ts/ts-stop/node_modules/.bin/jest",
+      "program": "${workspaceFolder}/ts/ts-stop-lib/node_modules/.bin/jest",
       "args": [
         "--runInBand",
         "--no-cache",
         "${relativeFile}"
       ],
-      "cwd": "${workspaceFolder}/ts/ts-stop",
+      "cwd": "${workspaceFolder}/ts/ts-stop-lib",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "env": {
         "TS_JEST": "true"
       },
       "windows": {
-        "program": "${workspaceFolder}/ts/ts-stop/node_modules/jest/bin/jest.js"
+        "program": "${workspaceFolder}/ts/ts-stop-lib/node_modules/jest/bin/jest.js"
       }
     },
     {
-      "name": "Debug All Tests",
+      "name": "Jest: All Tests (ts-stop-lib)",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/ts/ts-stop/node_modules/.bin/jest",
+      "program": "${workspaceFolder}/ts/ts-stop-lib/node_modules/.bin/jest",
       "args": [
         "--runInBand",
         "--no-cache"
       ],
-      "cwd": "${workspaceFolder}/ts/ts-stop",
+      "cwd": "${workspaceFolder}/ts/ts-stop-lib",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "env": {
         "TS_JEST": "true"
       },
       "windows": {
-        "program": "${workspaceFolder}/ts/ts-stop/node_modules/jest/bin/jest.js"
+        "program": "${workspaceFolder}/ts/ts-stop-lib/node_modules/jest/bin/jest.js"
+      }
+    },
+    {
+      "name": "Jest: Current Test File (ts-stop-sdk)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/ts/ts-stop-sdk/node_modules/.bin/jest",
+      "args": [
+        "--runInBand",
+        "--no-cache",
+        "${relativeFile}"
+      ],
+      "cwd": "${workspaceFolder}/ts/ts-stop-sdk",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "TS_JEST": "true"
+      },
+      "windows": {
+        "program": "${workspaceFolder}/ts/ts-stop-sdk/node_modules/jest/bin/jest.js"
+      }
+    },
+    {
+      "name": "Jest: All Tests (ts-stop-sdk)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/ts/ts-stop-sdk/node_modules/.bin/jest",
+      "args": [
+        "--runInBand",
+        "--no-cache"
+      ],
+      "cwd": "${workspaceFolder}/ts/ts-stop-sdk",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "TS_JEST": "true"
+      },
+      "windows": {
+        "program": "${workspaceFolder}/ts/ts-stop-sdk/node_modules/jest/bin/jest.js"
       }
     }
   ],

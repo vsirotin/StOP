@@ -6,7 +6,7 @@
         "**/.hg/store/**": true
     },
 
-    "js/ts.tsdk.path": "ts/ts-stop/node_modules/typescript/lib",
+    "js/ts.tsdk.path": "ts/ts-stop-lib/node_modules/typescript/lib",
     "js/ts.tsdk.promptToUseWorkspaceVersion": true,
     "typescript.preferences.maxTsServerMemory": 4096,
     "js/ts.suggest.autoImports": true,
