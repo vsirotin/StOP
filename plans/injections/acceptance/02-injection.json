@@ -1,0 +1,43 @@
+{
+  "_comment": [
+    "Illustrative injection for the draft's acceptance scenario (draft 4.1 -> 4.2).",
+    "Shape is the one defined in plan.md 2.1. The 'signals' members are shown",
+    "for documentation only - see open question 1 in plan.md 8."
+  ],
+
+  "fa": "CHAT",
+
+  "remove": [
+    ["CHAT:Greeting", "CHAT>close", "CHAT:E_Closing", "CHAT.close"]
+  ],
+
+  "add-after": [
+    ["CHAT:Greeting", "CHAT>close", "CHAT:E_Closing", "CHAT.farewell"]
+  ],
+
+  "update": [
+    {
+      "match":   ["CHAT:Greeting", "CHAT>user-greeted", "CHAT:Answering", "CHAT.askTopic"],
+      "set":     ["CHAT:Greeting", "CHAT>user-greeted", "CHAT:NameAsked",  "CHAT.askName"],
+      "signals": ["CHAT>name-known", "CHAT>name-unknown"]
+    }
+  ],
+
+  "commands": {
+    "CHAT.greet": [
+      "val known = readLS('user-name')",
+      "IF(known != '') THEN {sayGreeting(known)} ELSE {askName()}"
+    ],
+    "CHAT.askName": [
+      "val answer = ask('What is your name?')",
+      "IF(answer == 'YES') THEN {writeLS('user-name', valueOf('name')), sendSignal('CHAT>name-known')} ELSE {sendSignal('CHAT>name-unknown')}"
+    ],
+    "CHAT.askTopic": [
+      "val topic = ask('What would you like to talk about?')",
+      "IF(topic == 'whether') THEN {sayWeather(reportWeather())} ELSE {sayOther(topic)}"
+    ],
+    "CHAT.farewell": [
+      "say 'Goodbye, see you next time!'"
+    ]
+  }
+}

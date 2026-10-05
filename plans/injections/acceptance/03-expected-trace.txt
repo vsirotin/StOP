@@ -1,0 +1,19 @@
+// Expected trace for the acceptance scenario (draft 4.2).
+// Format: one signal per line, "//" starts a comment, blank lines ignored -
+// exactly the format consumed by ts-stop-sdk's run-fa CLI (FaRunner).
+// Reference: ts/ts-stop-sdk/tutorial/04-tools.md 4.8.8
+
+// --- Run A: cold start, user name NOT yet in Local Storage -------------
+// AI asks the name, user confirms it, weather is reported, then Close.
+CHAT>session-start
+CHAT>close
+
+// --- Run B: same session, name already known ---------------------------
+// AI greets WITH the name and does not ask again.
+CHAT>session-start
+CHAT>close
+
+// --- Run C: user declines to give a name --------------------------------
+// Negative branch; no writeLS, greeting stays generic.
+CHAT>session-start
+CHAT>close

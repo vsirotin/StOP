@@ -1,0 +1,10 @@
+{
+  "CHAT": [
+    ["CHAT:I",                "CHAT>session-start", "CHAT:Greeting",   "CHAT.greet"],
+    ["CHAT:Greeting",         "CHAT>user-greeted",  "CHAT:Answering",  "CHAT.askTopic"],
+    ["CHAT:Greeting",         "CHAT>close",         "CHAT:E_Closing",  "CHAT.close"],
+    ["CHAT:Answering",        "CHAT>question",      "CHAT:Answering",  "CHAT.answer"],
+    ["CHAT:Answering",        "CHAT>close",         "CHAT:E_Closing",  "CHAT.close"],
+    ["CHAT:E_Closing",        "CHAT>closed",        "CHAT:I",          "CHAT.farewell"]
+  ]
+}
